@@ -241,17 +241,6 @@
     }" 
     class="space-y-6">
 
-    <!-- Header -->
-    <div class="flex items-center justify-between border-b border-white/[0.06] pb-4">
-        <div>
-            <h2 class="text-base font-bold text-white flex items-center gap-2">
-                <span>Live AI Studio Playground</span>
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            </h2>
-            <p class="text-xs text-zinc-400 mt-0.5">Test any combo or direct model with real-time routing telemetry, latency metrics, and prompt compression statistics.</p>
-        </div>
-    </div>
-
     <!-- Split Studio Layout -->
     <div class="bg-[#121215] border border-white/[0.07] rounded-2xl p-5 shadow-lg grid grid-cols-1 lg:grid-cols-4 gap-6">
         <!-- Left Panel: Configuration -->

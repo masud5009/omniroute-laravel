@@ -21,6 +21,8 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
     Route::get('/', [AdminDashboardController::class, 'overview'])->name('index');
     Route::get('/overview', [AdminDashboardController::class, 'overview'])->name('overview');
     Route::get('/providers', [AdminDashboardController::class, 'providers'])->name('providers');
+    Route::get('/providers/{provider}', [AdminDashboardController::class, 'providerDetail'])->name('providers.show');
+    Route::post('/providers/{provider}/import-models', [AdminDashboardController::class, 'importModels'])->name('providers.import-models');
     Route::get('/combos', [AdminDashboardController::class, 'combos'])->name('combos');
     Route::get('/gateway-keys', [AdminDashboardController::class, 'gatewayKeys'])->name('gateway-keys');
     Route::get('/playground', [AdminDashboardController::class, 'playground'])->name('playground');

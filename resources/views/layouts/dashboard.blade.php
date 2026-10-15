@@ -134,6 +134,12 @@
             }
             this.showAccountModal = true;
             this.$nextTick(() => lucide.createIcons());
+        },
+        customProviderFormat: 'openai',
+        openAddCustomProviderModal(format = 'openai') {
+            this.customProviderFormat = format;
+            this.showProviderModal = true;
+            this.$nextTick(() => lucide.createIcons());
         }
     }"
     x-init="
@@ -155,7 +161,7 @@
         <!-- ============================================================== -->
         <!-- FIXED LEFT SIDEBAR (w-64)                                      -->
         <!-- ============================================================== -->
-        <aside class="w-64 h-screen bg-[#0c0c0e] border-r border-white/[0.07] flex flex-col justify-between flex-shrink-0 z-30 select-none">
+        <aside class="w-64 h-screen bg-[#10141e] border-r border-white/[0.07] flex flex-col justify-between flex-shrink-0 z-30 select-none">
             <!-- Sidebar Top: Brand -->
             <div>
                 <a href="{{ route('dashboard.overview') }}" class="h-16 px-5 border-b border-white/[0.07] flex items-center justify-between hover:bg-white/[0.02] transition-colors">
@@ -278,9 +284,9 @@
             </div>
 
             <!-- Sidebar Bottom: System Health, Clear Cache & User Profile -->
-            <div class="p-3 border-t border-white/[0.07] space-y-2 bg-[#0a0a0c]">
+            <div class="p-3 border-t border-white/[0.07] space-y-2 bg-[#0c101a]">
                 <!-- Health Pulse -->
-                <div class="p-2.5 rounded-xl bg-zinc-900/90 border border-white/[0.06] flex items-center justify-between text-[11px]">
+                <div class="p-2.5 rounded-xl bg-[#141926] border border-white/[0.06] flex items-center justify-between text-[11px]">
                     <div class="flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                         <span class="text-zinc-300 font-medium">All Systems Operational</span>
@@ -290,7 +296,7 @@
 
                 <!-- Clear Cache Button -->
                 <button type="button" @click="clearCache()"
-                    class="w-full py-1.5 px-2.5 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-white/[0.06] hover:border-white/10 text-zinc-300 text-[11px] font-medium flex items-center justify-between transition-colors group">
+                    class="w-full py-1.5 px-2.5 rounded-xl bg-[#141926] hover:bg-[#1a2133] border border-white/[0.06] hover:border-white/10 text-zinc-300 text-[11px] font-medium flex items-center justify-between transition-colors group">
                     <div class="flex items-center gap-2">
                         <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-zinc-400 group-hover:text-emerald-400 transition-colors"></i>
                         <span>Clear Gateway Cache</span>
@@ -333,15 +339,6 @@
 
                 <!-- Right Header Actions -->
                 <div class="flex items-center gap-3">
-                    <!-- Quick Copy Endpoint Pill -->
-                    <div class="hidden sm:flex items-center bg-zinc-900 border border-white/[0.08] rounded-xl px-3 py-1.5 text-xs text-zinc-300 gap-2">
-                        <span class="text-zinc-500 font-mono text-[11px]">Base URL:</span>
-                        <code class="font-mono text-zinc-200 select-all">{{ url('/v1') }}</code>
-                        <button type="button" @click="copyText('{{ url('/v1') }}', 'Base URL copied!')" class="text-zinc-400 hover:text-white transition-colors" title="Copy URL">
-                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                        </button>
-                    </div>
-
                     <!-- Quick Add Key Button -->
                     <button type="button" @click="openAddKeyModal()"
                         class="px-3.5 py-1.5 bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-xs rounded-xl shadow-lg shadow-white/5 transition-all flex items-center gap-1.5">
@@ -352,7 +349,7 @@
             </header>
 
             <!-- Scrollable Content Body -->
-            <div class="flex-1 overflow-y-auto p-6 space-y-6">
+            <div class="flex-1 overflow-y-auto p-6 space-y-6 bg-[#090b10] bg-[radial-gradient(rgba(255,255,255,0.035)_1px,transparent_1px)] [background-size:24px_24px]">
 
                 <!-- Global Success Alert -->
                 @if(session('success'))
@@ -470,7 +467,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-zinc-400 mb-1.5">Protocol</label>
-                        <select name="format" class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                        <select name="format" x-model="customProviderFormat" class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
                             <option value="openai">OpenAI (/chat/completions)</option>
                             <option value="anthropic">Anthropic (/messages)</option>
                         </select>

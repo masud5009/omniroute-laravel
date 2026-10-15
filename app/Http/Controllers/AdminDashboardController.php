@@ -166,20 +166,14 @@ class AdminDashboardController extends Controller
     }
 
     /**
-     * Delete a custom AI provider.
+     * Delete an AI provider.
      */
     public function deleteProvider(AiProvider $provider): RedirectResponse
     {
-        $coreSlugs = ['gemini', 'groq', 'openrouter', 'deepseek', 'cerebras', 'mistral', 'openai', 'anthropic'];
-
-        if (in_array($provider->slug, $coreSlugs)) {
-            return back()->withErrors(['error' => "Core system provider '{$provider->name}' cannot be deleted."]);
-        }
-
         $name = $provider->name;
         $provider->delete();
 
-        return back()->with('success', "Custom provider '{$name}' deleted successfully.");
+        return back()->with('success', "Provider '{$name}' deleted successfully.");
     }
 
     /**
@@ -339,7 +333,50 @@ class AdminDashboardController extends Controller
     }
 
     /**
-     * Attempt to fetch and sync available models from an OpenAI-compatible provider.
+     * Display dedicated Provider Detail page (Connections & Available Models).
+     */
+    public function providerDetail(string $providerSlug): View
+    {
+        $provider = AiProvider::where('slug', $providerSlug)
+            ->orWhere('id', $providerSlug)
+            ->with(['accounts' => fn ($q) => $q->orderBy('priority', 'asc')->orderBy('tokens_used_today', 'asc')])
+            ->firstOrFail();
+
+        return view('dashboard.provider-detail', compact('provider'));
+    }
+
+    /**
+     * Import models from upstream provider /models endpoint.
+     */
+    public function importModels(AiProvider $provider): JsonResponse
+    {
+        $account = $provider->accounts()->where('is_active', true)->first()
+            ?? $provider->accounts()->first();
+
+        if (!$account) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No configured API keys/credentials found for this provider. Please add a key/connection first.',
+            ], 422);
+        }
+
+        $beforeCount = count($provider->models_catalog ?? []);
+        $models = $this->syncProviderModels($provider, $account->api_key);
+        $newCount = count($models) - $beforeCount;
+
+        return response()->json([
+            'success' => true,
+            'message' => $newCount > 0 
+                ? "Successfully imported {$newCount} new models! Total in catalog: " . count($models)
+                : "Models catalog up to date (" . count($models) . " models available).",
+            'models_count' => count($models),
+            'new_count' => $newCount,
+            'models' => $models,
+        ]);
+    }
+
+    /**
+     * Attempt to fetch and sync available models from an OpenAI or Anthropic provider.
      *
      * @param AiProvider $provider
      * @param string $apiKey
@@ -347,12 +384,50 @@ class AdminDashboardController extends Controller
      */
     protected function syncProviderModels(AiProvider $provider, string $apiKey): array
     {
-        if ($provider->format !== 'openai') {
+        $baseUrl = rtrim($provider->base_url, '/');
+
+        // Anthropic /models endpoint support
+        if ($provider->format === 'anthropic') {
+            try {
+                $modelsUrl = str_ends_with($baseUrl, '/messages')
+                    ? substr($baseUrl, 0, -strlen('/messages')) . '/models'
+                    : $baseUrl . '/models';
+
+                $res = Http::withHeaders([
+                    'x-api-key' => $apiKey,
+                    'anthropic-version' => '2023-06-01',
+                    'Accept' => 'application/json',
+                ])->timeout(8)->get($modelsUrl);
+
+                if ($res->successful()) {
+                    $json = $res->json();
+                    $modelList = [];
+                    if (isset($json['data']) && is_array($json['data'])) {
+                        foreach ($json['data'] as $item) {
+                            $id = is_array($item) ? ($item['id'] ?? null) : (is_string($item) ? $item : null);
+                            if ($id && is_string($id)) {
+                                $modelList[] = $id;
+                            }
+                        }
+                    }
+                    if (!empty($modelList)) {
+                        $existing = is_array($provider->models_catalog) ? $provider->models_catalog : [];
+                        $merged = array_values(array_unique(array_merge($existing, $modelList)));
+                        $provider->models_catalog = $merged;
+                        $provider->save();
+
+                        return $merged;
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Silently fallback
+            }
+
             return $provider->models_catalog ?? [];
         }
 
+        // OpenAI format /models endpoint support
         try {
-            $baseUrl = rtrim($provider->base_url, '/');
             if (str_ends_with($baseUrl, '/chat/completions')) {
                 $modelsUrl = substr($baseUrl, 0, -strlen('/chat/completions')) . '/models';
             } elseif (str_ends_with($baseUrl, '/models')) {
@@ -364,7 +439,7 @@ class AdminDashboardController extends Controller
             $res = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $apiKey,
                 'Accept' => 'application/json',
-            ])->timeout(6)->get($modelsUrl);
+            ])->timeout(8)->get($modelsUrl);
 
             if ($res->successful()) {
                 $json = $res->json();
@@ -404,7 +479,7 @@ class AdminDashboardController extends Controller
                 }
             }
         } catch (\Throwable $e) {
-            // Silently ignore if provider does not support /models
+            // Silently fallback
         }
 
         return $provider->models_catalog ?? [];

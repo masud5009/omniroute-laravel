@@ -30,6 +30,15 @@ class ProviderAccount extends Model
     ];
 
     /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'api_key',
+    ];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

@@ -15,13 +15,6 @@
         }
     }
 }">
-    <div class="flex items-center justify-between border-b border-white/[0.06] pb-4">
-        <div>
-            <h2 class="text-base font-bold text-white">Smart Combos & Fallback Router Builder</h2>
-            <p class="text-xs text-zinc-400 mt-0.5">Create resilient virtual models that seamlessly cascade through fallback providers on rate-limits (429) or upstream outages.</p>
-        </div>
-    </div>
-
     <!-- Visual Fallback Pipeline Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         @foreach($combos as $combo)
@@ -80,22 +73,25 @@
                 </div>
 
                 <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between">
-                    <form action="{{ route('dashboard.combos.toggle', $combo) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="text-xs font-semibold px-2.5 py-1 rounded-lg border border-white/5 {{ $combo->is_active ? 'text-amber-400 hover:bg-amber-500/10' : 'text-emerald-400 hover:bg-emerald-500/10' }}">
-                            {{ $combo->is_active ? 'Pause' : 'Enable' }}
-                        </button>
-                    </form>
+                    <span class="text-[11px] text-zinc-500 font-mono">{{ count($combo->models ?? []) }} steps</span>
+                    <div class="flex items-center gap-1">
+                        <form action="{{ route('dashboard.combos.toggle', $combo) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="p-1.5 rounded-lg transition-colors {{ $combo->is_active ? 'text-amber-400 hover:bg-amber-500/10' : 'text-emerald-400 hover:bg-emerald-500/10' }}" title="{{ $combo->is_active ? 'Pause Combo' : 'Enable Combo' }}">
+                                <i data-lucide="{{ $combo->is_active ? 'pause-circle' : 'play-circle' }}" class="w-4 h-4 pointer-events-none"></i>
+                            </button>
+                        </form>
 
-                    <form action="{{ route('dashboard.combos.delete', $combo) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button type="button"
-                            @click="confirmDelete($el.closest('form'), 'Delete Smart Combo', 'Delete smart combo &quot;{{ $combo->name }}&quot;? Fallback routing for this model will cease.', 'Yes, Delete Combo')"
-                            class="text-xs font-semibold px-2.5 py-1 text-red-400 hover:bg-red-500/10 rounded-lg border border-white/5 cursor-pointer">
-                            Delete
-                        </button>
-                    </form>
+                        <form action="{{ route('dashboard.combos.delete', $combo) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="button"
+                                @click="confirmDelete($el.closest('form'), 'Delete Smart Combo', 'Delete smart combo &quot;{{ $combo->name }}&quot;? Fallback routing for this model will cease.', 'Yes, Delete Combo')"
+                                class="p-1.5 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer" title="Delete Combo">
+                                <i data-lucide="trash-2" class="w-4 h-4 pointer-events-none"></i>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         @endforeach
@@ -158,13 +154,16 @@
                 <!-- Quick Chips -->
                 <div class="text-[11px] text-zinc-400 flex items-center gap-1.5 flex-wrap">
                     <span class="text-zinc-500 font-semibold">Quick Chips:</span>
-                    @foreach($providers as $p)
-                        @foreach(array_slice($p->models_catalog ?? [], 0, 2) as $m)
+                    @foreach($providers->filter(fn($p) => $p->accounts->count() > 0)->take(4) as $p)
+                        @foreach(array_slice($p->models_catalog ?? [], 0, 1) as $m)
                             <button type="button" @click="addModelChip('{{ $p->slug }}/{{ $m }}')"
                                 class="px-2 py-0.5 rounded bg-zinc-800 hover:bg-emerald-500/20 border border-white/5 text-zinc-300 font-mono transition-colors">
                                 + {{ $p->slug }}/{{ $m }}
                             </button>
                         @endforeach
+                        @if(count($p->models_catalog ?? []) > 1)
+                            <span class="text-zinc-600">+{{ count($p->models_catalog) - 1 }}</span>
+                        @endif
                     @endforeach
                 </div>
             </div>

@@ -4,29 +4,6 @@
 
 @section('content')
 <div class="space-y-6">
-    <!-- Header with Clear Logs Action -->
-    <div class="flex items-center justify-between border-b border-white/[0.06] pb-4">
-        <div>
-            <h2 class="text-base font-bold text-white flex items-center gap-2">
-                <span>Live Request Telemetry & Error Inspector</span>
-                <span class="text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 font-mono font-normal">Latest {{ $logs->count() }} Traces</span>
-            </h2>
-            <p class="text-xs text-zinc-400 mt-0.5">Real-time trace logs of gateway requests with token accounting, latency metrics, and error details.</p>
-        </div>
-
-        @if($logs->isNotEmpty())
-            <form action="{{ route('dashboard.logs.clear') }}" method="POST">
-                @csrf
-                <button type="button"
-                    @click="confirmDelete($el.closest('form'), 'Clear Telemetry Logs', 'Clear all request telemetry trace logs? This cannot be undone.', 'Yes, Clear All Logs')"
-                    class="px-3.5 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/10 border border-red-500/20 rounded-xl transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer">
-                    <i data-lucide="trash-2" class="w-3.5 h-3.5 pointer-events-none"></i>
-                    <span>Clear All Logs</span>
-                </button>
-            </form>
-        @endif
-    </div>
-
     <!-- Logs Table Container -->
     <div class="bg-[#121215] border border-white/[0.07] rounded-2xl overflow-hidden shadow-lg">
         <div class="overflow-x-auto">
@@ -41,7 +18,20 @@
                         <th class="py-3 px-4">Tokens (Prompt + Compl)</th>
                         <th class="py-3 px-4">Tokens Saved</th>
                         <th class="py-3 px-4">Latency</th>
-                        <th class="py-3 px-4">Status</th>
+                        <th class="py-3 px-4 text-right">
+                            @if($logs->isNotEmpty())
+                                <form action="{{ route('dashboard.logs.clear') }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="button"
+                                        @click="confirmDelete($el.closest('form'), 'Clear Telemetry Logs', 'Clear all request telemetry trace logs? This cannot be undone.', 'Yes, Clear All Logs')"
+                                        class="p-1.5 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer" title="Clear All Logs">
+                                        <i data-lucide="trash-2" class="w-4 h-4 pointer-events-none"></i>
+                                    </button>
+                                </form>
+                            @else
+                                Status
+                            @endif
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-white/[0.05]">

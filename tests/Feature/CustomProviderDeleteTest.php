@@ -37,16 +37,21 @@ class CustomProviderDeleteTest extends TestCase
         $this->assertDatabaseMissing('provider_accounts', ['id' => $account->id]);
     }
 
-    public function test_core_system_provider_cannot_be_deleted(): void
+    public function test_any_provider_can_be_deleted(): void
     {
         $admin = User::first() ?? User::factory()->create(['email' => 'admin@omniroute.local']);
 
-        $coreProvider = AiProvider::where('slug', 'gemini')->first();
-        $this->assertNotNull($coreProvider);
+        $provider = AiProvider::create([
+            'name' => 'Test Provider to Delete',
+            'slug' => 'test-delete-' . uniqid(),
+            'base_url' => 'https://api.test.com/v1',
+            'format' => 'openai',
+            'is_active' => true,
+        ]);
 
-        $response = $this->actingAs($admin)->delete("/dashboard/providers/{$coreProvider->id}");
+        $response = $this->actingAs($admin)->delete("/dashboard/providers/{$provider->id}");
 
-        $response->assertSessionHasErrors(['error']);
-        $this->assertDatabaseHas('ai_providers', ['id' => $coreProvider->id]);
+        $response->assertSessionHas('success');
+        $this->assertDatabaseMissing('ai_providers', ['id' => $provider->id]);
     }
 }

@@ -4,13 +4,6 @@
 
 @section('content')
 <div class="space-y-6">
-    <div class="flex items-center justify-between border-b border-white/[0.06] pb-4">
-        <div>
-            <h2 class="text-base font-bold text-white">Client Gateway API Keys</h2>
-            <p class="text-xs text-zinc-400 mt-0.5">Issue master and application keys to authenticate external clients, code editors, and LLM applications.</p>
-        </div>
-    </div>
-
     <!-- Generator Box -->
     <div class="bg-[#121215] border border-white/[0.07] rounded-2xl p-5 shadow-lg">
         <form action="{{ route('dashboard.gateway-keys.store') }}" method="POST" class="flex flex-col sm:flex-row items-end gap-3">
@@ -72,23 +65,25 @@
                                     {{ $gKey->is_active ? 'Active' : 'Disabled' }}
                                 </span>
                             </td>
-                            <td class="py-3.5 px-4 text-right space-x-1 whitespace-nowrap">
-                                <form action="{{ route('dashboard.gateway-keys.toggle', $gKey) }}" method="POST" class="inline">
-                                    @csrf
-                                    <button type="submit" class="px-2 py-1 text-[11px] font-semibold {{ $gKey->is_active ? 'text-amber-400 hover:bg-amber-500/10' : 'text-emerald-400 hover:bg-emerald-500/10' }} rounded-lg border border-white/5 transition-colors">
-                                        {{ $gKey->is_active ? 'Pause' : 'Enable' }}
-                                    </button>
-                                </form>
+                            <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                                <div class="flex items-center justify-end gap-1">
+                                    <form action="{{ route('dashboard.gateway-keys.toggle', $gKey) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="p-1.5 rounded-lg transition-colors {{ $gKey->is_active ? 'text-amber-400 hover:bg-amber-500/10' : 'text-emerald-400 hover:bg-emerald-500/10' }}" title="{{ $gKey->is_active ? 'Pause Key' : 'Enable Key' }}">
+                                            <i data-lucide="{{ $gKey->is_active ? 'pause-circle' : 'play-circle' }}" class="w-4 h-4 pointer-events-none"></i>
+                                        </button>
+                                    </form>
 
-                                <form action="{{ route('dashboard.gateway-keys.delete', $gKey) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button"
-                                        @click="confirmDelete($el.closest('form'), 'Delete Gateway Key', 'Permanently delete gateway key &quot;{{ $gKey->name }}&quot;? External clients using this key will immediately lose access.', 'Yes, Delete Key')"
-                                        class="px-2 py-1 text-[11px] font-semibold text-red-400 hover:bg-red-500/10 rounded-lg border border-white/5 transition-colors cursor-pointer">
-                                        Delete
-                                    </button>
-                                </form>
+                                    <form action="{{ route('dashboard.gateway-keys.delete', $gKey) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button"
+                                            @click="confirmDelete($el.closest('form'), 'Delete Gateway Key', 'Permanently delete gateway key &quot;{{ $gKey->name }}&quot;? External clients using this key will immediately lose access.', 'Yes, Delete Key')"
+                                            class="p-1.5 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer" title="Delete Key">
+                                            <i data-lucide="trash-2" class="w-4 h-4 pointer-events-none"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @endforeach

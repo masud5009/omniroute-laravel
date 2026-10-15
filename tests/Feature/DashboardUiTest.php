@@ -37,8 +37,25 @@ class DashboardUiTest extends TestCase
         // 2. Providers Route
         $resProviders = $this->actingAs($admin)->get('/dashboard/providers');
         $resProviders->assertStatus(200);
-        $resProviders->assertSee('AI Provider Registry', false);
+        $resProviders->assertSee('Add Custom Provider', false);
         $resProviders->assertSee('Free Tier', false);
+
+        // 2b. Dedicated Provider Detail Route
+        $provider = \App\Models\AiProvider::firstOrCreate(
+            ['slug' => 'gemini'],
+            [
+                'name' => 'Google Gemini',
+                'base_url' => 'https://generativelanguage.googleapis.com/v1beta/openai',
+                'format' => 'openai',
+                'models_catalog' => ['gemini-2.5-flash'],
+                'is_active' => true,
+            ]
+        );
+        $resProviderDetail = $this->actingAs($admin)->get('/dashboard/providers/gemini');
+        $resProviderDetail->assertStatus(200);
+        $resProviderDetail->assertSee('Connections', false);
+        $resProviderDetail->assertSee('Available Models', false);
+        $resProviderDetail->assertSee('Import from /models', false);
 
         // 3. Combos Route
         $resCombos = $this->actingAs($admin)->get('/dashboard/combos');

@@ -4,21 +4,7 @@
 
 @section('content')
 <div class="space-y-6">
-    <!-- Header -->
-    <div class="flex items-center justify-between border-b border-white/[0.06] pb-4">
-        <div>
-            <h2 class="text-base font-bold text-white flex items-center gap-2">
-                <span>Architecture & Security Settings</span>
-            </h2>
-            <p class="text-xs text-zinc-400 mt-0.5">Under-the-hood diagnostics for OmniRoute Lite shared hosting runtime, encryption, and system controls.</p>
-        </div>
 
-        <button type="button" @click="clearCache()"
-            class="px-3.5 py-1.5 text-xs font-semibold text-zinc-300 hover:text-white bg-zinc-800 hover:bg-zinc-700 border border-white/5 rounded-xl transition-colors flex items-center gap-1.5 shadow-sm">
-            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-emerald-400"></i>
-            <span>Purge Runtime Cache</span>
-        </button>
-    </div>
 
     <!-- Diagnostic Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
