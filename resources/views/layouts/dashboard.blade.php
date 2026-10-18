@@ -559,19 +559,15 @@
                 this.selectedProviderId = providerId;
             }
             this.showAccountModal = true;
-            this.$nextTick(() => lucide.createIcons());
         },
         customProviderFormat: 'openai',
         openAddCustomProviderModal(format = 'openai') {
             this.customProviderFormat = format;
             this.showProviderModal = true;
-            this.$nextTick(() => lucide.createIcons());
         }
     }"
     x-init="
         lucide.createIcons();
-        $watch('showAccountModal', () => $nextTick(() => lucide.createIcons()));
-        $watch('showProviderModal', () => $nextTick(() => lucide.createIcons()));
     ">
 
     <!-- Copy Toast Floating Notification -->
@@ -845,8 +841,25 @@
     <!-- ============================================================== -->
     <!-- SLIDE-OVER / MODAL: ADD PROVIDER API KEY                       -->
     <!-- ============================================================== -->
-    <div x-show="showAccountModal" class="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" x-cloak>
-        <div class="bg-[#121215] border border-white/[0.08] rounded-2xl w-full max-w-md p-6 shadow-2xl relative" @click.away="showAccountModal = false">
+    <!-- ============================================================== -->
+    <!-- SLIDE-OVER / MODAL: ADD PROVIDER API KEY                       -->
+    <!-- ============================================================== -->
+    <div x-show="showAccountModal"
+        x-transition:enter="transition ease-out duration-150"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-100"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-50 overflow-y-auto bg-black/75 flex items-center justify-center p-4" x-cloak>
+        <div x-show="showAccountModal"
+            x-transition:enter="transition ease-out duration-150"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-100"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="bg-[#121215] border border-white/[0.08] rounded-2xl w-full max-w-md p-6 shadow-2xl relative" @click.away="showAccountModal = false">
             <div class="flex items-center justify-between pb-3.5 border-b border-white/[0.06] mb-4">
                 <div class="flex items-center gap-2.5">
                     <i data-lucide="key" class="w-5 h-5 text-emerald-400"></i>
@@ -904,8 +917,22 @@
     <!-- ============================================================== -->
     <!-- MODAL: ADD CUSTOM AI PROVIDER                                  -->
     <!-- ============================================================== -->
-    <div x-show="showProviderModal" class="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" x-cloak>
-        <div class="bg-[#121215] border border-white/[0.08] rounded-2xl w-full max-w-md p-6 shadow-2xl relative" @click.away="showProviderModal = false">
+    <div x-show="showProviderModal"
+        x-transition:enter="transition ease-out duration-150"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-100"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-50 overflow-y-auto bg-black/75 flex items-center justify-center p-4" x-cloak>
+        <div x-show="showProviderModal"
+            x-transition:enter="transition ease-out duration-150"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-100"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="bg-[#121215] border border-white/[0.08] rounded-2xl w-full max-w-md p-6 shadow-2xl relative" @click.away="showProviderModal = false">
             <div class="flex items-center justify-between pb-3.5 border-b border-white/[0.06] mb-4">
                 <div class="flex items-center gap-2.5">
                     <i data-lucide="cpu" class="w-5 h-5 text-emerald-400"></i>

@@ -237,89 +237,15 @@
     <!-- ============================================================== -->
     <!-- ZERO SEARCH MATCHES EMPTY STATE                                -->
     <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- ZERO SEARCH MATCHES EMPTY STATE                                -->
+    <!-- ============================================================== -->
     <div x-show="!hasMatches()"
         class="border border-dashed border-white/10 rounded-2xl p-12 text-center text-zinc-500 text-sm flex flex-col items-center justify-center gap-2 bg-[#121622]/40">
         <i data-lucide="search-x" class="w-9 h-9 text-zinc-600"></i>
         <span class="text-zinc-200 font-semibold text-base">No matching providers found</span>
         <span class="text-zinc-400 text-xs">Try adjusting your provider name or model search filter.</span>
     </div>
-
-    <!-- ============================================================== -->
-    <!-- DEDICATED MANAGE MODAL (KEEPS MAIN PAGE 100% CLEAN!)            -->
-    <!-- ============================================================== -->
-    @foreach($providers as $provider)
-        <div x-show="manageModalProviderId === {{ $provider->id }}"
-            class="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" x-cloak>
-            <div class="bg-[#121622] border border-white/[0.08] rounded-2xl w-full max-w-lg p-6 shadow-2xl relative"
-                @click.away="manageModalProviderId = null">
-                <!-- Modal Header -->
-                <div class="flex items-center justify-between pb-3.5 border-b border-white/[0.06] mb-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-zinc-800 border border-white/10 flex items-center justify-center font-bold text-sm text-emerald-400">
-                            {{ strtoupper(substr($provider->slug, 0, 2)) }}
-                        </div>
-                        <div>
-                            <h3 class="text-base font-bold text-white">{{ $provider->name }}</h3>
-                            <p class="text-xs text-zinc-400 font-mono truncate max-w-xs mt-0.5">{{ $provider->base_url }}</p>
-                        </div>
-                    </div>
-                    <button type="button" @click="manageModalProviderId = null" class="text-zinc-500 hover:text-white text-xl leading-none">&times;</button>
-                </div>
-
-                <!-- Configured Keys List -->
-                <div class="space-y-2.5 mb-4 max-h-64 overflow-y-auto pr-1">
-                    @forelse($provider->accounts as $acc)
-                        <div class="p-3 rounded-xl bg-[#161c2c] border border-white/[0.06] flex items-center justify-between text-xs">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <span class="w-2.5 h-2.5 rounded-full {{ $acc->isInCooldown() ? 'bg-red-400 animate-ping' : ($acc->is_active ? 'bg-emerald-400' : 'bg-zinc-600') }}"></span>
-                                <div class="min-w-0">
-                                    <div class="font-semibold text-white truncate text-sm">{{ $acc->label }}</div>
-                                    <div class="text-xs text-zinc-400 flex items-center gap-2 mt-1">
-                                        <span class="bg-zinc-800 px-2 py-0.5 rounded-md text-indigo-300 font-mono font-semibold">Priority P{{ $acc->priority }}</span>
-                                        <span>Today: {{ number_format($acc->tokens_used_today) }} tokens</span>
-                                        @if($acc->isInCooldown())
-                                            <span class="text-red-400 font-semibold">Cooldown active</span>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center gap-2 flex-shrink-0">
-                                <button type="button" @click="pingAccount({{ $acc->id }})"
-                                    :disabled="testingAccountId === {{ $acc->id }}"
-                                    class="p-2 text-zinc-300 hover:text-white bg-zinc-800 hover:bg-zinc-700 rounded-xl transition-colors" title="Test Key">
-                                    <i data-lucide="play" class="w-4 h-4"></i>
-                                </button>
-                                <form action="{{ route('dashboard.accounts.delete', $acc) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button"
-                                        @click="confirmDelete($el.closest('form'), 'Delete Provider API Key', 'Delete key &quot;{{ $acc->label }}&quot;?', 'Yes, Delete Key')"
-                                        class="p-2 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors cursor-pointer" title="Delete Key">
-                                        <i data-lucide="trash-2" class="w-4 h-4 pointer-events-none"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="text-center py-8 text-xs text-zinc-400 border border-dashed border-white/10 rounded-xl">
-                            No credentials configured for this provider yet.
-                        </div>
-                    @endforelse
-                </div>
-
-                <!-- Modal Footer -->
-                <div class="pt-3.5 border-t border-white/[0.06] flex items-center justify-between">
-                    <span class="text-xs text-zinc-400">{{ $provider->accounts->count() }} active {{ Str::plural('credential', $provider->accounts->count()) }}</span>
-                    <button type="button" @click="manageModalProviderId = null; openAddKeyModal({{ $provider->id }})"
-                        class="px-4 py-2.5 bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-xs rounded-xl transition-all shadow-md flex items-center gap-2">
-                        <i data-lucide="plus" class="w-4 h-4 text-zinc-950"></i>
-                        <span>Add New Key</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    @endforeach
 </div>
 
 @push('scripts')
@@ -331,7 +257,6 @@ window.providersManager = function() {
         providerFilter: 'all',
         testingAccountId: null,
         testResult: null,
-        manageModalProviderId: null,
         providersList: @json($providersList),
         matchesProvider(name, slug, format, hasKeys, isFree, models) {
             if (this.searchQuery.trim() !== '') {
