@@ -119,33 +119,20 @@
     <div class="space-y-4" x-show="hasMatches()">
         <div class="flex items-center justify-between gap-4 flex-wrap pb-1">
             <div>
-                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <h3 class="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
                     <span>AI Providers</span>
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span>
-                    <span class="text-xs font-mono font-medium text-zinc-400">({{ $connectedCount }}/{{ $providers->count() }})</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+                    <span class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400">({{ $connectedCount }}/{{ $providers->count() }})</span>
                 </h3>
-                <p class="text-xs text-zinc-400 mt-0.5">Configured upstream AI providers with failover, load balancing, and rate limit cooldowns.</p>
-            </div>
-
-            <div class="flex items-center gap-2">
-                <button type="button" @click="openAddCustomProviderModal('anthropic')"
-                    class="px-3.5 py-1.5 text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 dark:bg-amber-500/10 dark:hover:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/20 rounded-xl transition-all flex items-center gap-1.5 shadow-sm">
-                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                    <span>Add Anthropic Compatible</span>
-                </button>
-                <button type="button" @click="openAddCustomProviderModal('openai')"
-                    class="px-3.5 py-1.5 text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/20 rounded-xl transition-all flex items-center gap-1.5 shadow-sm">
-                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                    <span>Add OpenAI Compatible</span>
-                </button>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Configured upstream AI providers with failover, load balancing, and rate limit cooldowns.</p>
             </div>
         </div>
 
         @if($providers->isEmpty())
-            <div class="border border-dashed border-white/10 rounded-2xl p-12 text-center text-zinc-500 text-base flex flex-col items-center justify-center gap-3.5 bg-[#121622]/40">
-                <i data-lucide="box" class="w-10 h-10 text-zinc-600"></i>
-                <span class="text-zinc-200 font-semibold text-lg">No AI providers configured yet</span>
-                <span class="text-zinc-400 text-sm">Add your first OpenAI or Anthropic compatible provider using the buttons above.</span>
+            <div class="border border-dashed border-zinc-200 dark:border-white/10 rounded-2xl p-12 text-center text-zinc-500 text-base flex flex-col items-center justify-center gap-3.5 bg-zinc-50/50 dark:bg-[#121622]/40">
+                <i data-lucide="box" class="w-10 h-10 text-zinc-400 dark:text-zinc-600"></i>
+                <span class="text-zinc-900 dark:text-zinc-200 font-semibold text-lg">No AI providers configured yet</span>
+                <span class="text-zinc-500 dark:text-zinc-400 text-sm">Click "+ Add Custom Provider" above to add your first OpenAI or Anthropic compatible provider.</span>
             </div>
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

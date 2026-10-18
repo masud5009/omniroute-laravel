@@ -177,160 +177,177 @@ window.providerDetailManager = function() {
                 </button>
             </div>
         </div>
-
-        <!-- Provider Notes & Credentials Card -->
-        <div x-data="{ editingNotes: false }" class="mt-4 p-5 rounded-2xl bg-white dark:bg-[#121622] border border-zinc-200/90 dark:border-white/[0.08] shadow-sm">
-            <div class="flex items-center justify-between gap-3 mb-2.5">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                        <i data-lucide="file-text" class="w-4 h-4"></i>
-                    </div>
-                    <div>
-                        <h4 class="text-xs uppercase font-bold text-zinc-900 dark:text-zinc-300 tracking-wider">Provider Notes & Portal Credentials</h4>
-                    </div>
-                </div>
-                <button type="button" @click="editingNotes = !editingNotes" class="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white px-3 py-1.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-white/5 dark:hover:bg-white/10 transition-colors border border-zinc-200/80 dark:border-white/5 cursor-pointer shadow-sm">
-                    <i data-lucide="pencil" class="w-3.5 h-3.5 text-emerald-500"></i>
-                    <span x-text="editingNotes ? 'Close' : '{{ !empty($provider->description) ? 'Edit Notes' : '+ Add Notes' }}'"></span>
-                </button>
-            </div>
-
-            <div x-show="!editingNotes" class="mt-2">
-                @if(!empty($provider->description))
-                    <div class="p-3.5 rounded-xl bg-zinc-50 dark:bg-black/20 border border-zinc-200/60 dark:border-white/5 font-mono text-xs sm:text-sm text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap leading-relaxed select-text">
-                        {{ $provider->description }}
-                    </div>
-                @else
-                    <p class="text-zinc-400 dark:text-zinc-500 text-xs italic py-1">
-                        No notes or credentials stored yet. Click "Add Notes" to save portal login URLs, passwords, or billing reminders.
-                    </p>
-                @endif
-            </div>
-
-            <form x-show="editingNotes" action="{{ route('dashboard.providers.update', $provider) }}" method="POST" class="space-y-3 mt-3" x-cloak>
-                @csrf
-                @method('PUT')
-                <textarea name="description" rows="4" placeholder="e.g. Website URL: https://console.together.ai&#10;Username: team@example.com&#10;Password Reference: vault-key-123&#10;Billing Note: Renews on 1st of every month"
-                    class="w-full bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-white/10 rounded-xl p-3.5 text-xs sm:text-sm text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:border-emerald-500 resize-none font-mono"></textarea>
-                <div class="flex items-center justify-end gap-2.5">
-                    <button type="button" @click="editingNotes = false" class="px-3.5 py-1.5 text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white rounded-xl">Cancel</button>
-                    <button type="submit" class="px-4 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs rounded-xl transition-all shadow-sm">Save Notes</button>
-                </div>
-            </form>
-        </div>
     </div>
 
     <!-- ============================================================== -->
-    <!-- SECTION 1: CONNECTIONS PANEL                                   -->
+    <!-- DUAL COLUMN ROW: NOTES & CREDENTIALS + CONNECTIONS & API KEYS  -->
     <!-- ============================================================== -->
-    <div class="bg-white dark:bg-[#121622] border border-zinc-200/90 dark:border-white/[0.08] rounded-2xl p-6 shadow-sm space-y-4">
-        <!-- Panel Header -->
-        <div class="flex items-center justify-between pb-3.5 border-b border-zinc-100 dark:border-white/[0.06] flex-wrap gap-2">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+        <!-- CARD 1: PROVIDER NOTES & PORTAL CREDENTIALS -->
+        <div x-data="{ editingNotes: false }" class="bg-white dark:bg-[#121622] border border-zinc-200/90 dark:border-white/[0.08] rounded-2xl p-6 shadow-sm flex flex-col justify-between">
             <div>
-                <h3 class="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                    <span>Connections & API Keys</span>
-                    <span class="text-xs font-mono font-bold px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border border-zinc-200 dark:border-white/5">{{ $provider->accounts->count() }} active</span>
-                </h3>
-                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">API key connection pool for load balancing and rate limit recovery.</p>
-            </div>
+                <!-- Card Header -->
+                <div class="flex items-center justify-between pb-3.5 border-b border-zinc-100 dark:border-white/[0.06] flex-wrap gap-2">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 flex-shrink-0">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                                <span>Provider Notes & Portal Credentials</span>
+                            </h3>
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Portal logins, passwords, billing reminders.</p>
+                        </div>
+                    </div>
 
-            <div class="flex items-center gap-2">
-                <button type="button" @click="openAddKeyModal({{ $provider->id }})"
-                    class="px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-sm cursor-pointer">
-                    <i data-lucide="plus" class="w-4 h-4"></i>
-                    <span>Add Connection</span>
-                </button>
+                    <button type="button" @click="editingNotes = !editingNotes" class="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white px-3 py-1.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-white/5 dark:hover:bg-white/10 transition-colors border border-zinc-200/80 dark:border-white/5 cursor-pointer shadow-sm">
+                        <i data-lucide="pencil" class="w-3.5 h-3.5 text-emerald-500"></i>
+                        <span x-text="editingNotes ? 'Close' : '{{ !empty($provider->description) ? 'Edit Notes' : '+ Add Notes' }}'"></span>
+                    </button>
+                </div>
+
+                <!-- Notes Content View -->
+                <div x-show="!editingNotes" class="mt-4">
+                    @if(!empty($provider->description))
+                        <div class="p-3.5 rounded-xl bg-zinc-50 dark:bg-black/20 border border-zinc-200/60 dark:border-white/5 font-mono text-xs sm:text-sm text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap leading-relaxed select-text break-words min-h-[70px]">{{ trim($provider->description) }}</div>
+                    @else
+                        <div class="p-6 rounded-xl border border-dashed border-zinc-200 dark:border-white/10 text-center flex flex-col items-center justify-center bg-zinc-50/50 dark:bg-[#0d1017]">
+                            <p class="text-zinc-400 dark:text-zinc-500 text-xs italic">
+                                No notes or credentials stored yet. Click "Add Notes" to save portal login URLs, passwords, or billing reminders.
+                            </p>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Notes Edit Form -->
+                <form x-show="editingNotes" action="{{ route('dashboard.providers.update', $provider) }}" method="POST" class="space-y-3 mt-4" x-cloak>
+                    @csrf
+                    @method('PUT')
+                    <textarea name="description" rows="4" placeholder="e.g. Website URL: https://console.together.ai&#10;Username: team@example.com&#10;Password Reference: vault-key-123&#10;Billing Note: Renews on 1st of every month"
+                        class="w-full bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-white/10 rounded-xl p-3.5 text-xs sm:text-sm text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:border-emerald-500 resize-none font-mono">{{ old('description', $provider->description) }}</textarea>
+                    <div class="flex items-center justify-end gap-2.5">
+                        <button type="button" @click="editingNotes = false" class="px-3.5 py-1.5 text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white rounded-xl">Cancel</button>
+                        <button type="submit" class="px-4 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs rounded-xl transition-all shadow-sm">Save Notes</button>
+                    </div>
+                </form>
             </div>
         </div>
 
-        @if($provider->accounts->isEmpty())
-            <div class="border border-dashed border-zinc-200 dark:border-white/10 rounded-2xl p-10 text-center text-zinc-500 text-sm flex flex-col items-center justify-center gap-3 bg-zinc-50/50 dark:bg-[#0d1017]">
-                <div class="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400">
-                    <i data-lucide="key" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <h4 class="text-base font-bold text-zinc-900 dark:text-white">No API connections configured</h4>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Add your upstream API key to start routing traffic through this provider.</p>
-                </div>
-                <button type="button" @click="openAddKeyModal({{ $provider->id }})"
-                    class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs rounded-xl transition-all flex items-center gap-2 shadow-sm cursor-pointer">
-                    <i data-lucide="plus" class="w-4 h-4"></i>
-                    <span>Add First Connection</span>
-                </button>
-            </div>
-        @else
-            <!-- Accounts List -->
-            <div class="space-y-3">
-                @foreach($provider->accounts as $acc)
-                    <div class="p-4 rounded-xl bg-zinc-50 dark:bg-[#161c2c] border border-zinc-200/80 dark:border-white/[0.06] hover:border-zinc-300 dark:hover:border-white/[0.12] transition-colors flex items-center justify-between gap-4 flex-wrap text-sm">
-                        <!-- Left Details -->
-                        <div class="flex items-center gap-3.5 min-w-0 flex-1">
-                            <div class="w-9 h-9 rounded-xl bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 flex items-center justify-center text-zinc-500 dark:text-zinc-400 flex-shrink-0 shadow-sm">
-                                <i data-lucide="lock" class="w-4 h-4 text-emerald-500"></i>
-                            </div>
-                            <div class="min-w-0">
-                                <div class="flex items-center gap-2.5 flex-wrap">
-                                    <span class="font-mono font-bold text-zinc-900 dark:text-white text-sm truncate">{{ $acc->label }}</span>
-                                    @if($acc->isInCooldown())
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20">
-                                            <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
-                                            <span>Cooldown Active</span>
-                                        </span>
-                                    @elseif($acc->is_active)
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20">
-                                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                            <span>Connected</span>
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-zinc-100 text-zinc-500 border border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-white/5">
-                                            Disabled
-                                        </span>
-                                    @endif
-                                    <span class="text-xs font-mono bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded text-indigo-600 dark:text-indigo-300 font-bold border border-zinc-200/80 dark:border-white/5">Priority #{{ $acc->priority }}</span>
-                                </div>
-                                <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-1 flex items-center gap-3 font-mono">
-                                    <span>Today: <strong class="text-zinc-800 dark:text-zinc-200">{{ number_format($acc->tokens_used_today) }}</strong> tokens</span>
-                                    @if($acc->daily_token_limit)
-                                        <span>&bull;</span>
-                                        <span>Limit: {{ number_format($acc->daily_token_limit) }}</span>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Right Actions -->
-                        <div class="flex items-center gap-2 flex-shrink-0">
-                            <!-- Retest Button -->
-                            <button type="button" @click="pingAccount({{ $acc->id }})"
-                                :disabled="testingAccountId === {{ $acc->id }}"
-                                class="px-3 py-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 dark:hover:text-white bg-white hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 rounded-xl border border-zinc-200/80 dark:border-white/5 transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer" title="Retest Connection">
-                                <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-zinc-400" :class="testingAccountId === {{ $acc->id }} ? 'animate-spin' : ''"></i>
-                                <span x-text="testingAccountId === {{ $acc->id }} ? 'Testing...' : 'Retest'"></span>
-                            </button>
-
-                            <!-- Active Toggle Switch -->
-                            <form action="{{ route('dashboard.accounts.toggle', $acc) }}" method="POST" class="inline">
-                                @csrf
-                                <button type="submit" class="p-1.5 rounded-xl transition-colors cursor-pointer {{ $acc->is_active ? 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10' : 'text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}" title="{{ $acc->is_active ? 'Disable Account' : 'Enable Account' }}">
-                                    <i data-lucide="{{ $acc->is_active ? 'toggle-right' : 'toggle-left' }}" class="w-6 h-6 pointer-events-none"></i>
-                                </button>
-                            </form>
-
-                            <!-- Delete Button -->
-                            <form action="{{ route('dashboard.accounts.delete', $acc) }}" method="POST" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="button"
-                                    @click="confirmDelete($el.closest('form'), 'Delete Provider Connection', 'Permanently delete key &quot;{{ $acc->label }}&quot;?', 'Yes, Delete Key')"
-                                    class="p-1.5 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-colors cursor-pointer" title="Delete Connection">
-                                    <i data-lucide="trash-2" class="w-4.5 h-4.5 pointer-events-none"></i>
-                                </button>
-                            </form>
-                        </div>
+        <!-- CARD 2: CONNECTIONS & API KEYS -->
+        <div class="bg-white dark:bg-[#121622] border border-zinc-200/90 dark:border-white/[0.08] rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+            <div>
+                <!-- Panel Header -->
+                <div class="flex items-center justify-between pb-3.5 border-b border-zinc-100 dark:border-white/[0.06] flex-wrap gap-2">
+                    <div>
+                        <h3 class="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                            <span>Connections & API Keys</span>
+                            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border border-zinc-200 dark:border-white/5">{{ $provider->accounts->count() }} active</span>
+                        </h3>
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">API key connection pool for load balancing.</p>
                     </div>
-                @endforeach
+
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="openAddKeyModal({{ $provider->id }})"
+                            class="px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-sm cursor-pointer">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                            <span>Add Connection</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Accounts List or Empty State -->
+                <div class="mt-4">
+                    @if($provider->accounts->isEmpty())
+                        <div class="border border-dashed border-zinc-200 dark:border-white/10 rounded-xl p-6 text-center text-zinc-500 text-sm flex flex-col items-center justify-center gap-2.5 bg-zinc-50/50 dark:bg-[#0d1017]">
+                            <div class="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400">
+                                <i data-lucide="key" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-zinc-900 dark:text-white">No API connections configured</h4>
+                                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Add your upstream API key to start routing traffic.</p>
+                            </div>
+                            <button type="button" @click="openAddKeyModal({{ $provider->id }})"
+                                class="mt-1 px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-sm cursor-pointer">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                <span>Add First Connection</span>
+                            </button>
+                        </div>
+                    @else
+                        <!-- Accounts List -->
+                        <div class="space-y-2.5">
+                            @foreach($provider->accounts as $acc)
+                                <div class="p-3.5 rounded-xl bg-zinc-50 dark:bg-[#161c2c] border border-zinc-200/80 dark:border-white/[0.06] hover:border-zinc-300 dark:hover:border-white/[0.12] transition-colors flex items-center justify-between gap-3 flex-wrap text-sm">
+                                    <!-- Left Details -->
+                                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                                        <div class="w-8 h-8 rounded-xl bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 flex items-center justify-center text-zinc-500 dark:text-zinc-400 flex-shrink-0 shadow-sm">
+                                            <i data-lucide="lock" class="w-3.5 h-3.5 text-emerald-500"></i>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <div class="flex items-center gap-2 flex-wrap">
+                                                <span class="font-mono font-bold text-zinc-900 dark:text-white text-xs sm:text-sm truncate">{{ $acc->label }}</span>
+                                                @if($acc->isInCooldown())
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
+                                                        <span>Cooldown</span>
+                                                    </span>
+                                                @elseif($acc->is_active)
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                        <span>Connected</span>
+                                                    </span>
+                                                @else
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-zinc-100 text-zinc-500 border border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-white/5">
+                                                        Disabled
+                                                    </span>
+                                                @endif
+                                                <span class="text-xs font-mono bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-indigo-600 dark:text-indigo-300 font-bold border border-zinc-200/80 dark:border-white/5">Priority #{{ $acc->priority }}</span>
+                                            </div>
+                                            <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 flex items-center gap-2 font-mono">
+                                                <span>Today: <strong class="text-zinc-800 dark:text-zinc-200">{{ number_format($acc->tokens_used_today) }}</strong> tokens</span>
+                                                @if($acc->daily_token_limit)
+                                                    <span>&bull;</span>
+                                                    <span>Limit: {{ number_format($acc->daily_token_limit) }}</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Right Actions -->
+                                    <div class="flex items-center gap-1.5 flex-shrink-0">
+                                        <!-- Retest Button -->
+                                        <button type="button" @click="pingAccount({{ $acc->id }})"
+                                            :disabled="testingAccountId === {{ $acc->id }}"
+                                            class="px-2.5 py-1 text-xs font-semibold text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 dark:hover:text-white bg-white hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 rounded-lg border border-zinc-200/80 dark:border-white/5 transition-colors flex items-center gap-1 shadow-sm cursor-pointer" title="Retest Connection">
+                                            <i data-lucide="refresh-cw" class="w-3 h-3 text-zinc-400" :class="testingAccountId === {{ $acc->id }} ? 'animate-spin' : ''"></i>
+                                            <span x-text="testingAccountId === {{ $acc->id }} ? 'Testing...' : 'Retest'"></span>
+                                        </button>
+
+                                        <!-- Active Toggle Switch -->
+                                        <form action="{{ route('dashboard.accounts.toggle', $acc) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="p-1 rounded-lg transition-colors cursor-pointer {{ $acc->is_active ? 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10' : 'text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}" title="{{ $acc->is_active ? 'Disable Account' : 'Enable Account' }}">
+                                                <i data-lucide="{{ $acc->is_active ? 'toggle-right' : 'toggle-left' }}" class="w-5 h-5 pointer-events-none"></i>
+                                            </button>
+                                        </form>
+
+                                        <!-- Delete Button -->
+                                        <form action="{{ route('dashboard.accounts.delete', $acc) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button"
+                                                @click="confirmDelete($el.closest('form'), 'Delete Provider Connection', 'Permanently delete key &quot;{{ $acc->label }}&quot;?', 'Yes, Delete Key')"
+                                                class="p-1 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer" title="Delete Connection">
+                                                <i data-lucide="trash-2" class="w-4 h-4 pointer-events-none"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
             </div>
-        @endif
+        </div>
     </div>
 
     <!-- ============================================================== -->
