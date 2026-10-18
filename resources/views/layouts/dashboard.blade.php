@@ -5,6 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>OmniRoute Lite - @yield('title', 'AI Gateway Console')</title>
+
+    <!-- Theme Initializer (Prevents Theme Flash / FOUC) -->
+    <script>
+        (function() {
+            try {
+                const savedTheme = localStorage.getItem('omni_theme');
+                if (savedTheme === 'light' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+                    document.documentElement.classList.remove('dark');
+                } else {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {
+                console.error('Theme detection error:', e);
+            }
+        })();
+    </script>
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -19,6 +36,18 @@
                             925: '#0e0e11',
                             950: '#09090b',
                         }
+                    },
+                    fontSize: {
+                        '2xs': ['0.6875rem', { lineHeight: '1rem' }],       /* 11px */
+                        'xs': ['0.75rem', { lineHeight: '1.125rem' }],       /* 12px - exactly: if 10 was before, now 12px! */
+                        'sm': ['0.8125rem', { lineHeight: '1.25rem' }],     /* 13px */
+                        'base': ['0.875rem', { lineHeight: '1.375rem' }],   /* 14px */
+                        'md': ['0.9375rem', { lineHeight: '1.45rem' }],     /* 15px */
+                        'lg': ['1.0625rem', { lineHeight: '1.55rem' }],     /* 17px */
+                        'xl': ['1.25rem', { lineHeight: '1.75rem' }],       /* 20px */
+                        '2xl': ['1.5rem', { lineHeight: '1.875rem' }],      /* 24px */
+                        '3xl': ['1.875rem', { lineHeight: '2.25rem' }],     /* 30px */
+                        '4xl': ['2.25rem', { lineHeight: '2.5rem' }],       /* 36px */
                     }
                 }
             }
@@ -35,13 +64,36 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        code, pre { font-family: 'JetBrains Mono', monospace; }
+        html {
+            font-size: 16px;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem; /* 14px */
+            line-height: 1.5;
+        }
+        code, pre {
+            font-family: 'JetBrains Mono', monospace;
+        }
         [x-cloak] { display: none !important; }
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 9999px; }
         ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+        /* Typography Harmonizer (Scaled by ~2px: 9px -> 11px, 10px -> 12px, 11px -> 12.5px) */
+        .text-\[9px\] {
+            font-size: 11px !important;
+            line-height: 1rem !important;
+        }
+        .text-\[10px\] {
+            font-size: 12px !important; /* user requested: 10 -> 12 */
+            line-height: 1.15rem !important;
+        }
+        .text-\[11px\] {
+            font-size: 12.5px !important;
+            line-height: 1.2rem !important;
+        }
 
         /* SweetAlert2 Zinc Dark Theme */
         .swal2-popup.omni-swal {
@@ -107,11 +159,385 @@
             background: rgba(0, 0, 0, 0.75) !important;
             z-index: 9999 !important;
         }
+
+        /* ============================================================== */
+        /* LIGHT MODE DESIGN SYSTEM (html:not(.dark))                     */
+        /* ============================================================== */
+        html:not(.dark) {
+            color-scheme: light;
+        }
+
+        html:not(.dark) body {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+
+        /* Light Scrollbars */
+        html:not(.dark) ::-webkit-scrollbar-thumb {
+            background: #cbd5e1 !important;
+        }
+        html:not(.dark) ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8 !important;
+        }
+
+        /* Shell & Backgrounds */
+        html:not(.dark) main,
+        html:not(.dark) [class*="bg-[#09090b]"],
+        html:not(.dark) [class*="bg-[#0c101a]"],
+        html:not(.dark) [class*="bg-[#0e0e11]"],
+        html:not(.dark) .bg-zinc-950,
+        html:not(.dark) .bg-zinc-925 {
+            background-color: #f8fafc !important;
+        }
+
+        html:not(.dark) [class*="bg-[#090b10]"] {
+            background-color: #f8fafc !important;
+            background-image: radial-gradient(rgba(15, 23, 42, 0.06) 1px, transparent 1px) !important;
+        }
+
+        /* Sidebar & Header */
+        html:not(.dark) aside.w-64,
+        html:not(.dark) [class*="bg-[#10141e]"] {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        html:not(.dark) aside [class*="bg-[#0c101a]"] {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        html:not(.dark) aside [class*="bg-[#141926]"] {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            color: #334155 !important;
+        }
+
+        html:not(.dark) aside .hover\:bg-\[\#1a2133\]:hover {
+            background-color: #f1f5f9 !important;
+        }
+
+        html:not(.dark) header {
+            background-color: rgba(255, 255, 255, 0.88) !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Cards, Tables, Toolbars & Panels */
+        html:not(.dark) [class*="bg-[#121215]"],
+        html:not(.dark) [class*="bg-[#121622]"],
+        html:not(.dark) [class*="bg-[#141926]"],
+        html:not(.dark) .bg-zinc-850 {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05) !important;
+        }
+
+        /* Secondary containers & chips (like inside Matrix or Toolbars) */
+        html:not(.dark) [class*="bg-[#0e0e11]"] {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03) !important;
+        }
+
+        html:not(.dark) [class*="bg-[#161c2c]"] {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Inner Boxes inside Cards */
+        html:not(.dark) [class*="bg-[#121215]"] [class*="bg-[#09090b]"],
+        html:not(.dark) [class*="bg-[#121622]"] [class*="bg-[#09090b]"],
+        html:not(.dark) [class*="bg-[#161c2c]"] [class*="bg-[#09090b]"],
+        html:not(.dark) .bg-white [class*="bg-[#09090b]"] {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Badges, Pills & Status Elements */
+        html:not(.dark) [class*="bg-zinc-900"],
+        html:not(.dark) .bg-zinc-800,
+        html:not(.dark) .bg-zinc-800\/80 {
+            background-color: #f1f5f9 !important;
+            color: #334155 !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Provider Matrix Avatar Tags */
+        html:not(.dark) .w-8.h-8.bg-zinc-800 {
+            background-color: #ecfdf5 !important;
+            color: #047857 !important;
+            border-color: #d1fae5 !important;
+        }
+
+        /* Progress Bar Track */
+        html:not(.dark) .w-24.bg-zinc-800,
+        html:not(.dark) .sm\:w-36.bg-zinc-800 {
+            background-color: #e2e8f0 !important;
+        }
+
+        /* Action Buttons with bg-zinc-800 */
+        html:not(.dark) button.bg-zinc-800,
+        html:not(.dark) button[class*="bg-zinc-800"],
+        html:not(.dark) a.bg-zinc-800,
+        html:not(.dark) a[class*="bg-zinc-800"] {
+            background-color: #f1f5f9 !important;
+            border-color: #cbd5e1 !important;
+            color: #1e293b !important;
+        }
+
+        html:not(.dark) button.bg-zinc-800:hover,
+        html:not(.dark) button[class*="bg-zinc-800"]:hover,
+        html:not(.dark) a.bg-zinc-800:hover,
+        html:not(.dark) a[class*="bg-zinc-800"]:hover {
+            background-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+
+        /* Tabs active buttons inside snippet headers */
+        html:not(.dark) [class*="bg-[#09090b]"] button.bg-zinc-800 {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+        }
+
+        /* Segmented View Filter active pill */
+        html:not(.dark) [class*="bg-[#161c2c]"] button.bg-zinc-800 {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+        }
+
+        /* Borders */
+        html:not(.dark) [class*="border-white\/"],
+        html:not(.dark) .border-white\/5,
+        html:not(.dark) .border-white\/10 {
+            border-color: #e2e8f0 !important;
+        }
+
+        html:not(.dark) [class*="divide-white\/"] > :not([hidden]) ~ :not([hidden]) {
+            border-color: #f1f5f9 !important;
+        }
+
+        html:not(.dark) [class*="hover:border-white\/"]:hover {
+            border-color: #cbd5e1 !important;
+        }
+
+        html:not(.dark) .hover\:bg-white\/\[0\.02\]:hover,
+        html:not(.dark) .hover\:bg-white\/\[0\.03\]:hover,
+        html:not(.dark) .hover\:bg-white\/\[0\.05\]:hover {
+            background-color: #f8fafc !important;
+        }
+
+        /* Navigation Links */
+        html:not(.dark) .bg-white\/\[0\.08\] {
+            background-color: #ecfdf5 !important;
+            color: #065f46 !important;
+            font-weight: 600 !important;
+        }
+
+        html:not(.dark) .bg-white\/\[0\.08\] i {
+            color: #059669 !important;
+        }
+
+        /* Primary Headings & Text */
+        html:not(.dark) h1,
+        html:not(.dark) h2,
+        html:not(.dark) h3,
+        html:not(.dark) h4,
+        html:not(.dark) .text-white:not([class*="bg-emerald"]):not([class*="bg-rose"]):not([class*="bg-indigo"]):not([class*="bg-red"]):not([class*="bg-blue"]):not([class*="bg-amber"]):not([class*="bg-teal"]):not([class*="bg-gradient"]):not([class*="bg-zinc-900"]):not(.swal2-confirm):not(.keep-white) {
+            color: #0f172a !important;
+        }
+
+        /* Keep White Text on Colored Buttons & Badges */
+        html:not(.dark) [class*="bg-rose-"],
+        html:not(.dark) [class*="bg-emerald-500"],
+        html:not(.dark) [class*="bg-emerald-600"],
+        html:not(.dark) [class*="bg-gradient-to-"] {
+            color: #ffffff !important;
+        }
+        html:not(.dark) [class*="bg-rose-"] span,
+        html:not(.dark) [class*="bg-gradient-to-"] span {
+            color: #ffffff !important;
+        }
+
+        /* Zinc Neutral Text Hierarchy */
+        html:not(.dark) .text-zinc-100,
+        html:not(.dark) .text-zinc-200 {
+            color: #1e293b !important;
+        }
+
+        html:not(.dark) .text-zinc-300 {
+            color: #334155 !important;
+        }
+
+        html:not(.dark) .text-zinc-400 {
+            color: #64748b !important;
+        }
+
+        html:not(.dark) .text-zinc-500 {
+            color: #64748b !important;
+        }
+
+        html:not(.dark) .text-zinc-600 {
+            color: #94a3b8 !important;
+        }
+
+        /* High-Contrast Tint Adjustments */
+        html:not(.dark) .text-emerald-300 {
+            color: #047857 !important;
+        }
+        html:not(.dark) .text-amber-300 {
+            color: #b45309 !important;
+        }
+        html:not(.dark) .text-indigo-300 {
+            color: #4338ca !important;
+        }
+        html:not(.dark) .text-teal-300 {
+            color: #0f766e !important;
+        }
+
+        /* Inputs, Selects & Textareas */
+        html:not(.dark) input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+        html:not(.dark) select,
+        html:not(.dark) textarea {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+
+        html:not(.dark) input::placeholder,
+        html:not(.dark) textarea::placeholder {
+            color: #94a3b8 !important;
+        }
+
+        html:not(.dark) input:focus,
+        html:not(.dark) select:focus,
+        html:not(.dark) textarea:focus {
+            border-color: #10b981 !important;
+            box-shadow: 0 0 0 1px #10b981 !important;
+        }
+
+        /* Tables in Light Mode */
+        html:not(.dark) thead,
+        html:not(.dark) thead[class*="bg-[#09090b]"] {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        html:not(.dark) thead th {
+            color: #475569 !important;
+        }
+
+        html:not(.dark) td [class*="bg-[#09090b]"] {
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+            color: #047857 !important;
+        }
+
+        /* High-Contrast Action Buttons */
+        html:not(.dark) .bg-white.text-zinc-950,
+        html:not(.dark) button.bg-white.text-zinc-950,
+        html:not(.dark) a.bg-white.text-zinc-950 {
+            background-color: #0f172a !important;
+            color: #ffffff !important;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+        }
+
+        html:not(.dark) .bg-white.text-zinc-950:hover,
+        html:not(.dark) button.bg-white.text-zinc-950:hover,
+        html:not(.dark) a.bg-white.text-zinc-950:hover {
+            background-color: #1e293b !important;
+        }
+
+        /* Code snippets */
+        html:not(.dark) pre,
+        html:not(.dark) code {
+            color: #0f172a !important;
+        }
+
+        /* Playground Chat Window */
+        html:not(.dark) .lg\:col-span-3.h-\[560px\] {
+            background-color: #f8fafc !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        html:not(.dark) #play-chat-box [class*="bg-[#121215]"] {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            color: #1e293b !important;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+        }
+
+        html:not(.dark) .p-3[class*="bg-[#121215]"].border-t {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Modals in Light Mode */
+        html:not(.dark) [x-show="showAccountModal"] > div,
+        html:not(.dark) [x-show="showProviderModal"] > div,
+        html:not(.dark) [x-show="catalogModalOpen"] > div {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            color: #0f172a !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        /* SweetAlert2 Light Mode */
+        html:not(.dark) .swal2-container {
+            background: rgba(15, 23, 42, 0.45) !important;
+        }
+
+        html:not(.dark) .swal2-popup.omni-swal {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        html:not(.dark) .swal2-popup.omni-swal .swal2-title {
+            color: #0f172a !important;
+        }
+
+        html:not(.dark) .swal2-popup.omni-swal .swal2-html-container {
+            color: #475569 !important;
+        }
+
+        html:not(.dark) .swal2-popup.omni-swal .swal2-cancel {
+            background-color: #f1f5f9 !important;
+            color: #334155 !important;
+            border: 1px solid #cbd5e1 !important;
+        }
+
+        html:not(.dark) .swal2-popup.omni-swal .swal2-cancel:hover {
+            background-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
     </style>
     @stack('styles')
 </head>
 <body class="bg-[#09090b] text-zinc-100 antialiased selection:bg-emerald-500 selection:text-white"
     x-data="{
+        currentTheme: localStorage.getItem('omni_theme') || (document.documentElement.classList.contains('dark') ? 'dark' : 'light'),
+        toggleTheme() {
+            if (this.currentTheme === 'dark') {
+                this.setTheme('light');
+            } else {
+                this.setTheme('dark');
+            }
+        },
+        setTheme(mode) {
+            this.currentTheme = mode;
+            if (mode === 'dark') {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('omni_theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('omni_theme', 'light');
+            }
+            this.$nextTick(() => {
+                if (window.lucide) lucide.createIcons();
+            });
+        },
         showAccountModal: false,
         showProviderModal: false,
         selectedProviderId: {{ $modalProviders->first()?->id ?? 1 }},
@@ -164,14 +590,14 @@
         <aside class="w-64 h-screen bg-[#10141e] border-r border-white/[0.07] flex flex-col justify-between flex-shrink-0 z-30 select-none">
             <!-- Sidebar Top: Brand -->
             <div>
-                <a href="{{ route('dashboard.overview') }}" class="h-16 px-5 border-b border-white/[0.07] flex items-center justify-between hover:bg-white/[0.02] transition-colors">
+                <a href="{{ route('dashboard.overview') }}" class="h-14 px-5 border-b border-white/[0.07] flex items-center justify-between hover:bg-white/[0.02] transition-colors">
                     <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-zinc-800 to-zinc-900 border border-white/10 flex items-center justify-center shadow-lg relative">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-zinc-800 to-zinc-900 border border-white/10 flex items-center justify-center shadow-lg relative">
                             <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
                         </div>
                         <div>
                             <span class="font-bold text-sm tracking-tight text-white block">OmniRoute</span>
-                            <span class="text-[10px] text-zinc-500 font-mono">Lite Gateway</span>
+                            <span class="text-[11px] text-zinc-500 font-mono">Lite Gateway</span>
                         </div>
                     </div>
                     <span class="text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded">v1.0</span>
@@ -179,14 +605,14 @@
 
                 <!-- Navigation Links with Dedicated Routes -->
                 <nav class="p-3 space-y-1">
-                    <div class="text-[10px] font-semibold uppercase tracking-wider text-zinc-500 px-3 pt-2 pb-1">Navigation</div>
+                    <div class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 px-3 pt-2 pb-1">Navigation</div>
 
                     <!-- 1. Overview -->
                     <a href="{{ route('dashboard.overview') }}"
                         @class([
-                            'w-full py-2 pr-3 rounded-lg text-xs flex items-center justify-between transition-all group',
-                            'bg-white/[0.08] text-white font-medium border-l-2 border-emerald-400 pl-2.5' => request()->routeIs('dashboard.index') || request()->routeIs('dashboard.overview') || request()->routeIs('dashboard'),
-                            'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03] pl-3' => !(request()->routeIs('dashboard.index') || request()->routeIs('dashboard.overview') || request()->routeIs('dashboard')),
+                            'w-full py-2 px-3 rounded-xl text-xs sm:text-sm flex items-center justify-between transition-all group',
+                            'bg-white/[0.08] text-white font-semibold border-l-2 border-emerald-400 pl-2.5' => request()->routeIs('dashboard.index') || request()->routeIs('dashboard.overview') || request()->routeIs('dashboard'),
+                            'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]' => !(request()->routeIs('dashboard.index') || request()->routeIs('dashboard.overview') || request()->routeIs('dashboard')),
                         ])>
                         <div class="flex items-center gap-2.5">
                             <i data-lucide="layout-dashboard" class="w-4 h-4 transition-colors {{ (request()->routeIs('dashboard.index') || request()->routeIs('dashboard.overview') || request()->routeIs('dashboard')) ? 'text-emerald-400' : 'text-zinc-500 group-hover:text-zinc-300' }}"></i>
@@ -197,15 +623,15 @@
                     <!-- 2. AI Providers -->
                     <a href="{{ route('dashboard.providers') }}"
                         @class([
-                            'w-full py-2 pr-3 rounded-lg text-xs flex items-center justify-between transition-all group',
-                            'bg-white/[0.08] text-white font-medium border-l-2 border-emerald-400 pl-2.5' => request()->routeIs('dashboard.providers'),
-                            'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03] pl-3' => !request()->routeIs('dashboard.providers'),
+                            'w-full py-2 px-3 rounded-xl text-xs sm:text-sm flex items-center justify-between transition-all group',
+                            'bg-white/[0.08] text-white font-semibold border-l-2 border-emerald-400 pl-2.5' => request()->routeIs('dashboard.providers'),
+                            'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]' => !request()->routeIs('dashboard.providers'),
                         ])>
                         <div class="flex items-center gap-2.5">
                             <i data-lucide="cpu" class="w-4 h-4 transition-colors {{ request()->routeIs('dashboard.providers') ? 'text-emerald-400' : 'text-zinc-500 group-hover:text-zinc-300' }}"></i>
                             <span>AI Providers</span>
                         </div>
-                        <span class="text-[10px] px-1.5 py-0.5 rounded font-mono {{ request()->routeIs('dashboard.providers') ? 'bg-emerald-500/20 text-emerald-300' : 'bg-zinc-800 text-zinc-400' }}">
+                        <span class="text-[11px] px-1.5 py-0.5 rounded font-mono {{ request()->routeIs('dashboard.providers') ? 'bg-emerald-500/20 text-emerald-300 font-semibold' : 'bg-zinc-800 text-zinc-400' }}">
                             {{ $sidebarProvidersCount }}
                         </span>
                     </a>
@@ -213,39 +639,39 @@
                     <!-- 3. Smart Combos -->
                     <a href="{{ route('dashboard.combos') }}"
                         @class([
-                            'w-full py-2 pr-3 rounded-lg text-xs flex items-center justify-between transition-all group',
-                            'bg-white/[0.08] text-white font-medium border-l-2 border-emerald-400 pl-2.5' => request()->routeIs('dashboard.combos'),
-                            'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03] pl-3' => !request()->routeIs('dashboard.combos'),
+                            'w-full py-2 px-3 rounded-xl text-xs sm:text-sm flex items-center justify-between transition-all group',
+                            'bg-white/[0.08] text-white font-semibold border-l-2 border-emerald-400 pl-2.5' => request()->routeIs('dashboard.combos'),
+                            'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]' => !request()->routeIs('dashboard.combos'),
                         ])>
                         <div class="flex items-center gap-2.5">
                             <i data-lucide="git-branch" class="w-4 h-4 transition-colors {{ request()->routeIs('dashboard.combos') ? 'text-emerald-400' : 'text-zinc-500 group-hover:text-zinc-300' }}"></i>
                             <span>Smart Combos</span>
                         </div>
-                        <span class="text-[10px] px-1.5 py-0.5 rounded font-mono bg-zinc-800 text-zinc-400">{{ $sidebarCombosCount }}</span>
+                        <span class="text-[11px] px-1.5 py-0.5 rounded font-mono bg-zinc-800 text-zinc-400">{{ $sidebarCombosCount }}</span>
                     </a>
 
                     <!-- 4. Gateway Client Keys -->
                     <a href="{{ route('dashboard.gateway-keys') }}"
                         @class([
-                            'w-full py-2 pr-3 rounded-lg text-xs flex items-center justify-between transition-all group',
-                            'bg-white/[0.08] text-white font-medium border-l-2 border-emerald-400 pl-2.5' => request()->routeIs('dashboard.gateway-keys'),
-                            'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03] pl-3' => !request()->routeIs('dashboard.gateway-keys'),
+                            'w-full py-2 px-3 rounded-xl text-xs sm:text-sm flex items-center justify-between transition-all group',
+                            'bg-white/[0.08] text-white font-semibold border-l-2 border-emerald-400 pl-2.5' => request()->routeIs('dashboard.gateway-keys'),
+                            'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]' => !request()->routeIs('dashboard.gateway-keys'),
                         ])>
                         <div class="flex items-center gap-2.5">
                             <i data-lucide="key-round" class="w-4 h-4 transition-colors {{ request()->routeIs('dashboard.gateway-keys') ? 'text-emerald-400' : 'text-zinc-500 group-hover:text-zinc-300' }}"></i>
                             <span>Gateway Keys</span>
                         </div>
-                        <span class="text-[10px] px-1.5 py-0.5 rounded font-mono bg-zinc-800 text-zinc-400">{{ $sidebarKeysCount }}</span>
+                        <span class="text-[11px] px-1.5 py-0.5 rounded font-mono bg-zinc-800 text-zinc-400">{{ $sidebarKeysCount }}</span>
                     </a>
 
-                    <div class="text-[10px] font-semibold uppercase tracking-wider text-zinc-500 px-3 pt-4 pb-1">Studio & Inspector</div>
+                    <div class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 px-3 pt-3 pb-1">Studio & Inspector</div>
 
                     <!-- 5. Live Playground -->
                     <a href="{{ route('dashboard.playground') }}"
                         @class([
-                            'w-full py-2 pr-3 rounded-lg text-xs flex items-center justify-between transition-all group',
-                            'bg-white/[0.08] text-white font-medium border-l-2 border-emerald-400 pl-2.5' => request()->routeIs('dashboard.playground'),
-                            'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03] pl-3' => !request()->routeIs('dashboard.playground'),
+                            'w-full py-2 px-3 rounded-xl text-xs sm:text-sm flex items-center justify-between transition-all group',
+                            'bg-white/[0.08] text-white font-semibold border-l-2 border-emerald-400 pl-2.5' => request()->routeIs('dashboard.playground'),
+                            'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]' => !request()->routeIs('dashboard.playground'),
                         ])>
                         <div class="flex items-center gap-2.5">
                             <i data-lucide="terminal" class="w-4 h-4 transition-colors {{ request()->routeIs('dashboard.playground') ? 'text-emerald-400' : 'text-zinc-500 group-hover:text-zinc-300' }}"></i>
@@ -257,23 +683,23 @@
                     <!-- 6. Telemetry Logs -->
                     <a href="{{ route('dashboard.logs') }}"
                         @class([
-                            'w-full py-2 pr-3 rounded-lg text-xs flex items-center justify-between transition-all group',
-                            'bg-white/[0.08] text-white font-medium border-l-2 border-emerald-400 pl-2.5' => request()->routeIs('dashboard.logs'),
-                            'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03] pl-3' => !request()->routeIs('dashboard.logs'),
+                            'w-full py-2 px-3 rounded-xl text-xs sm:text-sm flex items-center justify-between transition-all group',
+                            'bg-white/[0.08] text-white font-semibold border-l-2 border-emerald-400 pl-2.5' => request()->routeIs('dashboard.logs'),
+                            'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]' => !request()->routeIs('dashboard.logs'),
                         ])>
                         <div class="flex items-center gap-2.5">
                             <i data-lucide="activity" class="w-4 h-4 transition-colors {{ request()->routeIs('dashboard.logs') ? 'text-emerald-400' : 'text-zinc-500 group-hover:text-zinc-300' }}"></i>
                             <span>Telemetry Logs</span>
                         </div>
-                        <span class="text-[10px] px-1.5 py-0.5 rounded font-mono bg-zinc-800 text-zinc-400">{{ $sidebarLogsCount }}</span>
+                        <span class="text-[11px] px-1.5 py-0.5 rounded font-mono bg-zinc-800 text-zinc-400">{{ $sidebarLogsCount }}</span>
                     </a>
 
                     <!-- 7. Settings & Security -->
                     <a href="{{ route('dashboard.settings') }}"
                         @class([
-                            'w-full py-2 pr-3 rounded-lg text-xs flex items-center justify-between transition-all group',
-                            'bg-white/[0.08] text-white font-medium border-l-2 border-emerald-400 pl-2.5' => request()->routeIs('dashboard.settings'),
-                            'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03] pl-3' => !request()->routeIs('dashboard.settings'),
+                            'w-full py-2 px-3 rounded-xl text-xs sm:text-sm flex items-center justify-between transition-all group',
+                            'bg-white/[0.08] text-white font-semibold border-l-2 border-emerald-400 pl-2.5' => request()->routeIs('dashboard.settings'),
+                            'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]' => !request()->routeIs('dashboard.settings'),
                         ])>
                         <div class="flex items-center gap-2.5">
                             <i data-lucide="shield-check" class="w-4 h-4 transition-colors {{ request()->routeIs('dashboard.settings') ? 'text-emerald-400' : 'text-zinc-500 group-hover:text-zinc-300' }}"></i>
@@ -284,42 +710,66 @@
             </div>
 
             <!-- Sidebar Bottom: System Health, Clear Cache & User Profile -->
-            <div class="p-3 border-t border-white/[0.07] space-y-2 bg-[#0c101a]">
+            <div class="p-3.5 border-t border-white/[0.07] space-y-2.5 bg-[#0c101a]">
                 <!-- Health Pulse -->
-                <div class="p-2.5 rounded-xl bg-[#141926] border border-white/[0.06] flex items-center justify-between text-[11px]">
-                    <div class="flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span class="text-zinc-300 font-medium">All Systems Operational</span>
+                <div class="p-3 rounded-xl bg-[#141926] border border-white/[0.06] flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="text-zinc-200 font-medium">All Systems Operational</span>
                     </div>
-                    <span class="text-zinc-500 font-mono text-[10px]">No-Redis</span>
+                    <span class="text-zinc-400 font-mono text-xs">No-Redis</span>
                 </div>
 
                 <!-- Clear Cache Button -->
                 <button type="button" @click="clearCache()"
-                    class="w-full py-1.5 px-2.5 rounded-xl bg-[#141926] hover:bg-[#1a2133] border border-white/[0.06] hover:border-white/10 text-zinc-300 text-[11px] font-medium flex items-center justify-between transition-colors group">
+                    class="w-full py-2 px-3 rounded-xl bg-[#141926] hover:bg-[#1a2133] border border-white/[0.06] hover:border-white/10 text-zinc-200 text-xs font-medium flex items-center justify-between transition-colors group">
                     <div class="flex items-center gap-2">
-                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-zinc-400 group-hover:text-emerald-400 transition-colors"></i>
+                        <i data-lucide="refresh-cw" class="w-4 h-4 text-zinc-400 group-hover:text-emerald-400 transition-colors"></i>
                         <span>Clear Gateway Cache</span>
                     </div>
-                    <span class="text-[9px] font-mono text-zinc-500 uppercase tracking-wider">Purge</span>
+                    <span class="text-[11px] font-mono text-zinc-400 uppercase tracking-wider">Purge</span>
                 </button>
 
+                <!-- Theme Mode Selector Pill -->
+                <div class="p-2 rounded-xl bg-[#141926] border border-white/[0.06] flex items-center justify-between text-xs">
+                    <span class="text-zinc-300 font-medium px-2 flex items-center gap-2">
+                        <i data-lucide="palette" class="w-4 h-4 text-zinc-400"></i>
+                        <span>Theme</span>
+                    </span>
+                    <div class="flex items-center bg-[#09090b] rounded-lg p-0.5 border border-white/5">
+                        <button type="button" @click="setTheme('dark')"
+                            :class="currentTheme === 'dark' ? 'bg-zinc-800 text-amber-400 font-semibold shadow-sm' : 'text-zinc-400 hover:text-white'"
+                            class="px-2.5 py-1 rounded-md text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                            title="Dark Theme">
+                            <i data-lucide="moon" class="w-3.5 h-3.5"></i>
+                            <span>Dark</span>
+                        </button>
+                        <button type="button" @click="setTheme('light')"
+                            :class="currentTheme === 'light' ? 'bg-white text-zinc-950 font-semibold shadow-sm' : 'text-zinc-400 hover:text-white'"
+                            class="px-2.5 py-1 rounded-md text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                            title="Light / White Theme">
+                            <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-500"></i>
+                            <span>Light</span>
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Admin Profile Card -->
-                <div class="flex items-center justify-between px-1 pt-1">
-                    <div class="flex items-center gap-2 truncate">
-                        <div class="w-7 h-7 rounded-lg bg-zinc-800 border border-white/10 flex items-center justify-center font-bold text-xs text-zinc-300">
+                <div class="flex items-center justify-between px-1.5 pt-1">
+                    <div class="flex items-center gap-2.5 truncate">
+                        <div class="w-8 h-8 rounded-lg bg-zinc-800 border border-white/10 flex items-center justify-center font-bold text-sm text-zinc-300">
                             {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                         </div>
                         <div class="truncate">
-                            <div class="text-xs font-semibold text-white truncate">{{ auth()->user()->name }}</div>
-                            <div class="text-[10px] text-zinc-500 truncate">{{ auth()->user()->email }}</div>
+                            <div class="text-sm font-semibold text-white truncate">{{ auth()->user()->name }}</div>
+                            <div class="text-xs text-zinc-400 truncate">{{ auth()->user()->email }}</div>
                         </div>
                     </div>
 
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
-                        <button type="submit" class="p-1.5 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors" title="Sign Out">
-                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                        <button type="submit" class="p-2 text-zinc-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors" title="Sign Out">
+                            <i data-lucide="log-out" class="w-4.5 h-4.5"></i>
                         </button>
                     </form>
                 </div>
@@ -334,14 +784,27 @@
             <header class="h-16 border-b border-white/[0.07] bg-[#09090b]/80 backdrop-blur-md px-6 flex items-center justify-between z-20 flex-shrink-0">
                 <!-- Page Title -->
                 <div class="flex items-center gap-3">
-                    <h1 class="text-base font-bold text-white tracking-tight">@yield('title', 'Overview & Live Analytics')</h1>
+                    <h1 class="text-lg sm:text-xl font-bold text-white tracking-tight">@yield('title', 'Overview & Live Analytics')</h1>
                 </div>
 
                 <!-- Right Header Actions -->
                 <div class="flex items-center gap-3">
+                    <!-- Quick Theme Toggle Switcher -->
+                    <button type="button" @click="toggleTheme()"
+                        class="p-2 rounded-xl border border-white/10 bg-[#141926] hover:bg-[#1a2133] text-zinc-300 transition-all shadow-sm flex items-center justify-center cursor-pointer"
+                        :title="currentTheme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+                        aria-label="Toggle Theme">
+                        <span x-show="currentTheme === 'dark'" class="flex items-center">
+                            <i data-lucide="sun" class="w-4 h-4 text-amber-400"></i>
+                        </span>
+                        <span x-show="currentTheme !== 'dark'" class="flex items-center" x-cloak>
+                            <i data-lucide="moon" class="w-4 h-4 text-indigo-600"></i>
+                        </span>
+                    </button>
+
                     <!-- Quick Add Key Button -->
                     <button type="button" @click="openAddKeyModal()"
-                        class="px-3.5 py-1.5 bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-xs rounded-xl shadow-lg shadow-white/5 transition-all flex items-center gap-1.5">
+                        class="px-3.5 py-1.5 bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-xs sm:text-sm rounded-xl shadow-md transition-all flex items-center gap-1.5">
                         <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                         <span>Add Key</span>
                     </button>
@@ -353,22 +816,22 @@
 
                 <!-- Global Success Alert -->
                 @if(session('success'))
-                    <div class="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center justify-between shadow-lg">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+                    <div class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm flex items-center justify-between shadow-lg">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400 flex-shrink-0"></i>
                             <span>{{ session('success') }}</span>
                         </div>
-                        <button type="button" @click="$el.parentElement.remove()" class="text-emerald-500 hover:text-emerald-300">&times;</button>
+                        <button type="button" @click="$el.parentElement.remove()" class="text-emerald-500 hover:text-emerald-300 text-base">&times;</button>
                     </div>
                 @endif
 
                 @if(isset($errors) && $errors->any())
-                    <div class="p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-center justify-between shadow-lg">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="alert-circle" class="w-4 h-4 text-red-400 flex-shrink-0"></i>
+                    <div class="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center justify-between shadow-lg">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="alert-circle" class="w-5 h-5 text-red-400 flex-shrink-0"></i>
                             <span>{{ $errors->first() }}</span>
                         </div>
-                        <button type="button" @click="$el.parentElement.remove()" class="text-red-500 hover:text-red-300">&times;</button>
+                        <button type="button" @click="$el.parentElement.remove()" class="text-red-500 hover:text-red-300 text-base">&times;</button>
                     </div>
                 @endif
 
@@ -384,19 +847,19 @@
     <!-- ============================================================== -->
     <div x-show="showAccountModal" class="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" x-cloak>
         <div class="bg-[#121215] border border-white/[0.08] rounded-2xl w-full max-w-md p-6 shadow-2xl relative" @click.away="showAccountModal = false">
-            <div class="flex items-center justify-between pb-3 border-b border-white/[0.06] mb-4">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="key" class="w-4 h-4 text-emerald-400"></i>
-                    <h3 class="text-sm font-bold text-white">Add Provider API Key</h3>
+            <div class="flex items-center justify-between pb-3.5 border-b border-white/[0.06] mb-4">
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="key" class="w-5 h-5 text-emerald-400"></i>
+                    <h3 class="text-base font-bold text-white">Add Provider API Key</h3>
                 </div>
-                <button type="button" @click="showAccountModal = false" class="text-zinc-500 hover:text-white">&times;</button>
+                <button type="button" @click="showAccountModal = false" class="text-zinc-500 hover:text-white text-xl leading-none">&times;</button>
             </div>
 
             <form action="{{ route('dashboard.accounts.store') }}" method="POST" class="space-y-4">
                 @csrf
                 <div>
-                    <label class="block text-xs font-medium text-zinc-400 mb-1.5">Target AI Provider</label>
-                    <select name="ai_provider_id" x-model="selectedProviderId" class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Target AI Provider</label>
+                    <select name="ai_provider_id" x-model="selectedProviderId" class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
                         @foreach($modalProviders as $provider)
                             <option value="{{ $provider->id }}">{{ $provider->name }} ({{ $provider->slug }})</option>
                         @endforeach
@@ -404,33 +867,33 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-zinc-400 mb-1.5">Key Label / Identifier</label>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Key Label / Identifier</label>
                     <input type="text" name="label" placeholder="e.g. Free Tier Account 1" required
-                        class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500">
+                        class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-zinc-400 mb-1.5">Raw Provider Secret API Key</label>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Raw Provider Secret API Key</label>
                     <input type="password" name="api_key" placeholder="Will be encrypted in database with AES-256" required
-                        class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 font-mono">
+                        class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 font-mono">
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-3.5">
                     <div>
-                        <label class="block text-xs font-medium text-zinc-400 mb-1.5">Priority (1 = Highest)</label>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Priority (1 = Highest)</label>
                         <input type="number" name="priority" value="1" min="1"
-                            class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                            class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-zinc-400 mb-1.5">Daily Token Limit</label>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Daily Token Limit</label>
                         <input type="number" name="daily_token_limit" placeholder="Optional" min="1"
-                            class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500">
+                            class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500">
                     </div>
                 </div>
 
-                <div class="pt-3 border-t border-white/[0.06] flex items-center justify-end gap-2">
-                    <button type="button" @click="showAccountModal = false" class="px-3.5 py-2 text-xs font-medium text-zinc-400 hover:text-white rounded-xl">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-xs rounded-xl transition-all shadow-md">
+                <div class="pt-4 border-t border-white/[0.06] flex items-center justify-end gap-2.5">
+                    <button type="button" @click="showAccountModal = false" class="px-4 py-2.5 text-sm font-medium text-zinc-400 hover:text-white rounded-xl">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-sm rounded-xl transition-all shadow-md">
                         Save Encrypted Key
                     </button>
                 </div>
@@ -443,31 +906,31 @@
     <!-- ============================================================== -->
     <div x-show="showProviderModal" class="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" x-cloak>
         <div class="bg-[#121215] border border-white/[0.08] rounded-2xl w-full max-w-md p-6 shadow-2xl relative" @click.away="showProviderModal = false">
-            <div class="flex items-center justify-between pb-3 border-b border-white/[0.06] mb-4">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="cpu" class="w-4 h-4 text-emerald-400"></i>
-                    <h3 class="text-sm font-bold text-white">Add Custom AI Provider</h3>
+            <div class="flex items-center justify-between pb-3.5 border-b border-white/[0.06] mb-4">
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="cpu" class="w-5 h-5 text-emerald-400"></i>
+                    <h3 class="text-base font-bold text-white">Add Custom AI Provider</h3>
                 </div>
-                <button type="button" @click="showProviderModal = false" class="text-zinc-500 hover:text-white">&times;</button>
+                <button type="button" @click="showProviderModal = false" class="text-zinc-500 hover:text-white text-xl leading-none">&times;</button>
             </div>
 
             <form action="{{ route('dashboard.providers.store') }}" method="POST" class="space-y-4">
                 @csrf
                 <div>
-                    <label class="block text-xs font-medium text-zinc-400 mb-1.5">Provider Name</label>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Provider Name</label>
                     <input type="text" name="name" placeholder="e.g. Together AI, vLLM Local, Perplexity" required
-                        class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500">
+                        class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500">
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-3.5">
                     <div>
-                        <label class="block text-xs font-medium text-zinc-400 mb-1.5">Slug (Optional)</label>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Slug (Optional)</label>
                         <input type="text" name="slug" placeholder="e.g. together"
-                            class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 font-mono">
+                            class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 font-mono">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-zinc-400 mb-1.5">Protocol</label>
-                        <select name="format" x-model="customProviderFormat" class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Protocol</label>
+                        <select name="format" x-model="customProviderFormat" class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
                             <option value="openai">OpenAI (/chat/completions)</option>
                             <option value="anthropic">Anthropic (/messages)</option>
                         </select>
@@ -475,20 +938,20 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-zinc-400 mb-1.5">Base URL</label>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Base URL</label>
                     <input type="url" name="base_url" placeholder="https://api.together.xyz/v1" required
-                        class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 font-mono">
+                        class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 font-mono">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-zinc-400 mb-1.5">Model Catalog (Comma-separated)</label>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Model Catalog (Comma-separated)</label>
                     <textarea name="models_catalog" rows="3" placeholder="meta-llama/Llama-3-70b-chat-hf, mistralai/Mixtral-8x7B"
-                        class="w-full bg-[#09090b] border border-white/10 rounded-xl p-3 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 font-mono resize-none"></textarea>
+                        class="w-full bg-[#09090b] border border-white/10 rounded-xl p-3.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 font-mono resize-none"></textarea>
                 </div>
 
-                <div class="pt-3 border-t border-white/[0.06] flex items-center justify-end gap-2">
-                    <button type="button" @click="showProviderModal = false" class="px-3.5 py-2 text-xs font-medium text-zinc-400 hover:text-white rounded-xl">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-xs rounded-xl transition-all shadow-md">
+                <div class="pt-4 border-t border-white/[0.06] flex items-center justify-end gap-2.5">
+                    <button type="button" @click="showProviderModal = false" class="px-4 py-2.5 text-sm font-medium text-zinc-400 hover:text-white rounded-xl">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-sm rounded-xl transition-all shadow-md">
                         Add Provider
                     </button>
                 </div>

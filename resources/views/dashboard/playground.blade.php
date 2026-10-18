@@ -242,20 +242,20 @@
     class="space-y-6">
 
     <!-- Split Studio Layout -->
-    <div class="bg-[#121215] border border-white/[0.07] rounded-2xl p-5 shadow-lg grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <div class="bg-[#121215] border border-white/[0.07] rounded-2xl p-5 sm:p-6 shadow-lg grid grid-cols-1 lg:grid-cols-4 gap-6">
         <!-- Left Panel: Configuration -->
-        <div class="lg:col-span-1 space-y-4">
+        <div class="lg:col-span-1 space-y-5">
             <!-- 1. Target Model / Smart Combo Selector -->
-            <div class="space-y-1.5">
+            <div class="space-y-2">
                 <div class="flex items-center justify-between">
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400">Target Model / Smart Combo</label>
-                    <button type="button" @click="useCustomModel = !useCustomModel" class="text-[10px] text-emerald-400 hover:text-emerald-300 font-mono transition-colors">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-zinc-400">Target Model / Smart Combo</label>
+                    <button type="button" @click="useCustomModel = !useCustomModel" class="text-xs text-emerald-400 hover:text-emerald-300 font-mono transition-colors">
                         <span x-text="useCustomModel ? 'Select Dropdown' : '+ Custom Model'"></span>
                     </button>
                 </div>
 
                 <div x-show="!useCustomModel">
-                    <select x-model="playModel" class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 font-mono">
+                    <select x-model="playModel" class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 font-mono">
                         @if($readyCombos->isNotEmpty())
                             <optgroup label="⚡ Ready Smart Routing Combos">
                                 @foreach($readyCombos as $rc)
@@ -313,32 +313,32 @@
                 </div>
 
                 <!-- Custom Model Input Option -->
-                <div x-show="useCustomModel || playModel === 'custom'" class="space-y-1" x-cloak>
+                <div x-show="useCustomModel || playModel === 'custom'" class="space-y-1.5" x-cloak>
                     <div class="relative">
                         <input type="text" x-model="customPlayModel" placeholder="provider_slug/model_name (e.g. my-local-provider/agy/claude-opus-4-6-thinking)"
-                            class="w-full bg-[#09090b] border border-emerald-500/50 rounded-xl px-3 py-2 text-xs text-white font-mono placeholder-zinc-600 focus:outline-none focus:border-emerald-400">
-                        <button type="button" x-show="customPlayModel" @click="customPlayModel = ''" class="absolute right-2.5 top-2 text-zinc-500 hover:text-white text-xs">&times;</button>
+                            class="w-full bg-[#09090b] border border-emerald-500/50 rounded-xl px-3.5 py-2.5 text-sm text-white font-mono placeholder-zinc-600 focus:outline-none focus:border-emerald-400">
+                        <button type="button" x-show="customPlayModel" @click="customPlayModel = ''" class="absolute right-3 top-2.5 text-zinc-500 hover:text-white text-sm">&times;</button>
                     </div>
-                    <p class="text-[10px] text-zinc-500 font-mono">Format: <code class="text-emerald-400">provider_slug/model_name</code></p>
+                    <p class="text-xs text-zinc-400 font-mono">Format: <code class="text-emerald-400">provider_slug/model_name</code></p>
                 </div>
             </div>
 
             <!-- 2. System Prompt -->
             <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">System Prompt</label>
+                <label class="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">System Prompt</label>
                 <textarea x-model="playSystem" rows="3" placeholder="You are a helpful and concise AI assistant."
-                    class="w-full bg-[#09090b] border border-white/10 rounded-xl p-3 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 resize-none font-mono"></textarea>
+                    class="w-full bg-[#09090b] border border-white/10 rounded-xl p-3.5 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 resize-none font-mono"></textarea>
             </div>
 
             <!-- 3. Temperature Slider -->
             <div>
-                <div class="flex items-center justify-between mb-1.5">
-                    <label class="text-xs font-semibold uppercase tracking-wider text-zinc-400">Temperature</label>
-                    <span class="text-xs font-mono text-emerald-400 font-bold" x-text="playTemperature"></span>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="text-xs font-bold uppercase tracking-wider text-zinc-400">Temperature</label>
+                    <span class="text-sm font-mono text-emerald-400 font-bold" x-text="playTemperature"></span>
                 </div>
                 <input type="range" x-model="playTemperature" min="0" max="2" step="0.1"
-                    class="w-full accent-emerald-500 bg-zinc-800 rounded-lg h-1.5 cursor-pointer">
-                <div class="flex justify-between text-[10px] text-zinc-600 font-mono mt-1">
+                    class="w-full accent-emerald-500 bg-zinc-800 rounded-lg h-2 cursor-pointer">
+                <div class="flex justify-between text-xs text-zinc-500 font-mono mt-1.5">
                     <span>0.0 Precise</span>
                     <span>1.0 Balanced</span>
                     <span>2.0 Creative</span>
@@ -346,28 +346,28 @@
             </div>
 
             <!-- 4. CONFIGURED & READY APIS BOX -->
-            <div class="p-3.5 rounded-xl bg-[#09090b] border border-white/[0.07] space-y-3">
-                <div class="flex items-center justify-between border-b border-white/[0.05] pb-2">
-                    <div class="flex items-center gap-1.5">
-                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-300">Configured & Ready APIs</span>
+            <div class="p-4 rounded-xl bg-[#09090b] border border-white/[0.07] space-y-3.5">
+                <div class="flex items-center justify-between border-b border-white/[0.05] pb-2.5">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+                        <span class="text-xs font-bold uppercase tracking-wider text-zinc-300">Configured & Ready APIs</span>
                     </div>
-                    <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">
+                    <span class="text-xs font-mono font-medium px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">
                         {{ $configuredProviders->count() }} Connected
                     </span>
                 </div>
 
                 @if($configuredProviders->isEmpty())
-                    <div class="py-3 text-center space-y-2">
-                        <p class="text-[11px] text-zinc-500">No active API keys configured yet.</p>
+                    <div class="py-4 text-center space-y-2.5">
+                        <p class="text-xs text-zinc-400">No active API keys configured yet.</p>
                         <a href="{{ route('dashboard.providers') }}"
-                            class="px-3 py-1.5 bg-white text-zinc-950 font-semibold text-[11px] rounded-lg shadow hover:bg-zinc-200 transition-colors inline-flex items-center gap-1">
-                            <i data-lucide="plus" class="w-3 h-3"></i>
+                            class="px-3.5 py-2 bg-white text-zinc-950 font-semibold text-xs rounded-xl shadow hover:bg-zinc-200 transition-colors inline-flex items-center gap-1.5">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                             <span>Configure Provider</span>
                         </a>
                     </div>
                 @else
-                    <div class="space-y-3 max-h-72 overflow-y-auto pr-1">
+                    <div class="space-y-3 max-h-80 overflow-y-auto pr-1">
                         @foreach($configuredProviders as $cp)
                             @php
                                 $activeAccounts = $cp->accounts->where('is_active', true);
@@ -384,39 +384,44 @@
                                     $chips = array_slice($cat['all'], 0, 6);
                                 }
                             @endphp
-                            <div class="p-2.5 rounded-lg bg-zinc-900/80 border border-white/[0.04] space-y-2">
-                                <div class="flex items-center justify-between gap-1">
-                                    <div class="flex items-center gap-1.5 min-w-0">
-                                        <span class="w-1.5 h-1.5 rounded-full {{ $hasCooldown ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400' }}"></span>
-                                        <span class="text-xs font-bold text-white truncate">{{ $cp->name }}</span>
-                                        <span class="text-[9px] font-mono text-zinc-400 bg-zinc-800 px-1 rounded">{{ $cp->slug }}</span>
+                            <div class="p-3 rounded-xl bg-zinc-900/80 border border-white/[0.04] space-y-2.5">
+                                <div class="flex items-center justify-between gap-2">
+                                    <div class="flex items-center gap-2 min-w-0">
+                                        <span class="w-2.5 h-2.5 rounded-full {{ $hasCooldown ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400' }} shrink-0"></span>
+                                        <span class="text-sm font-bold text-white truncate">{{ $cp->name }}</span>
                                     </div>
 
                                     @if($hasCooldown)
                                         <div class="flex items-center gap-1.5 shrink-0">
-                                            <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
                                                 Cooldown
                                             </span>
                                             @foreach($cooldownAccounts as $cAct)
                                                 <button type="button" @click="resetAccountCooldown({{ $cAct->id }})"
-                                                    class="text-[9px] font-mono text-emerald-400 hover:text-emerald-300 underline font-semibold transition-colors"
+                                                    class="text-xs font-mono text-emerald-400 hover:text-emerald-300 underline font-semibold transition-colors"
                                                     title="Click to reset cooldown immediately">
                                                     Reset
                                                 </button>
                                             @endforeach
                                         </div>
                                     @else
-                                        <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+                                        <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
                                             Ready
                                         </span>
                                     @endif
                                 </div>
 
+                                <!-- Slug Badge -->
+                                <div class="flex items-center gap-2 text-xs text-zinc-400 font-mono">
+                                    <span class="bg-[#09090b] px-2 py-0.5 rounded text-zinc-300 border border-white/5">{{ $cp->slug }}</span>
+                                    <span class="text-zinc-500 uppercase text-xs">{{ $cp->format }}</span>
+                                </div>
+
                                 <!-- Key Labels -->
-                                <div class="flex items-center gap-1 text-[10px] text-zinc-400 font-mono flex-wrap">
-                                    <span class="text-zinc-600">Keys:</span>
+                                <div class="flex items-center gap-1.5 text-xs text-zinc-400 font-mono flex-wrap">
+                                    <span class="text-zinc-500 font-medium">Keys:</span>
                                     @foreach($activeAccounts as $act)
-                                        <span class="bg-[#09090b] px-1.5 py-0.5 rounded border border-white/5 text-zinc-300">
+                                        <span class="bg-[#09090b] px-2 py-0.5 rounded border border-white/5 text-zinc-300">
                                             {{ $act->label }} <span class="text-zinc-500">(P{{ $act->priority }})</span>
                                         </span>
                                     @endforeach
@@ -424,12 +429,12 @@
 
                                 <!-- Fast Model Chips -->
                                 @if(!empty($chips))
-                                    <div class="pt-1 flex items-center gap-1 flex-wrap">
+                                    <div class="pt-1 flex items-center gap-1.5 flex-wrap">
                                         @foreach($chips as $m)
                                             <button type="button" 
                                                 @click="selectPlayModel('{{ $cp->slug }}/{{ $m }}')"
-                                                :class="playModel === '{{ $cp->slug }}/{{ $m }}' ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 font-bold' : 'bg-zinc-800/80 border-white/5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700'"
-                                                class="text-[10px] font-mono px-1.5 py-0.5 rounded border transition-colors truncate max-w-[130px]"
+                                                :class="playModel === '{{ $cp->slug }}/{{ $m }}' ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 font-bold' : 'bg-zinc-800/80 border-white/5 text-zinc-300 hover:text-white hover:bg-zinc-700'"
+                                                class="text-xs font-mono px-2 py-0.5 rounded border transition-colors truncate max-w-[140px]"
                                                 title="Set as target model: {{ $cp->slug }}/{{ $m }}">
                                                 {{ $m }}
                                             </button>
@@ -438,13 +443,13 @@
                                         @if(count($cat['all']) > count($chips))
                                             <button type="button"
                                                 @click="openCatalogModal('{{ $cp->slug }}', '{{ $cp->name }}')"
-                                                class="text-[9px] text-emerald-400 hover:text-emerald-300 font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 transition-colors">
+                                                class="text-xs text-emerald-400 hover:text-emerald-300 font-mono px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 transition-colors">
                                                 Browse all {{ count($cat['all']) }} models &rarr;
                                             </button>
                                         @endif
                                     </div>
                                 @else
-                                    <div class="text-[10px] text-zinc-500 font-mono italic">
+                                    <div class="text-xs text-zinc-500 font-mono italic">
                                         No catalog models synced yet.
                                     </div>
                                 @endif
@@ -456,9 +461,9 @@
 
             <!-- Live Telemetry Card -->
             <template x-if="playMeta">
-                <div class="p-3.5 rounded-xl bg-[#09090b] border border-emerald-500/20 text-xs space-y-2">
-                    <div class="font-bold text-emerald-400 uppercase text-[10px] tracking-wider flex items-center gap-1.5">
-                        <i data-lucide="zap" class="w-3 h-3 text-emerald-400"></i>
+                <div class="p-4 rounded-xl bg-[#09090b] border border-emerald-500/20 text-xs sm:text-sm space-y-2.5">
+                    <div class="font-bold text-emerald-400 uppercase text-xs tracking-wider flex items-center gap-2">
+                        <i data-lucide="zap" class="w-3.5 h-3.5 text-emerald-400"></i>
                         <span>Routing Telemetry</span>
                     </div>
                     <div class="flex items-center justify-between text-zinc-400">
@@ -467,11 +472,11 @@
                     </div>
                     <div class="flex items-center justify-between text-zinc-400">
                         <span>Model:</span>
-                        <span class="font-mono text-emerald-300 truncate max-w-[130px]" x-text="playMeta.model"></span>
+                        <span class="font-mono text-emerald-300 truncate max-w-[140px]" x-text="playMeta.model"></span>
                     </div>
                     <div class="flex items-center justify-between text-zinc-400">
                         <span>Account:</span>
-                        <span class="text-zinc-200 truncate max-w-[130px]" x-text="playMeta.account"></span>
+                        <span class="text-zinc-200 truncate max-w-[140px]" x-text="playMeta.account"></span>
                     </div>
                     <div class="flex items-center justify-between text-zinc-400">
                         <span>Tokens Saved:</span>
@@ -486,21 +491,21 @@
         </div>
 
         <!-- Right Panel: Chat Studio Window -->
-        <div class="lg:col-span-3 flex flex-col h-[560px] bg-[#09090b] border border-white/[0.07] rounded-xl overflow-hidden">
+        <div class="lg:col-span-3 flex flex-col h-[600px] bg-[#09090b] border border-white/[0.07] rounded-xl overflow-hidden shadow-inner">
             <!-- Messages Area -->
-            <div id="play-chat-box" class="flex-1 p-4 overflow-y-auto space-y-4">
+            <div id="play-chat-box" class="flex-1 p-5 overflow-y-auto space-y-4">
                 <template x-for="(msg, i) in playMessages" :key="i">
                     <div class="flex flex-col" :class="msg.role === 'user' ? 'items-end' : 'items-start'">
-                        <div class="max-w-[85%] rounded-2xl px-4 py-2.5 text-xs leading-relaxed"
+                        <div class="max-w-[85%] rounded-2xl px-5 py-3 text-sm leading-relaxed"
                             :class="msg.role === 'user' 
                                 ? 'bg-emerald-500 text-zinc-950 font-medium rounded-br-none shadow-md shadow-emerald-500/10' 
-                                : (msg.isError ? 'bg-red-500/10 border border-red-500/20 text-red-300 rounded-bl-none' : 'bg-[#121215] border border-white/[0.08] text-zinc-100 rounded-bl-none')">
+                                : (msg.isError ? 'bg-red-500/10 border border-red-500/20 text-red-300 rounded-bl-none' : 'bg-[#121215] border border-white/[0.08] text-zinc-100 rounded-bl-none shadow-sm')">
                             <p class="whitespace-pre-wrap" x-text="msg.content"></p>
                         </div>
                         
                         <template x-if="msg.meta">
-                            <div class="text-[10px] text-zinc-500 mt-1 flex items-center gap-1 font-mono">
-                                <span class="text-emerald-400" x-text="msg.meta.provider"></span> / 
+                            <div class="text-xs text-zinc-400 mt-1.5 flex items-center gap-1.5 font-mono">
+                                <span class="text-emerald-400 font-semibold" x-text="msg.meta.provider"></span> / 
                                 <span x-text="msg.meta.model"></span> • 
                                 <span class="text-emerald-400" x-text="`+${msg.meta.saved_tokens} saved`"></span> • 
                                 <span class="text-amber-400" x-text="`${msg.meta.latency_ms}ms`"></span>
@@ -509,21 +514,21 @@
                     </div>
                 </template>
 
-                <div x-show="playLoading" class="flex items-center gap-2 text-xs text-emerald-400 p-2 font-mono">
-                    <div class="w-3 h-3 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
+                <div x-show="playLoading" class="flex items-center gap-2.5 text-sm text-emerald-400 p-2 font-mono">
+                    <div class="w-3.5 h-3.5 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
                     <span>Compressing prompt & routing to upstream provider...</span>
                 </div>
             </div>
 
             <!-- Input Bar -->
-            <div class="p-3 bg-[#121215] border-t border-white/[0.07] flex items-center gap-2">
+            <div class="p-3.5 bg-[#121215] border-t border-white/[0.07] flex items-center gap-3">
                 <input type="text" x-model="playInput" @keydown.enter="sendPlayground()" placeholder="Ask a question or test fallback behavior..."
                     :disabled="playLoading"
-                    class="flex-1 bg-[#09090b] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 disabled:opacity-50 font-sans">
+                    class="flex-1 bg-[#09090b] border border-white/10 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 disabled:opacity-50 font-sans">
                 <button type="button" @click="sendPlayground()" :disabled="playLoading || !playInput.trim()"
-                    class="px-5 py-2.5 bg-white hover:bg-zinc-200 text-zinc-950 font-semibold text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5 disabled:opacity-50">
+                    class="px-4 py-2.5 bg-white hover:bg-zinc-200 text-zinc-950 font-semibold text-xs sm:text-sm rounded-xl shadow-md transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer">
                     <span>Send</span>
-                    <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                    <i data-lucide="send" class="w-4 h-4"></i>
                 </button>
             </div>
         </div>
@@ -533,74 +538,74 @@
     <div x-show="catalogModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" x-cloak>
         <div @click.away="catalogModalOpen = false" class="bg-[#121215] border border-white/10 rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
             <!-- Modal Header -->
-            <div class="p-4 border-b border-white/[0.06] flex items-center justify-between">
+            <div class="p-5 border-b border-white/[0.06] flex items-center justify-between">
                 <div>
-                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2.5">
                         <span>Browse Available Models</span>
-                        <span class="text-xs font-mono text-zinc-400 bg-zinc-800 px-2 py-0.5 rounded" x-text="catalogModalProviderName"></span>
+                        <span class="text-xs font-mono text-zinc-300 bg-zinc-800 px-2.5 py-1 rounded-md" x-text="catalogModalProviderName"></span>
                     </h3>
-                    <p class="text-[11px] text-zinc-400 mt-0.5">Click any model to instantly set it as the Playground target model.</p>
+                    <p class="text-xs text-zinc-400 mt-1">Click any model to instantly set it as the Playground target model.</p>
                 </div>
-                <button type="button" @click="catalogModalOpen = false" class="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 transition-colors">
-                    <i data-lucide="x" class="w-4 h-4"></i>
+                <button type="button" @click="catalogModalOpen = false" class="p-2 text-zinc-400 hover:text-white rounded-xl hover:bg-zinc-800 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
             <!-- Filter Controls -->
-            <div class="p-3 border-b border-white/[0.06] space-y-2.5 bg-[#09090b]/50">
+            <div class="p-4 border-b border-white/[0.06] space-y-3 bg-[#09090b]/50">
                 <div class="relative">
-                    <i data-lucide="search" class="w-4 h-4 text-zinc-500 absolute left-3 top-2.5"></i>
+                    <i data-lucide="search" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-3"></i>
                     <input type="text" x-model="catalogModalSearch" placeholder="Filter models by name (e.g. claude, flash, opus, coding)..."
-                        class="w-full bg-[#09090b] border border-white/10 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 font-mono">
+                        class="w-full bg-[#09090b] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 font-mono">
                 </div>
 
-                <div class="flex items-center gap-1.5 flex-wrap">
+                <div class="flex items-center gap-2 flex-wrap">
                     <button type="button" @click="catalogModalFilter = 'all'"
-                        :class="catalogModalFilter === 'all' ? 'bg-emerald-500 text-zinc-950 font-bold' : 'bg-zinc-800 text-zinc-400 hover:text-white'"
-                        class="text-[11px] font-mono px-2.5 py-1 rounded-lg transition-colors">
+                        :class="catalogModalFilter === 'all' ? 'bg-emerald-500 text-zinc-950 font-bold' : 'bg-zinc-800 text-zinc-300 hover:text-white'"
+                        class="text-xs font-mono px-3 py-1.5 rounded-lg transition-colors">
                         All (<span x-text="catalogs[catalogModalProvider]?.models?.length || 0"></span>)
                     </button>
                     <button type="button" @click="catalogModalFilter = 'agy'"
-                        :class="catalogModalFilter === 'agy' ? 'bg-emerald-500 text-zinc-950 font-bold' : 'bg-zinc-800 text-zinc-400 hover:text-white'"
-                        class="text-[11px] font-mono px-2.5 py-1 rounded-lg transition-colors">
+                        :class="catalogModalFilter === 'agy' ? 'bg-emerald-500 text-zinc-950 font-bold' : 'bg-zinc-800 text-zinc-300 hover:text-white'"
+                        class="text-xs font-mono px-3 py-1.5 rounded-lg transition-colors">
                         Antigravity agy/* (<span x-text="catalogs[catalogModalProvider]?.agy?.length || 0"></span>)
                     </button>
                     <button type="button" @click="catalogModalFilter = 'auto'"
-                        :class="catalogModalFilter === 'auto' ? 'bg-emerald-500 text-zinc-950 font-bold' : 'bg-zinc-800 text-zinc-400 hover:text-white'"
-                        class="text-[11px] font-mono px-2.5 py-1 rounded-lg transition-colors">
+                        :class="catalogModalFilter === 'auto' ? 'bg-emerald-500 text-zinc-950 font-bold' : 'bg-zinc-800 text-zinc-300 hover:text-white'"
+                        class="text-xs font-mono px-3 py-1.5 rounded-lg transition-colors">
                         Auto Smart Routing auto/* (<span x-text="catalogs[catalogModalProvider]?.auto?.length || 0"></span>)
                     </button>
                     <button type="button" @click="catalogModalFilter = 'other'"
-                        :class="catalogModalFilter === 'other' ? 'bg-emerald-500 text-zinc-950 font-bold' : 'bg-zinc-800 text-zinc-400 hover:text-white'"
-                        class="text-[11px] font-mono px-2.5 py-1 rounded-lg transition-colors">
+                        :class="catalogModalFilter === 'other' ? 'bg-emerald-500 text-zinc-950 font-bold' : 'bg-zinc-800 text-zinc-300 hover:text-white'"
+                        class="text-xs font-mono px-3 py-1.5 rounded-lg transition-colors">
                         Extended (<span x-text="catalogs[catalogModalProvider]?.other?.length || 0"></span>)
                     </button>
                 </div>
             </div>
 
             <!-- Model Grid -->
-            <div class="p-4 overflow-y-auto flex-1 max-h-[50vh] space-y-2">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div class="p-5 overflow-y-auto flex-1 max-h-[50vh] space-y-2.5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     <template x-for="m in getFilteredCatalogModels()" :key="m">
                         <button type="button"
                             @click="selectPlayModel(`${catalogModalProvider}/${m}`)"
                             :class="playModel === `${catalogModalProvider}/${m}` ? 'border-emerald-500 bg-emerald-500/10 text-emerald-300' : 'border-white/[0.06] bg-[#09090b] text-zinc-300 hover:border-emerald-500/40 hover:text-white hover:bg-zinc-900'"
-                            class="p-2.5 rounded-xl border text-left transition-all flex items-center justify-between group">
-                            <span class="text-xs font-mono truncate" x-text="m"></span>
-                            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-zinc-600 group-hover:text-emerald-400 transition-colors shrink-0"></i>
+                            class="p-3 rounded-xl border text-left transition-all flex items-center justify-between group">
+                            <span class="text-xs sm:text-sm font-mono truncate" x-text="m"></span>
+                            <i data-lucide="arrow-up-right" class="w-4 h-4 text-zinc-600 group-hover:text-emerald-400 transition-colors shrink-0"></i>
                         </button>
                     </template>
                 </div>
 
-                <div x-show="getFilteredCatalogModels().length === 0" class="py-8 text-center text-xs text-zinc-500 font-mono">
+                <div x-show="getFilteredCatalogModels().length === 0" class="py-10 text-center text-sm text-zinc-500 font-mono">
                     No models matched your search filter.
                 </div>
             </div>
 
             <!-- Modal Footer -->
-            <div class="p-3 border-t border-white/[0.06] bg-[#09090b]/40 flex items-center justify-between text-[11px] text-zinc-500">
-                <span>Showing <strong class="text-zinc-300" x-text="getFilteredCatalogModels().length"></strong> models</span>
-                <button type="button" @click="catalogModalOpen = false" class="px-3 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-lg transition-colors">
+            <div class="p-4 border-t border-white/[0.06] bg-[#09090b]/40 flex items-center justify-between text-xs text-zinc-400">
+                <span>Showing <strong class="text-white" x-text="getFilteredCatalogModels().length"></strong> models</span>
+                <button type="button" @click="catalogModalOpen = false" class="px-4 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 rounded-lg transition-colors text-xs font-semibold">
                     Close
                 </button>
             </div>
