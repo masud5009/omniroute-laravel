@@ -177,20 +177,28 @@ class AdminDashboardController extends Controller
     }
 
     /**
-     * Update an AI provider's description and info.
+     * Update an AI provider's details and info.
      */
     public function updateProvider(Request $request, AiProvider $provider): RedirectResponse
     {
         $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'base_url' => 'sometimes|required|url|max:255',
+            'format' => 'sometimes|required|in:openai,anthropic',
             'description' => 'nullable|string|max:3000',
-            'base_url' => 'nullable|url|max:255',
         ]);
 
-        if ($request->has('description')) {
-            $provider->description = $validated['description'];
+        if (!empty($validated['name'])) {
+            $provider->name = $validated['name'];
         }
         if (!empty($validated['base_url'])) {
             $provider->base_url = $validated['base_url'];
+        }
+        if (!empty($validated['format'])) {
+            $provider->format = $validated['format'];
+        }
+        if ($request->has('description')) {
+            $provider->description = $validated['description'];
         }
 
         $provider->save();

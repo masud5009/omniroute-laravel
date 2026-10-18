@@ -396,6 +396,35 @@
             color: #0f766e !important;
         }
 
+        /* Soft Emerald Badges & Buttons in Light Mode */
+        html:not(.dark) [class*="bg-emerald-50"],
+        html:not(.dark) [class*="bg-emerald-500/10"],
+        html:not(.dark) [class*="bg-emerald-500/15"] {
+            background-color: #ecfdf5 !important;
+            border-color: #a7f3d0 !important;
+            color: #065f46 !important;
+        }
+        html:not(.dark) [class*="bg-emerald-50"] span,
+        html:not(.dark) [class*="bg-emerald-500/10"] span,
+        html:not(.dark) [class*="bg-emerald-50"] i,
+        html:not(.dark) [class*="bg-emerald-500/10"] i {
+            color: #065f46 !important;
+        }
+
+        /* Soft Amber Badges & Buttons in Light Mode */
+        html:not(.dark) [class*="bg-amber-50"],
+        html:not(.dark) [class*="bg-amber-500/10"] {
+            background-color: #fffbeb !important;
+            border-color: #fde68a !important;
+            color: #92400e !important;
+        }
+        html:not(.dark) [class*="bg-amber-50"] span,
+        html:not(.dark) [class*="bg-amber-500/10"] span,
+        html:not(.dark) [class*="bg-amber-50"] i,
+        html:not(.dark) [class*="bg-amber-500/10"] i {
+            color: #92400e !important;
+        }
+
         /* Inputs, Selects & Textareas */
         html:not(.dark) input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
         html:not(.dark) select,
@@ -476,6 +505,7 @@
         /* Modals in Light Mode */
         html:not(.dark) [x-show="showAccountModal"] > div,
         html:not(.dark) [x-show="showProviderModal"] > div,
+        html:not(.dark) [x-show="showEditProviderModal"] > div,
         html:not(.dark) [x-show="catalogModalOpen"] > div {
             background-color: #ffffff !important;
             border-color: #e2e8f0 !important;
@@ -540,6 +570,14 @@
         },
         showAccountModal: false,
         showProviderModal: false,
+        showEditProviderModal: false,
+        editProvider: {
+            id: null,
+            name: '',
+            format: 'openai',
+            base_url: '',
+            description: ''
+        },
         selectedProviderId: {{ $modalProviders->first()?->id ?? 1 }},
         copyToast: false,
         copyToastText: 'Copied to clipboard!',
@@ -559,6 +597,16 @@
                 this.selectedProviderId = providerId;
             }
             this.showAccountModal = true;
+        },
+        openEditProviderModal(provider) {
+            this.editProvider = {
+                id: provider.id,
+                name: provider.name || '',
+                format: provider.format || 'openai',
+                base_url: provider.base_url || '',
+                description: provider.description || ''
+            };
+            this.showEditProviderModal = true;
         },
         customProviderFormat: 'openai',
         openAddCustomProviderModal(format = 'openai') {
@@ -973,6 +1021,72 @@
                     <button type="button" @click="showProviderModal = false" class="px-4 py-2.5 text-sm font-medium text-zinc-400 hover:text-white rounded-xl">Cancel</button>
                     <button type="submit" class="px-5 py-2.5 bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-sm rounded-xl transition-all shadow-md">
                         Add Provider
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- MODAL: EDIT AI PROVIDER                                        -->
+    <!-- ============================================================== -->
+    <div x-show="showEditProviderModal"
+        x-transition:enter="transition ease-out duration-150"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-100"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-50 overflow-y-auto bg-black/75 flex items-center justify-center p-4" x-cloak>
+        <div x-show="showEditProviderModal"
+            x-transition:enter="transition ease-out duration-150"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-100"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="bg-[#121215] border border-white/[0.08] rounded-2xl w-full max-w-md p-6 shadow-2xl relative" @click.away="showEditProviderModal = false">
+            <div class="flex items-center justify-between pb-3.5 border-b border-white/[0.06] mb-4">
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="edit-3" class="w-5 h-5 text-emerald-400"></i>
+                    <h3 class="text-base font-bold text-white">Edit AI Provider</h3>
+                </div>
+                <button type="button" @click="showEditProviderModal = false" class="text-zinc-500 hover:text-white text-xl leading-none">&times;</button>
+            </div>
+
+            <form :action="'/dashboard/providers/' + editProvider.id" method="POST" class="space-y-4">
+                @csrf
+                @method('PUT')
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Provider Name</label>
+                    <input type="text" name="name" x-model="editProvider.name" required
+                        class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Protocol</label>
+                    <select name="format" x-model="editProvider.format" class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                        <option value="openai">OpenAI (/chat/completions)</option>
+                        <option value="anthropic">Anthropic (/messages)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Base URL</label>
+                    <input type="url" name="base_url" x-model="editProvider.base_url" required
+                        class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 font-mono">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Description & Notes (Optional)</label>
+                    <textarea name="description" x-model="editProvider.description" rows="3" placeholder="e.g. Website link, account email, login info, billing note, or documentation URL..."
+                        class="w-full bg-[#09090b] border border-white/10 rounded-xl p-3.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 resize-none"></textarea>
+                </div>
+
+                <div class="pt-4 border-t border-white/[0.06] flex items-center justify-end gap-2.5">
+                    <button type="button" @click="showEditProviderModal = false" class="px-4 py-2.5 text-sm font-medium text-zinc-400 hover:text-white rounded-xl">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-sm rounded-xl transition-all shadow-md">
+                        Save Changes
                     </button>
                 </div>
             </form>

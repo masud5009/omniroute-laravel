@@ -129,12 +129,12 @@
 
             <div class="flex items-center gap-2">
                 <button type="button" @click="openAddCustomProviderModal('anthropic')"
-                    class="px-3 py-1.5 text-xs font-semibold bg-pink-700/80 hover:bg-pink-600 text-pink-100 rounded-xl border border-pink-500/30 transition-colors flex items-center gap-1.5">
+                    class="px-3.5 py-1.5 text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 dark:bg-amber-500/10 dark:hover:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/20 rounded-xl transition-all flex items-center gap-1.5 shadow-sm">
                     <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                     <span>Add Anthropic Compatible</span>
                 </button>
                 <button type="button" @click="openAddCustomProviderModal('openai')"
-                    class="px-3 py-1.5 text-xs font-semibold bg-rose-700/80 hover:bg-rose-600 text-rose-100 rounded-xl border border-rose-500/30 transition-colors flex items-center gap-1.5">
+                    class="px-3.5 py-1.5 text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/20 rounded-xl transition-all flex items-center gap-1.5 shadow-sm">
                     <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                     <span>Add OpenAI Compatible</span>
                 </button>
@@ -166,48 +166,79 @@
                     @endphp
                     <div x-show="matchesProviderBySlug('{{ $provider->slug }}')"
                         @click="window.location.href = '{{ route('dashboard.providers.show', $provider->slug) }}'"
-                        class="bg-[#121622] hover:bg-[#151b2a] border border-white/[0.08] hover:border-white/[0.18] rounded-2xl p-5 flex flex-col justify-between transition-all group min-h-[135px] shadow-md cursor-pointer">
+                        class="bg-white hover:bg-zinc-50/90 dark:bg-[#121622] dark:hover:bg-[#151b2a] border border-zinc-200/90 hover:border-zinc-300 dark:border-white/[0.08] dark:hover:border-white/[0.18] rounded-2xl p-5 flex flex-col justify-between transition-all duration-200 group min-h-[145px] shadow-sm hover:shadow-md cursor-pointer relative">
                         
                         <!-- Card Header -->
                         <div>
-                            <div class="flex items-start justify-between gap-3 mb-3">
+                            <div class="flex items-start justify-between gap-3 mb-2.5">
                                 <a href="{{ route('dashboard.providers.show', $provider->slug) }}" class="flex items-center gap-3 min-w-0 flex-1 group/link">
-                                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr {{ $brandColor }} border flex items-center justify-center font-bold text-sm flex-shrink-0 group-hover/link:scale-105 transition-transform">
+                                    <div class="w-11 h-11 rounded-xl bg-gradient-to-tr {{ $brandColor }} border flex items-center justify-center font-bold text-sm flex-shrink-0 group-hover/link:scale-105 transition-transform shadow-sm">
                                         {{ strtoupper(substr($provider->slug, 0, 2)) }}
                                     </div>
                                     <div class="min-w-0 flex-1">
-                                        <h4 class="font-bold text-base text-white group-hover/link:text-emerald-400 transition-colors leading-snug">{{ $provider->name }}</h4>
-                                        <div class="text-xs text-zinc-400 font-mono truncate mt-0.5">{{ $provider->slug }}</div>
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <h4 class="font-bold text-base text-zinc-900 dark:text-white group-hover/link:text-emerald-500 transition-colors leading-snug truncate">
+                                                {{ $provider->name }}
+                                            </h4>
+                                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md border {{ $provider->format === 'anthropic' ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/20' : 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20' }}">
+                                                {{ $provider->format }}
+                                            </span>
+                                        </div>
+                                        <div class="text-xs text-zinc-500 dark:text-zinc-400 font-mono truncate mt-0.5">{{ $provider->slug }}</div>
                                     </div>
                                 </a>
 
-                                <div class="flex items-center gap-1.5 flex-shrink-0 ml-1">
-                                    <span class="text-xs uppercase font-bold px-2 py-0.5 rounded-md {{ $provider->format === 'anthropic' ? 'bg-amber-500/10 text-amber-300 border border-amber-500/20' : 'bg-blue-500/10 text-blue-300 border border-blue-500/20' }}">
-                                        {{ $provider->format }}
-                                    </span>
-                                    <form action="{{ route('dashboard.providers.delete', $provider) }}" method="POST" @click.stop>
+                                <!-- Action Toolbar Pill (Edit & Delete) -->
+                                <div class="flex items-center bg-zinc-100/90 dark:bg-white/[0.04] p-1 rounded-xl border border-zinc-200/80 dark:border-white/[0.06] flex-shrink-0 shadow-sm" @click.stop>
+                                    <button type="button"
+                                        @click.stop="openEditProviderModal({{ json_encode([
+                                            'id' => $provider->id,
+                                            'name' => $provider->name,
+                                            'slug' => $provider->slug,
+                                            'base_url' => $provider->base_url,
+                                            'format' => $provider->format,
+                                            'description' => $provider->description ?? '',
+                                        ]) }})"
+                                        class="w-7 h-7 rounded-lg flex items-center justify-center text-zinc-500 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 hover:bg-white dark:hover:bg-white/10 transition-all cursor-pointer"
+                                        title="Edit Provider">
+                                        <i data-lucide="pencil" class="w-3.5 h-3.5 pointer-events-none"></i>
+                                    </button>
+                                    <div class="w-px h-3.5 bg-zinc-200 dark:bg-white/10 mx-0.5"></div>
+                                    <form action="{{ route('dashboard.providers.delete', $provider) }}" method="POST" @click.stop class="inline-flex">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button"
                                             @click.stop="confirmDelete($el.closest('form'), 'Delete Provider', 'Delete &quot;{{ $provider->name }}&quot; and all associated keys?', 'Yes, Delete Provider')"
-                                            class="p-1.5 text-zinc-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer" title="Delete Provider">
-                                            <i data-lucide="trash-2" class="w-4.5 h-4.5 pointer-events-none"></i>
+                                            class="w-7 h-7 rounded-lg flex items-center justify-center text-zinc-500 hover:text-rose-600 dark:text-zinc-400 dark:hover:text-rose-400 hover:bg-white dark:hover:bg-white/10 transition-all cursor-pointer"
+                                            title="Delete Provider">
+                                            <i data-lucide="trash-2" class="w-3.5 h-3.5 pointer-events-none"></i>
                                         </button>
                                     </form>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Card Middle: Endpoint Pill -->
+                        <div class="my-2.5 px-3 py-1.5 rounded-lg bg-zinc-50 dark:bg-black/20 border border-zinc-200/60 dark:border-white/5 flex items-center justify-between gap-2 text-xs text-zinc-500 dark:text-zinc-400 font-mono">
+                            <span class="truncate">{{ $provider->base_url }}</span>
+                            @if(!empty($provider->description))
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" title="Has Notes & Credentials"></span>
+                            @endif
+                        </div>
+
                         <!-- Card Footer -->
-                        <div class="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs mt-3">
+                        <div class="pt-3 border-t border-zinc-100 dark:border-white/[0.06] flex items-center justify-between text-xs">
                             <div>
                                 @if($hasKeys)
-                                    <div class="font-semibold text-emerald-400 flex items-center gap-1.5 text-xs">
-                                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                    <div class="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 text-xs">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                                         <span>{{ $provider->accounts->count() }} Connected</span>
                                     </div>
                                 @else
-                                    <span class="text-zinc-500 text-xs">No connections</span>
+                                    <span class="text-zinc-400 dark:text-zinc-500 text-xs flex items-center gap-1.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-600"></span>
+                                        No connections
+                                    </span>
                                 @endif
                             </div>
 
@@ -215,14 +246,14 @@
                                 @if($hasKeys)
                                     <button type="button" @click.stop="pingAccount({{ $provider->accounts->first()->id }})"
                                         :disabled="testingAccountId === {{ $provider->accounts->first()->id }}"
-                                        class="px-3 py-1 text-xs font-semibold text-zinc-200 hover:text-white bg-zinc-800/90 hover:bg-zinc-700 rounded-xl border border-white/5 transition-colors flex items-center gap-1.5 cursor-pointer">
-                                        <i data-lucide="play" class="w-3 h-3 text-zinc-400"></i>
+                                        class="px-3 py-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-200 hover:text-zinc-900 dark:hover:text-white bg-zinc-100 hover:bg-zinc-200/80 dark:bg-zinc-800/90 dark:hover:bg-zinc-700 rounded-xl border border-zinc-200/80 dark:border-white/5 transition-colors flex items-center gap-1.5 cursor-pointer shadow-none hover:shadow-sm">
+                                        <i data-lucide="play" class="w-3 h-3 text-emerald-500 dark:text-zinc-400"></i>
                                         <span x-text="testingAccountId === {{ $provider->accounts->first()->id }} ? 'Testing...' : 'Test'"></span>
                                     </button>
                                 @else
                                     <button type="button" @click.stop="openAddKeyModal({{ $provider->id }})"
-                                        class="px-3 py-1 text-xs font-semibold text-zinc-200 hover:text-white bg-zinc-800 hover:bg-zinc-700 rounded-xl border border-white/10 transition-colors flex items-center gap-1.5 cursor-pointer">
-                                        <i data-lucide="plus" class="w-3 h-3 text-emerald-400"></i>
+                                        class="px-3.5 py-1.5 text-xs font-semibold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer">
+                                        <i data-lucide="plus" class="w-3 h-3"></i>
                                         <span>Connect</span>
                                     </button>
                                 @endif
