@@ -20,6 +20,7 @@ class AiProvider extends Model
         'name',
         'base_url',
         'format',
+        'description',
         'models_catalog',
         'is_active',
     ];

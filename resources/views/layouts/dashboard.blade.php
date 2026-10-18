@@ -949,19 +949,12 @@
                         class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500">
                 </div>
 
-                <div class="grid grid-cols-2 gap-3.5">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Slug (Optional)</label>
-                        <input type="text" name="slug" placeholder="e.g. together"
-                            class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 font-mono">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Protocol</label>
-                        <select name="format" x-model="customProviderFormat" class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
-                            <option value="openai">OpenAI (/chat/completions)</option>
-                            <option value="anthropic">Anthropic (/messages)</option>
-                        </select>
-                    </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Protocol</label>
+                    <select name="format" x-model="customProviderFormat" class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                        <option value="openai">OpenAI (/chat/completions)</option>
+                        <option value="anthropic">Anthropic (/messages)</option>
+                    </select>
                 </div>
 
                 <div>
@@ -971,9 +964,9 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Model Catalog (Comma-separated)</label>
-                    <textarea name="models_catalog" rows="3" placeholder="meta-llama/Llama-3-70b-chat-hf, mistralai/Mixtral-8x7B"
-                        class="w-full bg-[#09090b] border border-white/10 rounded-xl p-3.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 font-mono resize-none"></textarea>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Description & Notes (Optional)</label>
+                    <textarea name="description" rows="3" placeholder="e.g. Website link, account email, login info, billing note, or documentation URL..."
+                        class="w-full bg-[#09090b] border border-white/10 rounded-xl p-3.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 resize-none"></textarea>
                 </div>
 
                 <div class="pt-4 border-t border-white/[0.06] flex items-center justify-end gap-2.5">

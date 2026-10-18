@@ -31,6 +31,7 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
 
     // Providers & Accounts
     Route::post('/providers', [AdminDashboardController::class, 'storeProvider'])->name('providers.store');
+    Route::put('/providers/{provider}', [AdminDashboardController::class, 'updateProvider'])->name('providers.update');
     Route::delete('/providers/{provider}', [AdminDashboardController::class, 'deleteProvider'])->name('providers.delete');
     Route::post('/accounts', [AdminDashboardController::class, 'storeAccount'])->name('accounts.store');
     Route::post('/accounts/{account}/toggle', [AdminDashboardController::class, 'toggleAccount'])->name('accounts.toggle');

@@ -64,6 +64,7 @@
                         <span>&bull;</span>
                         <code class="font-mono text-zinc-300 select-all text-xs bg-black/30 px-2 py-0.5 rounded border border-white/5">{{ $provider->base_url }}</code>
                     </div>
+                    </div>
                 </div>
             </div>
 
@@ -74,6 +75,39 @@
                     <span>Add Connection</span>
                 </button>
             </div>
+        </div>
+
+        <!-- Provider Notes & Info -->
+        <div x-data="{ editingNotes: false }" class="mt-4 p-4 rounded-xl bg-[#121622]/90 border border-white/[0.07] text-xs sm:text-sm text-zinc-300 shadow-md">
+            <div class="flex items-center justify-between gap-3 mb-2">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="file-text" class="w-4 h-4 text-emerald-400 flex-shrink-0"></i>
+                    <span class="text-xs uppercase font-bold text-zinc-400 tracking-wider">Provider Notes & Account Info</span>
+                </div>
+                <button type="button" @click="editingNotes = !editingNotes" class="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white px-2.5 py-1 rounded-lg hover:bg-white/5 transition-colors border border-white/5">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                    <span x-text="editingNotes ? 'Close' : '{{ !empty($provider->description) ? 'Edit Note' : 'Add Note' }}'"></span>
+                </button>
+            </div>
+
+            <div x-show="!editingNotes">
+                @if(!empty($provider->description))
+                    <p class="leading-relaxed text-zinc-300 whitespace-pre-wrap font-sans text-xs sm:text-sm">{{ $provider->description }}</p>
+                @else
+                    <p class="text-zinc-500 italic text-xs">No notes or account credentials added yet. Click "Add Note" to save portal links, passwords, or billing info.</p>
+                @endif
+            </div>
+
+            <form x-show="editingNotes" action="{{ route('dashboard.providers.update', $provider) }}" method="POST" class="space-y-3 mt-2" x-cloak>
+                @csrf
+                @method('PUT')
+                <textarea name="description" rows="3" placeholder="e.g. Website URL: https://..., Username/Email: admin@..., API Dashboard: ..., Billing Notes: ..."
+                    class="w-full bg-[#09090b] border border-white/10 rounded-xl p-3 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 resize-none font-mono">{{ old('description', $provider->description) }}</textarea>
+                <div class="flex items-center justify-end gap-2">
+                    <button type="button" @click="editingNotes = false" class="px-3 py-1.5 text-xs font-medium text-zinc-400 hover:text-white rounded-lg">Cancel</button>
+                    <button type="submit" class="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs rounded-lg transition-all shadow-sm">Save Note</button>
+                </div>
+            </form>
         </div>
     </div>
 

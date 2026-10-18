@@ -143,6 +143,7 @@ class AdminDashboardController extends Controller
             'slug' => 'nullable|string|max:100|unique:ai_providers,slug',
             'base_url' => 'required|string|url|max:255',
             'format' => 'required|in:openai,anthropic',
+            'description' => 'nullable|string|max:3000',
             'models_catalog' => 'nullable|string',
         ]);
 
@@ -151,18 +152,50 @@ class AdminDashboardController extends Controller
             $catalog = array_values(array_filter(array_map('trim', preg_split('/[\r\n,]+/', $validated['models_catalog']))));
         }
 
-        $slug = !empty($validated['slug']) ? Str::slug($validated['slug']) : Str::slug($validated['name']);
+        $baseSlug = Str::slug($validated['name']);
+        if (empty($baseSlug)) {
+            $baseSlug = 'provider';
+        }
+        $slug = $baseSlug;
+        $counter = 1;
+        while (AiProvider::where('slug', $slug)->exists()) {
+            $slug = "{$baseSlug}-{$counter}";
+            $counter++;
+        }
 
         AiProvider::create([
             'name' => $validated['name'],
             'slug' => $slug,
             'base_url' => $validated['base_url'],
             'format' => $validated['format'],
+            'description' => $validated['description'] ?? null,
             'models_catalog' => $catalog,
             'is_active' => true,
         ]);
 
         return back()->with('success', "Provider '{$validated['name']}' created successfully.");
+    }
+
+    /**
+     * Update an AI provider's description and info.
+     */
+    public function updateProvider(Request $request, AiProvider $provider): RedirectResponse
+    {
+        $validated = $request->validate([
+            'description' => 'nullable|string|max:3000',
+            'base_url' => 'nullable|url|max:255',
+        ]);
+
+        if ($request->has('description')) {
+            $provider->description = $validated['description'];
+        }
+        if (!empty($validated['base_url'])) {
+            $provider->base_url = $validated['base_url'];
+        }
+
+        $provider->save();
+
+        return back()->with('success', "Provider '{$provider->name}' updated successfully.");
     }
 
     /**
