@@ -207,6 +207,84 @@ window.providersManager = function(initialProvidersList = null) {
     };
 };
 
+// Smart Combo Builder Component
+window.comboBuilder = function(initialProviders = []) {
+    const providers = (initialProviders && Array.isArray(initialProviders) && initialProviders.length)
+        ? initialProviders
+        : (window.__comboProviders || []);
+
+    return {
+        providers: providers,
+        catalogSearch: '',
+        customModelInput: '',
+        sequence: [],
+
+        init() {
+            this.$watch('sequence', () => {
+                this.$nextTick(() => {
+                    if (window.lucide) lucide.createIcons();
+                });
+            });
+        },
+
+        matchesCatalogSearch(modelName) {
+            if (!this.catalogSearch || !this.catalogSearch.trim()) return true;
+            return (modelName || '').toLowerCase().includes(this.catalogSearch.toLowerCase().trim());
+        },
+
+        addModel(modelString) {
+            if (!modelString) return;
+            const trimmed = modelString.trim();
+            if (trimmed && !this.sequence.includes(trimmed)) {
+                this.sequence.push(trimmed);
+            }
+        },
+
+        addCustomModel() {
+            if (!this.customModelInput.trim()) return;
+            this.addModel(this.customModelInput.trim());
+            this.customModelInput = '';
+        },
+
+        removeStep(index) {
+            this.sequence.splice(index, 1);
+        },
+
+        moveUp(index) {
+            if (index > 0) {
+                const temp = this.sequence[index];
+                this.sequence[index] = this.sequence[index - 1];
+                this.sequence[index - 1] = temp;
+            }
+        },
+
+        moveDown(index) {
+            if (index < this.sequence.length - 1) {
+                const temp = this.sequence[index];
+                this.sequence[index] = this.sequence[index + 1];
+                this.sequence[index + 1] = temp;
+            }
+        },
+
+        isInSequence(modelString) {
+            return this.sequence.includes(modelString);
+        },
+
+        toggleModel(modelString) {
+            const idx = this.sequence.indexOf(modelString);
+            if (idx >= 0) {
+                this.sequence.splice(idx, 1);
+            } else {
+                this.sequence.push(modelString);
+            }
+        },
+
+        get sequenceString() {
+            return this.sequence.join(', ');
+        }
+    };
+};
+
 // Auto-initialize Lucide Icons on DOM Ready
 document.addEventListener('DOMContentLoaded', function() {
     if (window.lucide) {

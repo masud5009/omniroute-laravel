@@ -79,7 +79,7 @@ class AdminDashboardController extends Controller
     public function combos(): View
     {
         $combos = RoutingCombo::all();
-        $providers = AiProvider::where('is_active', true)->get();
+        $providers = AiProvider::with('accounts')->where('is_active', true)->get();
 
         return view('dashboard.combos', compact('combos', 'providers'));
     }
