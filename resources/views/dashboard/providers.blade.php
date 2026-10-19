@@ -25,14 +25,6 @@
         <!-- ============================================================== -->
         <!-- ZERO PROVIDERS CONFIGURED STATE (NO SEARCH/FILTERS)            -->
         <!-- ============================================================== -->
-        <div class="flex items-center justify-end">
-            <button type="button" @click="openAddCustomProviderModal('openai')"
-                class="px-3.5 py-2 text-xs sm:text-sm font-semibold bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white rounded-xl transition-all shadow-md shadow-rose-950/30 flex items-center gap-2 cursor-pointer"
-                style="color: #ffffff !important;">
-                <i data-lucide="plus" class="w-4 h-4" style="color: #ffffff !important; stroke: #ffffff !important;"></i>
-                <span style="color: #ffffff !important;">Add Custom Provider</span>
-            </button>
-        </div>
 
         <div class="border border-dashed border-zinc-200 dark:border-white/10 rounded-2xl p-12 text-center text-zinc-500 text-base flex flex-col items-center justify-center gap-3.5 bg-zinc-50/50 dark:bg-[#121622]/40">
             <div class="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 flex items-center justify-center">
