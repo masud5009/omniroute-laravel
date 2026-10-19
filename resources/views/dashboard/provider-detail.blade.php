@@ -110,20 +110,6 @@ window.providerDetailManager = function() {
     <!-- BREADCRUMB & HEADER                                            -->
     <!-- ============================================================== -->
     <div>
-        <!-- Breadcrumb & Back Link -->
-        <div class="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400 mb-2.5">
-            <a href="{{ route('dashboard.providers') }}" class="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">Dashboard</a>
-            <span>&rsaquo;</span>
-            <a href="{{ route('dashboard.providers') }}" class="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">Providers</a>
-            <span>&rsaquo;</span>
-            <span class="text-zinc-900 dark:text-white font-semibold">{{ $provider->name }}</span>
-        </div>
-
-        <a href="{{ route('dashboard.providers') }}" class="inline-flex items-center gap-2 text-xs font-semibold text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors mb-4 group">
-            <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform"></i>
-            <span>Back to Providers</span>
-        </a>
-
         <!-- Provider Title Header Banner -->
         <div class="bg-white dark:bg-[#121622] border border-zinc-200/90 dark:border-white/[0.08] rounded-2xl p-6 shadow-sm flex items-center justify-between gap-5 flex-wrap">
             <div class="flex items-center gap-4 min-w-0">
