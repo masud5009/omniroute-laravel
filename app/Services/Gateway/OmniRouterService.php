@@ -7,6 +7,10 @@ use App\Models\GatewayKey;
 use App\Models\GatewayLog;
 use App\Models\ProviderAccount;
 use App\Models\RoutingCombo;
+use App\Services\Gateway\CostCalculatorService;
+use App\Services\Gateway\PromptCompressor;
+use App\Services\Gateway\ResponseCacheService;
+use App\Services\Notification\AlertNotificationService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -14,13 +18,20 @@ use RuntimeException;
 
 class OmniRouterService
 {
+    protected AlertNotificationService $alertService;
+
     /**
      * Create a new OmniRouterService instance.
      */
     public function __construct(
         protected PromptCompressor $promptCompressor,
-        protected FormatTranslator $formatTranslator
-    ) {}
+        protected FormatTranslator $formatTranslator,
+        protected ResponseCacheService $cacheService,
+        protected CostCalculatorService $costCalculator,
+        ?AlertNotificationService $alertService = null
+    ) {
+        $this->alertService = $alertService ?? new AlertNotificationService();
+    }
 
     /**
      * Resolve target providers and models for a given requested model or combo.
@@ -200,12 +211,71 @@ class OmniRouterService
             }
         }
 
-        // 3. Compress prompts
+        // 3. Compress prompts & apply PII redaction guardrails
         $savedTokens = 0;
+        $redactedPiiCount = 0;
         if (!empty($payload['messages']) && is_array($payload['messages'])) {
             $compressed = $this->promptCompressor->compress($payload['messages'], $compressionModes);
             $payload['messages'] = $compressed['messages'];
             $savedTokens = $compressed['saved_tokens'];
+            $redactedPiiCount = $compressed['redacted_pii_count'] ?? 0;
+        }
+
+        // 3.5 Check Response Cache
+        $isCacheable = $this->cacheService->isCacheable($payload);
+        $cacheKey = $isCacheable ? $this->cacheService->generateKey($payload) : null;
+
+        if ($cacheKey) {
+            $cachedEntry = $this->cacheService->get($cacheKey);
+            if ($cachedEntry !== null) {
+                $cacheLatencyMs = max(1, (int) round((microtime(true) - $overallStartTime) * 1000));
+                $cachedResponse = $cachedEntry['response'] ?? [];
+                $cachedMeta = $cachedEntry['meta'] ?? [];
+
+                $promptTokens = (int) ($cachedResponse['usage']['prompt_tokens'] ?? 0);
+                $completionTokens = (int) ($cachedResponse['usage']['completion_tokens'] ?? 0);
+                $totalTokens = (int) ($cachedResponse['usage']['total_tokens'] ?? ($promptTokens + $completionTokens));
+
+                $costData = $this->costCalculator->calculate(
+                    $cachedMeta['model'] ?? $requestedModel,
+                    $promptTokens,
+                    $completionTokens,
+                    $totalTokens,
+                    true
+                );
+
+                GatewayLog::create([
+                    'gateway_key_id' => $gatewayKey?->id,
+                    'requested_model' => $requestedModel,
+                    'routed_provider' => $cachedMeta['provider'] ?? 'cache',
+                    'routed_model' => $cachedMeta['model'] ?? $requestedModel,
+                    'account_label' => 'cache-hit',
+                    'prompt_tokens' => $promptTokens,
+                    'completion_tokens' => $completionTokens,
+                    'total_tokens' => $totalTokens,
+                    'saved_tokens' => $totalTokens,
+                    'cost_usd' => $costData['cost_usd'],
+                    'cost_saved_usd' => $costData['cost_saved_usd'],
+                    'latency_ms' => $cacheLatencyMs,
+                    'status_code' => 200,
+                    'is_cached' => true,
+                    'redacted_pii_count' => $redactedPiiCount,
+                    'error_message' => null,
+                ]);
+
+                return [
+                    'response' => $cachedResponse,
+                    'meta' => array_merge($cachedMeta, [
+                        'cached' => true,
+                        'cache_hit' => true,
+                        'saved_tokens' => $totalTokens,
+                        'cost_usd' => $costData['cost_usd'],
+                        'cost_saved_usd' => $costData['cost_saved_usd'],
+                        'latency_ms' => $cacheLatencyMs,
+                        'redacted_pii_count' => $redactedPiiCount,
+                    ]),
+                ];
+            }
         }
 
         $attemptErrors = [];
@@ -240,25 +310,10 @@ class OmniRouterService
                 $targetPayload = $payload;
                 $targetPayload['model'] = $modelName;
 
-                $format = $provider->format;
-                $baseUrl = rtrim($provider->base_url, '/');
-
-                if ($format === 'anthropic') {
-                    $url = str_ends_with($baseUrl, '/messages') ? $baseUrl : $baseUrl . '/messages';
-                    $headers = [
-                        'x-api-key' => $account->api_key,
-                        'anthropic-version' => '2023-06-01',
-                        'Content-Type' => 'application/json',
-                    ];
-                    $body = $this->formatTranslator->toAnthropicPayload($modelName, $targetPayload);
-                } else {
-                    $url = str_ends_with($baseUrl, '/chat/completions') ? $baseUrl : $baseUrl . '/chat/completions';
-                    $headers = [
-                        'Authorization' => 'Bearer ' . $account->api_key,
-                        'Content-Type' => 'application/json',
-                    ];
-                    $body = $targetPayload;
-                }
+                $adapter = $this->formatTranslator->getAdapter($provider->format ?? 'openai');
+                $url = $adapter->buildUrl($provider->base_url, $modelName, false, $account->api_key);
+                $headers = $adapter->formatHeaders($account->api_key, false);
+                $body = $adapter->formatPayload($modelName, $targetPayload);
 
                 $reqStartTime = microtime(true);
 
@@ -279,11 +334,7 @@ class OmniRouterService
                 // HTTP 200 Success
                 if ($statusCode === 200 && $response && $response->successful()) {
                     $rawJson = $response->json();
-                    if ($format === 'anthropic') {
-                        $normalizedData = $this->formatTranslator->fromAnthropicResponse($rawJson, $modelName);
-                    } else {
-                        $normalizedData = $rawJson;
-                    }
+                    $normalizedData = $adapter->parseResponse($rawJson, $modelName);
 
                     $promptTokens = (int) ($normalizedData['usage']['prompt_tokens'] ?? 0);
                     $completionTokens = (int) ($normalizedData['usage']['completion_tokens'] ?? 0);
@@ -302,7 +353,16 @@ class OmniRouterService
                         $gatewayKey->update([
                             'last_used_at' => now(),
                         ]);
+                        \App\Http\Middleware\EnforceGatewayRateLimits::recordTokenUsage($gatewayKey, $totalTokens);
                     }
+
+                    $costData = $this->costCalculator->calculate(
+                        $modelName,
+                        $promptTokens,
+                        $completionTokens,
+                        $savedTokens,
+                        false
+                    );
 
                     // Create successful GatewayLog record
                     GatewayLog::create([
@@ -315,21 +375,36 @@ class OmniRouterService
                         'completion_tokens' => $completionTokens,
                         'total_tokens' => $totalTokens,
                         'saved_tokens' => $savedTokens,
+                        'cost_usd' => $costData['cost_usd'],
+                        'cost_saved_usd' => $costData['cost_saved_usd'],
                         'latency_ms' => $latencyMs,
                         'status_code' => 200,
+                        'is_cached' => false,
+                        'redacted_pii_count' => $redactedPiiCount,
                         'error_message' => null,
                     ]);
 
-                    return [
+                    $result = [
                         'response' => $normalizedData,
                         'meta' => [
                             'provider' => $providerSlug,
                             'model' => $modelName,
                             'account' => $account->label,
                             'saved_tokens' => $savedTokens,
+                            'cost_usd' => $costData['cost_usd'],
+                            'cost_saved_usd' => $costData['cost_saved_usd'],
                             'latency_ms' => $latencyMs,
+                            'cached' => false,
+                            'redacted_pii_count' => $redactedPiiCount,
                         ],
                     ];
+
+                    // Store into response cache if cacheable
+                    if ($cacheKey) {
+                        $this->cacheService->put($cacheKey, $normalizedData, $result['meta']);
+                    }
+
+                    return $result;
                 }
 
                 // Handle Failure: Rate limit, Auth/Quota, or 5xx
@@ -338,10 +413,13 @@ class OmniRouterService
 
                 if ($statusCode === 429) {
                     $account->markCooldown(2, "HTTP 429 Rate Limit: {$errorSnippet}");
+                    $this->alertService->notifyAccountCooldown($account->label, $providerSlug, 429, $errorSnippet);
                 } elseif (in_array($statusCode, [401, 402, 403], true)) {
                     $account->markCooldown(60, "HTTP {$statusCode} Auth/Quota: {$errorSnippet}");
+                    $this->alertService->notifyAccountCooldown($account->label, $providerSlug, $statusCode, $errorSnippet);
                 } elseif ($statusCode >= 500) {
                     $account->markCooldown(1, "HTTP {$statusCode}: {$errorSnippet}");
+                    $this->alertService->notifyAccountCooldown($account->label, $providerSlug, $statusCode, $errorSnippet);
                 } else {
                     // Client/model mismatch errors (e.g. 400 Bad Request, 404) do not disable the API account
                     $account->update(['last_error' => "HTTP {$statusCode}: {$errorSnippet}"]);
@@ -352,6 +430,7 @@ class OmniRouterService
                 // Trip circuit breaker if fail_count reaches 5
                 if ($account->fresh()->fail_count >= 5) {
                     Cache::put("circuit_open:{$providerSlug}", true, now()->addMinutes(1));
+                    $this->alertService->notifyCircuitBreakerTripped($providerSlug, "5 consecutive failures on '{$account->label}' ({$errorSnippet})");
                 }
             }
         }
@@ -372,6 +451,7 @@ class OmniRouterService
             'saved_tokens' => $savedTokens,
             'latency_ms' => $totalLatency,
             'status_code' => 502,
+            'redacted_pii_count' => $redactedPiiCount,
             'error_message' => $summary ?: 'All providers and accounts failed.',
         ]);
 

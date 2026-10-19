@@ -9,6 +9,7 @@
     $freeTierCount = $providers->filter(fn($p) => in_array($p->slug, $freeSlugs))->count();
     $openaiCount = $providers->filter(fn($p) => $p->format === 'openai')->count();
     $anthropicCount = $providers->filter(fn($p) => $p->format === 'anthropic')->count();
+    $geminiCount = $providers->filter(fn($p) => $p->format === 'gemini')->count();
 
     $providersList = $providers->map(fn($p) => [
         'id' => $p->id,
@@ -137,6 +138,14 @@
                     <span>Anthropic</span>
                     <span class="text-zinc-400 font-mono">{{ $anthropicCount }}</span>
                 </button>
+
+                <button type="button" @click="providerFilter = 'gemini'"
+                    :class="providerFilter === 'gemini' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30 font-semibold' : 'bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-white/5'"
+                    class="px-3 py-1 rounded-full transition-colors flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                    <span>Gemini</span>
+                    <span class="text-zinc-400 font-mono">{{ $geminiCount }}</span>
+                </button>
             </div>
         </div>
 
@@ -187,7 +196,7 @@
                                             <h4 class="font-bold text-base text-zinc-900 dark:text-white group-hover/link:text-emerald-500 transition-colors leading-snug truncate">
                                                 {{ $provider->name }}
                                             </h4>
-                                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md border {{ $provider->format === 'anthropic' ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/20' : 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20' }}">
+                                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md border {{ $provider->format === 'anthropic' ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/20' : ($provider->format === 'gemini' ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-500/10 dark:text-blue-300 dark:border-blue-500/20' : 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20') }}">
                                                 {{ $provider->format }}
                                             </span>
                                         </div>

@@ -25,8 +25,12 @@ class GatewayLog extends Model
         'completion_tokens',
         'total_tokens',
         'saved_tokens',
+        'cost_usd',
+        'cost_saved_usd',
         'latency_ms',
         'status_code',
+        'is_cached',
+        'redacted_pii_count',
         'error_message',
     ];
 
@@ -42,8 +46,12 @@ class GatewayLog extends Model
             'completion_tokens' => 'integer',
             'total_tokens' => 'integer',
             'saved_tokens' => 'integer',
+            'cost_usd' => 'float',
+            'cost_saved_usd' => 'float',
             'latency_ms' => 'integer',
             'status_code' => 'integer',
+            'is_cached' => 'boolean',
+            'redacted_pii_count' => 'integer',
         ];
     }
 

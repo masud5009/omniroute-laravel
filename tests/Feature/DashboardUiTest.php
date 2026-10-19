@@ -3,10 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 class DashboardUiTest extends TestCase
 {
+    use DatabaseTransactions;
     public function test_login_page_renders_with_redesigned_ui(): void
     {
         $response = $this->get('/login');

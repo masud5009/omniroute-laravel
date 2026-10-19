@@ -27,11 +27,21 @@ class PromptCompressor
     ];
 
     /**
+     * DataGuardrailService instance.
+     */
+    protected DataGuardrailService $guardrails;
+
+    public function __construct(?DataGuardrailService $guardrails = null)
+    {
+        $this->guardrails = $guardrails ?? new DataGuardrailService();
+    }
+
+    /**
      * Compress message history based on enabled modes.
      *
      * @param array<int, array{role: string, content: string|array}> $messages
      * @param array<int, string> $modes
-     * @return array{messages: array, saved_tokens: int}
+     * @return array{messages: array, saved_tokens: int, redacted_pii_count: int}
      */
     public function compress(array $messages, array $modes = ['dedup', 'lite']): array
     {
@@ -39,7 +49,17 @@ class PromptCompressor
             return [
                 'messages' => [],
                 'saved_tokens' => 0,
+                'redacted_pii_count' => 0,
             ];
+        }
+
+        $redactedPiiCount = 0;
+
+        // 0. Mode 'pii' / 'pii_redaction': Redact sensitive personal data before sending to downstream AI
+        if (in_array('pii', $modes, true) || in_array('pii_redaction', $modes, true)) {
+            $guardrailResult = $this->guardrails->redactMessages($messages);
+            $messages = $guardrailResult['messages'];
+            $redactedPiiCount = $guardrailResult['count'];
         }
 
         $originalJson = json_encode($messages, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -95,6 +115,7 @@ class PromptCompressor
         return [
             'messages' => array_values($messages),
             'saved_tokens' => $savedTokens,
+            'redacted_pii_count' => $redactedPiiCount,
         ];
     }
 

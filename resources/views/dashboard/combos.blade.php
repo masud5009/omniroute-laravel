@@ -108,10 +108,17 @@
                         </div>
 
                         @if(!empty($combo->compression_modes))
-                            <div class="flex items-center gap-2 flex-wrap text-xs mb-2">
-                                <span class="text-zinc-500 dark:text-zinc-400 font-medium">Compression:</span>
+                            <div class="flex items-center gap-1.5 flex-wrap text-xs mb-2">
+                                <span class="text-zinc-500 dark:text-zinc-400 font-medium">Pipeline:</span>
                                 @foreach($combo->compression_modes as $mode)
-                                    <span class="bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-md font-mono">{{ $mode }}</span>
+                                    @if($mode === 'pii' || $mode === 'pii_redaction')
+                                        <span class="bg-purple-500/10 border border-purple-500/20 text-purple-400 px-2 py-0.5 rounded-md font-mono inline-flex items-center gap-1">
+                                            <i data-lucide="shield-check" class="w-3 h-3 text-purple-400"></i>
+                                            <span>pii-guard</span>
+                                        </span>
+                                    @else
+                                        <span class="bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-md font-mono">{{ $mode }}</span>
+                                    @endif
                                 @endforeach
                             </div>
                         @endif
@@ -207,8 +214,8 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 mb-2">Prompt Compression Pipeline</label>
-                        <div class="flex items-center gap-3 flex-wrap text-xs text-zinc-700 dark:text-zinc-300">
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 mb-2">Prompt Compression & Privacy Guardrails</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-zinc-700 dark:text-zinc-300">
                             <label class="flex items-center gap-2 bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-white/5 px-3 py-2 rounded-xl cursor-pointer hover:border-zinc-300 dark:hover:border-white/10">
                                 <input type="checkbox" name="compression_modes[]" value="dedup" checked class="rounded border-zinc-300 dark:border-white/10 text-emerald-500 focus:ring-emerald-500">
                                 <span><strong>dedup</strong>: Deduplicate repeated system messages</span>
@@ -220,6 +227,10 @@
                             <label class="flex items-center gap-2 bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-white/5 px-3 py-2 rounded-xl cursor-pointer hover:border-zinc-300 dark:hover:border-white/10">
                                 <input type="checkbox" name="compression_modes[]" value="caveman" class="rounded border-zinc-300 dark:border-white/10 text-emerald-500 focus:ring-emerald-500">
                                 <span><strong>caveman</strong>: Strip conversational filler</span>
+                            </label>
+                            <label class="flex items-center gap-2 bg-zinc-50 dark:bg-[#09090b] border border-purple-500/20 px-3 py-2 rounded-xl cursor-pointer hover:border-purple-500/40">
+                                <input type="checkbox" name="compression_modes[]" value="pii" checked class="rounded border-zinc-300 dark:border-white/10 text-purple-500 focus:ring-purple-500">
+                                <span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-purple-400"></i><strong class="text-purple-400">pii</strong>: Mask API keys, cards, emails & phones</span>
                             </label>
                         </div>
                     </div>

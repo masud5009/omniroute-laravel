@@ -28,6 +28,9 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
     Route::get('/playground', [AdminDashboardController::class, 'playground'])->name('playground');
     Route::get('/logs', [AdminDashboardController::class, 'logs'])->name('logs');
     Route::get('/settings', [AdminDashboardController::class, 'settings'])->name('settings');
+    Route::put('/settings/alerts', [AdminDashboardController::class, 'updateAlertSettings'])->name('settings.alerts.update');
+    Route::post('/settings/alerts/test', [AdminDashboardController::class, 'testAlertWebhook'])->name('settings.alerts.test');
+    Route::get('/analytics/charts', [AdminDashboardController::class, 'chartAnalytics'])->name('analytics.charts');
 
     // Providers & Accounts
     Route::post('/providers', [AdminDashboardController::class, 'storeProvider'])->name('providers.store');
@@ -46,11 +49,13 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
 
     // Gateway Keys
     Route::post('/gateway-keys', [AdminDashboardController::class, 'storeGatewayKey'])->name('gateway-keys.store');
+    Route::put('/gateway-keys/{gatewayKey}', [AdminDashboardController::class, 'updateGatewayKey'])->name('gateway-keys.update');
     Route::post('/gateway-keys/{gatewayKey}/toggle', [AdminDashboardController::class, 'toggleGatewayKey'])->name('gateway-keys.toggle');
     Route::delete('/gateway-keys/{gatewayKey}', [AdminDashboardController::class, 'deleteGatewayKey'])->name('gateway-keys.delete');
 
-    // Logs & Playground
+    // Logs, Cache & Playground
     Route::post('/logs/clear', [AdminDashboardController::class, 'clearLogs'])->name('logs.clear');
+    Route::post('/cache/purge', [AdminDashboardController::class, 'purgeCache'])->name('cache.purge');
     Route::post('/playground/chat', [AdminDashboardController::class, 'playgroundChat'])->name('playground.chat');
 });
 

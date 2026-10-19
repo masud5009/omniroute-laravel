@@ -17,6 +17,7 @@
                         <th class="py-3.5 px-4">Account Label</th>
                         <th class="py-3.5 px-4">Tokens (Prompt + Compl)</th>
                         <th class="py-3.5 px-4">Tokens Saved</th>
+                        <th class="py-3.5 px-4">Est. Cost</th>
                         <th class="py-3.5 px-4">Latency</th>
                         <th class="py-3.5 px-4 text-right">
                             @if($logs->isNotEmpty())
@@ -66,17 +67,45 @@
                                 <span class="text-zinc-500 text-xs">({{ $log->prompt_tokens }} + {{ $log->completion_tokens }})</span>
                             </td>
                             <td class="py-3.5 px-4 font-mono text-emerald-400 text-xs font-medium">
-                                @if($log->saved_tokens > 0)
-                                    +{{ number_format($log->saved_tokens) }}
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    @if($log->saved_tokens > 0)
+                                        <span>+{{ number_format($log->saved_tokens) }}</span>
+                                    @else
+                                        <span class="text-zinc-600">0</span>
+                                    @endif
+
+                                    @if($log->redacted_pii_count > 0)
+                                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20" title="{{ $log->redacted_pii_count }} sensitive PII items redacted before upstream delivery">
+                                            <i data-lucide="shield-check" class="w-3 h-3 text-purple-400"></i>
+                                            <span>{{ $log->redacted_pii_count }} PII</span>
+                                        </span>
+                                    @endif
+                                </div>
+                            </td>
+                            <td class="py-3.5 px-4 font-mono whitespace-nowrap">
+                                @if($log->is_cached)
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-zinc-500 line-through text-[11px]">${{ number_format($log->cost_saved_usd, 5) }}</span>
+                                        <span class="text-emerald-400 font-semibold text-xs">$0.00</span>
+                                    </div>
+                                    <div class="text-[10px] text-emerald-400 font-medium">Saved ${{ number_format($log->cost_saved_usd, 5) }}</div>
                                 @else
-                                    <span class="text-zinc-600">0</span>
+                                    <div class="text-zinc-200 font-semibold text-xs">${{ number_format($log->cost_usd, 5) }}</div>
+                                    @if($log->cost_saved_usd > 0)
+                                        <div class="text-[10px] text-emerald-400 font-medium">+${{ number_format($log->cost_saved_usd, 5) }} saved</div>
+                                    @endif
                                 @endif
                             </td>
                             <td class="py-3.5 px-4 font-mono text-amber-400 text-xs font-medium whitespace-nowrap">
                                 {{ $log->latency_ms }} ms
                             </td>
                             <td class="py-3.5 px-4 whitespace-nowrap">
-                                @if($log->status_code === 200)
+                                @if($log->is_cached)
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-300 mr-1.5"></span>
+                                        Cached
+                                    </span>
+                                @elseif($log->status_code === 200)
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span>
                                         200 OK
@@ -91,7 +120,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="py-14 text-center text-zinc-500 text-sm">
+                            <td colspan="10" class="py-14 text-center text-zinc-500 text-sm">
                                 <div class="w-14 h-14 rounded-2xl bg-zinc-800/80 border border-white/5 mx-auto flex items-center justify-center text-zinc-400 mb-3.5">
                                     <i data-lucide="activity" class="w-7 h-7"></i>
                                 </div>

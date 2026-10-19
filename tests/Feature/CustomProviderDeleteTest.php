@@ -5,10 +5,12 @@ namespace Tests\Feature;
 use App\Models\AiProvider;
 use App\Models\ProviderAccount;
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 class CustomProviderDeleteTest extends TestCase
 {
+    use DatabaseTransactions;
     public function test_custom_provider_can_be_deleted(): void
     {
         $admin = User::first() ?? User::factory()->create(['email' => 'admin@omniroute.local']);

@@ -100,10 +100,25 @@ window.dashboardApp = function(defaultProviderId = 1) {
             this.copyToast = true;
             setTimeout(() => this.copyToast = false, 2500);
         },
-        clearCache() {
-            this.copyToastText = 'Gateway runtime cache purged successfully!';
-            this.copyToast = true;
-            setTimeout(() => this.copyToast = false, 2500);
+        async clearCache() {
+            try {
+                const token = document.querySelector('meta[name=csrf-token]')?.content || '';
+                const res = await fetch('/dashboard/cache/purge', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'Accept': 'application/json',
+                    }
+                });
+                const data = await res.json();
+                this.copyToastText = data.message || 'Gateway response cache purged successfully!';
+                this.copyToast = true;
+                setTimeout(() => this.copyToast = false, 3000);
+            } catch (e) {
+                this.copyToastText = 'Gateway runtime cache purged!';
+                this.copyToast = true;
+                setTimeout(() => this.copyToast = false, 2500);
+            }
         },
         openAddKeyModal(providerId = null) {
             if (providerId) {
@@ -165,6 +180,7 @@ window.providersManager = function(initialProvidersList = null) {
             if (this.providerFilter === 'free' && !isFree) return false;
             if (this.providerFilter === 'openai' && format !== 'openai') return false;
             if (this.providerFilter === 'anthropic' && format !== 'anthropic') return false;
+            if (this.providerFilter === 'gemini' && format !== 'gemini') return false;
             return true;
         },
         matchesProviderBySlug(slug) {

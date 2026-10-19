@@ -7,9 +7,12 @@ use App\Models\AiProvider;
 use App\Models\GatewayKey;
 use App\Models\GatewayLog;
 use App\Models\RoutingCombo;
+use App\Services\Gateway\CostCalculatorService;
 use App\Services\Gateway\FormatTranslator;
 use App\Services\Gateway\OmniRouterService;
 use App\Services\Gateway\PromptCompressor;
+use App\Services\Gateway\ResponseCacheService;
+use App\Services\Notification\AlertNotificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -18,14 +21,21 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class GatewayController extends Controller
 {
+    protected AlertNotificationService $alertService;
+
     /**
      * Create a new GatewayController instance.
      */
     public function __construct(
         protected OmniRouterService $router,
         protected PromptCompressor $compressor,
-        protected FormatTranslator $translator
-    ) {}
+        protected FormatTranslator $translator,
+        protected ResponseCacheService $cacheService,
+        protected CostCalculatorService $costCalculator,
+        ?AlertNotificationService $alertService = null
+    ) {
+        $this->alertService = $alertService ?? new AlertNotificationService();
+    }
 
     /**
      * Return OpenAI-compatible model list.
@@ -117,10 +127,14 @@ class GatewayController extends Controller
             $result = $this->router->dispatchSync($payload, $gatewayKey);
 
             return response()->json($result['response'], 200, [
+                'X-OmniRoute-Cache' => !empty($result['meta']['cached']) ? 'HIT' : 'MISS',
                 'X-OmniRoute-Provider' => $result['meta']['provider'] ?? '',
                 'X-OmniRoute-Model' => $result['meta']['model'] ?? '',
                 'X-OmniRoute-Account' => $result['meta']['account'] ?? '',
                 'X-OmniRoute-Saved-Tokens' => (string) ($result['meta']['saved_tokens'] ?? 0),
+                'X-OmniRoute-Cost-USD' => (string) ($result['meta']['cost_usd'] ?? 0),
+                'X-OmniRoute-Cost-Saved-USD' => (string) ($result['meta']['cost_saved_usd'] ?? 0),
+                'X-OmniRoute-Redacted-PII' => (string) ($result['meta']['redacted_pii_count'] ?? 0),
                 'X-OmniRoute-Latency-Ms' => (string) ($result['meta']['latency_ms'] ?? 0),
             ]);
         } catch (\Throwable $e) {
@@ -153,16 +167,105 @@ class GatewayController extends Controller
             $streamStartTime = microtime(true);
             $requestedModel = $payload['model'] ?? 'auto';
 
+            // 1. Check Response Cache for instantaneous SSE replay
+            $isCacheable = $this->cacheService->isCacheable($payload);
+            $cacheKey = $isCacheable ? $this->cacheService->generateKey($payload) : null;
+
+            if ($cacheKey) {
+                $cachedEntry = $this->cacheService->get($cacheKey);
+                if ($cachedEntry !== null) {
+                    $cachedResponse = $cachedEntry['response'] ?? [];
+                    $cachedMeta = $cachedEntry['meta'] ?? [];
+                    $cachedContent = $cachedResponse['choices'][0]['message']['content'] ?? '';
+
+                    $chunkId = 'chatcmpl-cache-' . bin2hex(random_bytes(6));
+                    $created = time();
+
+                    // Emit cached content chunk
+                    $sseChunk = [
+                        'id' => $chunkId,
+                        'object' => 'chat.completion.chunk',
+                        'created' => $created,
+                        'model' => $requestedModel,
+                        'choices' => [
+                            [
+                                'index' => 0,
+                                'delta' => [
+                                    'role' => 'assistant',
+                                    'content' => $cachedContent,
+                                ],
+                                'finish_reason' => null,
+                            ]
+                        ],
+                    ];
+                    echo "data: " . json_encode($sseChunk, JSON_UNESCAPED_UNICODE) . "\n\n";
+
+                    // Emit finish chunk
+                    $sseFinish = [
+                        'id' => $chunkId,
+                        'object' => 'chat.completion.chunk',
+                        'created' => $created,
+                        'model' => $requestedModel,
+                        'choices' => [
+                            [
+                                'index' => 0,
+                                'delta' => new \stdClass(),
+                                'finish_reason' => 'stop',
+                            ]
+                        ],
+                    ];
+                    echo "data: " . json_encode($sseFinish, JSON_UNESCAPED_UNICODE) . "\n\n";
+                    echo "data: [DONE]\n\n";
+                    if (ob_get_level() > 0) @ob_flush();
+                    @flush();
+
+                    $latencyMs = max(1, (int) round((microtime(true) - $streamStartTime) * 1000));
+                    $promptTokens = (int) ($cachedResponse['usage']['prompt_tokens'] ?? 0);
+                    $completionTokens = (int) ($cachedResponse['usage']['completion_tokens'] ?? (strlen($cachedContent) / 4));
+                    $totalTokens = (int) ($cachedResponse['usage']['total_tokens'] ?? ($promptTokens + $completionTokens));
+
+                    $costData = $this->costCalculator->calculate(
+                        $cachedMeta['model'] ?? $requestedModel,
+                        $promptTokens,
+                        $completionTokens,
+                        $totalTokens,
+                        true
+                    );
+
+                    GatewayLog::create([
+                        'gateway_key_id' => $gatewayKey?->id,
+                        'requested_model' => $requestedModel,
+                        'routed_provider' => $cachedMeta['provider'] ?? 'cache',
+                        'routed_model' => $cachedMeta['model'] ?? $requestedModel,
+                        'account_label' => 'cache-hit',
+                        'prompt_tokens' => $promptTokens,
+                        'completion_tokens' => $completionTokens,
+                        'total_tokens' => $totalTokens,
+                        'saved_tokens' => $totalTokens,
+                        'cost_usd' => $costData['cost_usd'],
+                        'cost_saved_usd' => $costData['cost_saved_usd'],
+                        'latency_ms' => $latencyMs,
+                        'status_code' => 200,
+                        'is_cached' => true,
+                        'error_message' => null,
+                    ]);
+
+                    return;
+                }
+            }
+
             // Resolve target sequence and compression modes
             $resolved = $this->router->resolveTargets($requestedModel);
             $targets = $resolved['targets'];
             $compressionModes = $resolved['compression_modes'] ?? ['dedup', 'lite'];
 
             $savedTokens = 0;
+            $redactedPiiCount = 0;
             if (!empty($payload['messages']) && is_array($payload['messages'])) {
                 $compressed = $this->compressor->compress($payload['messages'], $compressionModes);
                 $payload['messages'] = $compressed['messages'];
                 $savedTokens = $compressed['saved_tokens'];
+                $redactedPiiCount = $compressed['redacted_pii_count'] ?? 0;
             }
 
             $attemptErrors = [];
@@ -205,27 +308,12 @@ class GatewayController extends Controller
                     $targetPayload['model'] = $modelName;
                     $targetPayload['stream'] = true;
 
-                    $format = $provider->format;
-                    $baseUrl = rtrim($provider->base_url, '/');
+                    $format = $provider->format ?? 'openai';
+                    $adapter = $this->translator->getAdapter($format);
 
-                    if ($format === 'anthropic') {
-                        $url = str_ends_with($baseUrl, '/messages') ? $baseUrl : $baseUrl . '/messages';
-                        $curlHeaders = [
-                            'x-api-key: ' . $account->api_key,
-                            'anthropic-version: 2023-06-01',
-                            'Content-Type: application/json',
-                            'Accept: text/event-stream',
-                        ];
-                        $bodyJson = json_encode($this->translator->toAnthropicPayload($modelName, $targetPayload));
-                    } else {
-                        $url = str_ends_with($baseUrl, '/chat/completions') ? $baseUrl : $baseUrl . '/chat/completions';
-                        $curlHeaders = [
-                            'Authorization: Bearer ' . $account->api_key,
-                            'Content-Type: application/json',
-                            'Accept: text/event-stream',
-                        ];
-                        $bodyJson = json_encode($targetPayload);
-                    }
+                    $url = $adapter->buildUrl($provider->base_url, $modelName, true, $account->api_key);
+                    $curlHeaders = $adapter->formatCurlHeaders($account->api_key, true);
+                    $bodyJson = json_encode($adapter->formatPayload($modelName, $targetPayload));
 
                     // Native cURL handle for precise streaming control
                     $ch = curl_init($url);
@@ -241,6 +329,7 @@ class GatewayController extends Controller
                     $streamStartedForThisAttempt = false;
                     $sseBuffer = '';
                     $streamedChunksCount = 0;
+                    $accumulatedResponseText = '';
 
                     // Inspect HTTP headers as they arrive
                     curl_setopt($ch, CURLOPT_HEADERFUNCTION, function ($ch, $headerLine) use (&$httpStatusCode) {
@@ -257,7 +346,9 @@ class GatewayController extends Controller
                         &$streamStartedForThisAttempt,
                         &$sseBuffer,
                         &$streamedChunksCount,
+                        &$accumulatedResponseText,
                         $format,
+                        $adapter,
                         $modelName
                     ) {
                         // If status is not 200, collect error body without emitting to client
@@ -268,25 +359,37 @@ class GatewayController extends Controller
 
                         $streamStartedForThisAttempt = true;
 
-                        if ($format === 'anthropic') {
+                        if ($format === 'openai') {
+                            echo $chunk;
+                            $streamedChunksCount++;
+                            if (str_starts_with(trim($chunk), 'data: ') && !str_contains($chunk, '[DONE]')) {
+                                $cleanLine = trim(substr(trim($chunk), 6));
+                                $chunkData = json_decode($cleanLine, true);
+                                if (isset($chunkData['choices'][0]['delta']['content'])) {
+                                    $accumulatedResponseText .= $chunkData['choices'][0]['delta']['content'];
+                                }
+                            }
+                            if (ob_get_level() > 0) @ob_flush();
+                            @flush();
+                        } else {
+                            // Non-OpenAI SSE formats (Anthropic, Gemini) stream line by line
                             $sseBuffer .= $chunk;
                             while (($pos = strpos($sseBuffer, "\n")) !== false) {
                                 $line = substr($sseBuffer, 0, $pos);
                                 $sseBuffer = substr($sseBuffer, $pos + 1);
 
-                                $translated = $this->translator->translateAnthropicStreamChunk($line, $modelName);
+                                $translated = $adapter->transformStreamChunk($line, $modelName);
                                 if ($translated !== null) {
                                     echo $translated;
                                     $streamedChunksCount++;
+                                    if (str_starts_with($translated, 'data: ') && !str_contains($translated, '[DONE]')) {
+                                        $chunkData = json_decode(substr(trim($translated), 6), true);
+                                        $accumulatedResponseText .= ($chunkData['choices'][0]['delta']['content'] ?? '');
+                                    }
                                     if (ob_get_level() > 0) @ob_flush();
                                     @flush();
                                 }
                             }
-                        } else {
-                            echo $chunk;
-                            $streamedChunksCount++;
-                            if (ob_get_level() > 0) @ob_flush();
-                            @flush();
                         }
 
                         return strlen($chunk);
@@ -297,9 +400,9 @@ class GatewayController extends Controller
                     $curlError = curl_error($ch);
                     curl_close($ch);
 
-                    // Flush any leftover buffer for Anthropic stream
-                    if ($format === 'anthropic' && $streamStartedForThisAttempt && trim($sseBuffer) !== '') {
-                        $translated = $this->translator->translateAnthropicStreamChunk($sseBuffer, $modelName);
+                    // Flush any leftover buffer for non-OpenAI streams
+                    if ($format !== 'openai' && $streamStartedForThisAttempt && trim($sseBuffer) !== '') {
+                        $translated = $adapter->transformStreamChunk($sseBuffer, $modelName);
                         if ($translated !== null) {
                             echo $translated;
                             if (ob_get_level() > 0) @ob_flush();
@@ -320,7 +423,16 @@ class GatewayController extends Controller
                         if ($gatewayKey) {
                             $gatewayKey->increment('tokens_used_today', max(1, $streamedChunksCount));
                             $gatewayKey->update(['last_used_at' => now()]);
+                            \App\Http\Middleware\EnforceGatewayRateLimits::recordTokenUsage($gatewayKey, max(1, $streamedChunksCount));
                         }
+
+                        $costData = $this->costCalculator->calculate(
+                            $modelName,
+                            0,
+                            $streamedChunksCount,
+                            $savedTokens,
+                            false
+                        );
 
                         GatewayLog::create([
                             'gateway_key_id' => $gatewayKey?->id,
@@ -332,10 +444,45 @@ class GatewayController extends Controller
                             'completion_tokens' => $streamedChunksCount,
                             'total_tokens' => $streamedChunksCount,
                             'saved_tokens' => $savedTokens,
+                            'cost_usd' => $costData['cost_usd'],
+                            'cost_saved_usd' => $costData['cost_saved_usd'],
                             'latency_ms' => $latencyMs,
                             'status_code' => 200,
+                            'is_cached' => false,
+                            'redacted_pii_count' => $redactedPiiCount,
                             'error_message' => null,
                         ]);
+
+                        // Store in Response Cache if cacheable
+                        if ($cacheKey && !empty($accumulatedResponseText)) {
+                            $assembled = [
+                                'id' => 'chatcmpl-cached-' . bin2hex(random_bytes(6)),
+                                'object' => 'chat.completion',
+                                'created' => time(),
+                                'model' => $modelName,
+                                'choices' => [
+                                    [
+                                        'index' => 0,
+                                        'message' => [
+                                            'role' => 'assistant',
+                                            'content' => $accumulatedResponseText,
+                                        ],
+                                        'finish_reason' => 'stop',
+                                    ]
+                                ],
+                                'usage' => [
+                                    'prompt_tokens' => 0,
+                                    'completion_tokens' => $streamedChunksCount,
+                                    'total_tokens' => $streamedChunksCount,
+                                ],
+                            ];
+                            $this->cacheService->put($cacheKey, $assembled, [
+                                'provider' => $providerSlug,
+                                'model' => $modelName,
+                                'account' => $account->label,
+                                'latency_ms' => $latencyMs,
+                            ]);
+                        }
 
                         return;
                     }
@@ -346,10 +493,13 @@ class GatewayController extends Controller
 
                     if ($httpStatusCode === 429) {
                         $account->markCooldown(2, "HTTP 429: {$errSnippet}");
+                        $this->alertService->notifyAccountCooldown($account->label, $providerSlug, 429, $errSnippet);
                     } elseif (in_array($httpStatusCode, [401, 402, 403], true)) {
                         $account->markCooldown(60, "HTTP {$httpStatusCode}: {$errSnippet}");
+                        $this->alertService->notifyAccountCooldown($account->label, $providerSlug, $httpStatusCode, $errSnippet);
                     } elseif ($httpStatusCode >= 500) {
                         $account->markCooldown(1, "HTTP {$httpStatusCode}: {$errSnippet}");
+                        $this->alertService->notifyAccountCooldown($account->label, $providerSlug, $httpStatusCode, $errSnippet);
                     } else {
                         $account->update(['last_error' => "HTTP {$httpStatusCode}: {$errSnippet}"]);
                     }
@@ -358,6 +508,7 @@ class GatewayController extends Controller
 
                     if ($account->fresh()->fail_count >= 5) {
                         Cache::put("circuit_open:{$providerSlug}", true, now()->addMinutes(1));
+                        $this->alertService->notifyCircuitBreakerTripped($providerSlug, "5 consecutive failures in streaming on '{$account->label}' ({$errSnippet})");
                     }
                 }
             }
@@ -390,6 +541,7 @@ class GatewayController extends Controller
                     'saved_tokens' => $savedTokens,
                     'latency_ms' => (int) round((microtime(true) - $streamStartTime) * 1000),
                     'status_code' => 502,
+                    'redacted_pii_count' => $redactedPiiCount,
                     'error_message' => $summary ?: 'All providers failed in streaming mode.',
                 ]);
             }

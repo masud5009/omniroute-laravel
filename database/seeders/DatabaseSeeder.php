@@ -28,14 +28,24 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 2. Pre-configured AI Providers (Optional starter provider)
+        // 2. Pre-configured AI Providers (Native adapters starter providers)
         $providers = [
             [
                 'slug' => 'gemini',
-                'name' => 'Google Gemini',
-                'base_url' => 'https://generativelanguage.googleapis.com/v1beta/openai',
-                'format' => 'openai',
-                'models_catalog' => ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.0-flash'],
+                'name' => 'Google Gemini (Native)',
+                'base_url' => 'https://generativelanguage.googleapis.com/v1beta',
+                'format' => 'gemini',
+                'description' => 'Direct connection to Google Gemini REST API with native SSE streaming support.',
+                'models_catalog' => ['gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-1.5-flash-8b'],
+                'is_active' => true,
+            ],
+            [
+                'slug' => 'anthropic',
+                'name' => 'Anthropic Claude (Native)',
+                'base_url' => 'https://api.anthropic.com/v1',
+                'format' => 'anthropic',
+                'description' => 'Direct connection to Anthropic Messages API with native SSE stream translation.',
+                'models_catalog' => ['claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022', 'claude-3-opus-20240229'],
                 'is_active' => true,
             ],
         ];

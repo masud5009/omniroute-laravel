@@ -8,6 +8,7 @@ use App\Models\GatewayLog;
 use App\Models\ProviderAccount;
 use App\Models\RoutingCombo;
 use App\Services\Gateway\OmniRouterService;
+use App\Services\Gateway\ResponseCacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,7 +22,8 @@ class AdminDashboardController extends Controller
      * Create a new AdminDashboardController instance.
      */
     public function __construct(
-        protected OmniRouterService $router
+        protected OmniRouterService $router,
+        protected ResponseCacheService $cacheService
     ) {}
 
     /**
@@ -35,6 +37,8 @@ class AdminDashboardController extends Controller
             'total_requests_today' => GatewayLog::whereDate('created_at', $today)->count(),
             'total_tokens_today' => (int) GatewayLog::whereDate('created_at', $today)->sum('total_tokens'),
             'total_saved_tokens' => (int) GatewayLog::whereDate('created_at', $today)->sum('saved_tokens'),
+            'total_cost_today' => (float) GatewayLog::whereDate('created_at', $today)->sum('cost_usd'),
+            'total_cost_saved_today' => (float) GatewayLog::whereDate('created_at', $today)->sum('cost_saved_usd'),
             'avg_latency_ms' => (int) round(GatewayLog::whereDate('created_at', $today)->where('status_code', 200)->avg('latency_ms') ?? 0),
             'active_accounts_count' => ProviderAccount::where('is_active', true)
                 ->where(function ($q) {
@@ -44,11 +48,19 @@ class AdminDashboardController extends Controller
                 ->whereNotNull('cooldown_until')
                 ->where('cooldown_until', '>', now())
                 ->count(),
+            'cached_requests_today' => GatewayLog::whereDate('created_at', $today)->where('is_cached', true)->count(),
+            'redacted_pii_today' => (int) GatewayLog::whereDate('created_at', $today)->sum('redacted_pii_count'),
+            'cache_stats' => $this->cacheService->getHitStats(),
         ];
 
         $providers = AiProvider::with([
             'accounts' => fn ($q) => $q->orderBy('priority', 'asc')->orderBy('tokens_used_today', 'asc')
         ])->get();
+
+        $healthMatrixAccounts = ProviderAccount::with('provider')
+            ->latest()
+            ->take(10)
+            ->get();
 
         $combos = RoutingCombo::all();
         $gatewayKeys = GatewayKey::latest()->get();
@@ -57,7 +69,8 @@ class AdminDashboardController extends Controller
             'stats',
             'providers',
             'combos',
-            'gatewayKeys'
+            'gatewayKeys',
+            'healthMatrixAccounts'
         ));
     }
 
@@ -122,7 +135,192 @@ class AdminDashboardController extends Controller
      */
     public function settings(): View
     {
-        return view('dashboard.settings');
+        $alertSettings = \App\Models\AlertSetting::getSettings();
+
+        return view('dashboard.settings', compact('alertSettings'));
+    }
+
+    /**
+     * Update Real-time Failover Alert Webhook Settings.
+     */
+    public function updateAlertSettings(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'is_enabled' => 'nullable|boolean',
+            'webhook_type' => 'required|in:discord,slack,telegram,generic',
+            'webhook_url' => 'nullable|url|max:1000',
+            'telegram_bot_token' => 'nullable|string|max:255',
+            'telegram_chat_id' => 'nullable|string|max:100',
+            'alert_circuit_breaker' => 'nullable|boolean',
+            'alert_account_cooldown' => 'nullable|boolean',
+            'alert_key_limit_exceeded' => 'nullable|boolean',
+        ]);
+
+        $settings = \App\Models\AlertSetting::getSettings();
+        $settings->update([
+            'is_enabled' => $request->boolean('is_enabled'),
+            'webhook_type' => $validated['webhook_type'],
+            'webhook_url' => $validated['webhook_url'] ?? null,
+            'telegram_bot_token' => $validated['telegram_bot_token'] ?? null,
+            'telegram_chat_id' => $validated['telegram_chat_id'] ?? null,
+            'alert_circuit_breaker' => $request->boolean('alert_circuit_breaker'),
+            'alert_account_cooldown' => $request->boolean('alert_account_cooldown'),
+            'alert_key_limit_exceeded' => $request->boolean('alert_key_limit_exceeded'),
+        ]);
+
+        return back()->with('success', 'Real-time alert notification settings updated successfully.');
+    }
+
+    /**
+     * Send a test alert notification to the configured webhook channel.
+     */
+    public function testAlertWebhook(\App\Services\Notification\AlertNotificationService $alertService): JsonResponse
+    {
+        $settings = \App\Models\AlertSetting::getSettings();
+        $result = $alertService->sendTestNotification($settings);
+
+        return response()->json($result);
+    }
+
+    /**
+     * Provide aggregated visual analytics data for ApexCharts on Overview page.
+     */
+    public function chartAnalytics(Request $request): JsonResponse
+    {
+        $period = $request->query('period', 'today');
+        $now = now();
+
+        if ($period === '7d') {
+            $startDate = $now->copy()->subDays(6)->startOfDay();
+            $dateKeys = [];
+            $categories = [];
+            for ($i = 6; $i >= 0; $i--) {
+                $dt = $now->copy()->subDays($i);
+                $key = $dt->format('Y-m-d');
+                $dateKeys[$key] = [
+                    'prompt_tokens' => 0,
+                    'completion_tokens' => 0,
+                    'saved_tokens' => 0,
+                    'latency_sum' => 0,
+                    'latency_count' => 0,
+                    'errors' => 0,
+                ];
+                $categories[$key] = $dt->format('M d');
+            }
+            $groupBy = 'day';
+        } elseif ($period === '30d') {
+            $startDate = $now->copy()->subDays(29)->startOfDay();
+            $dateKeys = [];
+            $categories = [];
+            for ($i = 29; $i >= 0; $i--) {
+                $dt = $now->copy()->subDays($i);
+                $key = $dt->format('Y-m-d');
+                $dateKeys[$key] = [
+                    'prompt_tokens' => 0,
+                    'completion_tokens' => 0,
+                    'saved_tokens' => 0,
+                    'latency_sum' => 0,
+                    'latency_count' => 0,
+                    'errors' => 0,
+                ];
+                $categories[$key] = $dt->format('M d');
+            }
+            $groupBy = 'day';
+        } else {
+            $period = 'today';
+            $startDate = $now->copy()->startOfDay();
+            $dateKeys = [];
+            $categories = [];
+            for ($h = 0; $h < 24; $h++) {
+                $key = sprintf('%02d:00', $h);
+                $dateKeys[$key] = [
+                    'prompt_tokens' => 0,
+                    'completion_tokens' => 0,
+                    'saved_tokens' => 0,
+                    'latency_sum' => 0,
+                    'latency_count' => 0,
+                    'errors' => 0,
+                ];
+                $categories[$key] = $key;
+            }
+            $groupBy = 'hour';
+        }
+
+        $logs = GatewayLog::where('created_at', '>=', $startDate)->get([
+            'prompt_tokens',
+            'completion_tokens',
+            'saved_tokens',
+            'latency_ms',
+            'status_code',
+            'routed_provider',
+            'created_at',
+        ]);
+
+        $providerCounts = [];
+
+        foreach ($logs as $log) {
+            $key = $groupBy === 'hour'
+                ? $log->created_at->format('H:00')
+                : $log->created_at->format('Y-m-d');
+
+            if (isset($dateKeys[$key])) {
+                $dateKeys[$key]['prompt_tokens'] += (int) $log->prompt_tokens;
+                $dateKeys[$key]['completion_tokens'] += (int) $log->completion_tokens;
+                $dateKeys[$key]['saved_tokens'] += (int) $log->saved_tokens;
+
+                if ($log->status_code === 200 && $log->latency_ms > 0) {
+                    $dateKeys[$key]['latency_sum'] += (int) $log->latency_ms;
+                    $dateKeys[$key]['latency_count']++;
+                }
+
+                if ($log->status_code >= 400) {
+                    $dateKeys[$key]['errors']++;
+                }
+            }
+
+            $provider = !empty($log->routed_provider) ? $log->routed_provider : 'direct/combo';
+            $providerCounts[$provider] = ($providerCounts[$provider] ?? 0) + 1;
+        }
+
+        $catList = array_values($categories);
+        $promptList = [];
+        $completionList = [];
+        $savedList = [];
+        $latencyList = [];
+        $errorList = [];
+
+        foreach ($dateKeys as $item) {
+            $promptList[] = $item['prompt_tokens'];
+            $completionList[] = $item['completion_tokens'];
+            $savedList[] = $item['saved_tokens'];
+            $avgLat = $item['latency_count'] > 0 ? (int) round($item['latency_sum'] / $item['latency_count']) : 0;
+            $latencyList[] = $avgLat;
+            $errorList[] = $item['errors'];
+        }
+
+        arsort($providerCounts);
+        $providerLabels = !empty($providerCounts) ? array_keys($providerCounts) : ['No Traffic'];
+        $providerSeries = !empty($providerCounts) ? array_values($providerCounts) : [0];
+
+        return response()->json([
+            'period' => $period,
+            'token_chart' => [
+                'categories' => $catList,
+                'prompt_tokens' => $promptList,
+                'completion_tokens' => $completionList,
+                'saved_tokens' => $savedList,
+            ],
+            'provider_chart' => [
+                'labels' => $providerLabels,
+                'series' => $providerSeries,
+                'total_requests' => $logs->count(),
+            ],
+            'latency_chart' => [
+                'categories' => $catList,
+                'latencies' => $latencyList,
+                'errors' => $errorList,
+            ],
+        ]);
     }
 
     /**
@@ -142,7 +340,7 @@ class AdminDashboardController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:100|unique:ai_providers,slug',
             'base_url' => 'required|string|url|max:255',
-            'format' => 'required|in:openai,anthropic',
+            'format' => 'required|in:openai,anthropic,gemini',
             'description' => 'nullable|string|max:3000',
             'models_catalog' => 'nullable|string',
         ]);
@@ -184,7 +382,7 @@ class AdminDashboardController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'base_url' => 'sometimes|required|url|max:255',
-            'format' => 'sometimes|required|in:openai,anthropic',
+            'format' => 'sometimes|required|in:openai,anthropic,gemini',
             'description' => 'nullable|string|max:3000',
         ]);
 
@@ -308,37 +506,22 @@ class AdminDashboardController extends Controller
         $newCount = count($models) - $beforeCount;
 
         $provider->refresh();
+        $adapter = app(\App\Services\Gateway\Adapters\ProviderAdapterFactory::class)->make($provider->format);
         $model = (!empty($provider->models_catalog) && is_array($provider->models_catalog))
             ? $provider->models_catalog[0]
-            : ($provider->format === 'anthropic' ? 'claude-3-5-haiku-latest' : 'gpt-4o-mini');
+            : ($provider->format === 'anthropic' ? 'claude-3-5-haiku-latest' : ($provider->format === 'gemini' ? 'gemini-1.5-flash' : 'gpt-4o-mini'));
 
         $startTime = microtime(true);
 
         try {
-            $baseUrl = rtrim($provider->base_url, '/');
+            $url = $adapter->buildUrl($provider->base_url, $model, false, $account->api_key);
+            $headers = $adapter->formatHeaders($account->api_key, false);
+            $body = $adapter->formatPayload($model, [
+                'messages' => [['role' => 'user', 'content' => 'Say OK']],
+                'max_tokens' => 5,
+            ]);
 
-            if ($provider->format === 'anthropic') {
-                $url = str_ends_with($baseUrl, '/messages') ? $baseUrl : $baseUrl . '/messages';
-                $response = Http::withHeaders([
-                    'x-api-key' => $account->api_key,
-                    'anthropic-version' => '2023-06-01',
-                    'Content-Type' => 'application/json',
-                ])->timeout(12)->post($url, [
-                    'model' => $model,
-                    'messages' => [['role' => 'user', 'content' => 'Say OK']],
-                    'max_tokens' => 5,
-                ]);
-            } else {
-                $url = str_ends_with($baseUrl, '/chat/completions') ? $baseUrl : $baseUrl . '/chat/completions';
-                $response = Http::withHeaders([
-                    'Authorization' => 'Bearer ' . $account->api_key,
-                    'Content-Type' => 'application/json',
-                ])->timeout(12)->post($url, [
-                    'model' => $model,
-                    'messages' => [['role' => 'user', 'content' => 'Say OK']],
-                    'max_tokens' => 5,
-                ]);
-            }
+            $response = Http::withHeaders($headers)->timeout(12)->post($url, $body);
 
             $latencyMs = (int) round((microtime(true) - $startTime) * 1000);
 
@@ -426,6 +609,43 @@ class AdminDashboardController extends Controller
     protected function syncProviderModels(AiProvider $provider, string $apiKey): array
     {
         $baseUrl = rtrim($provider->base_url, '/');
+
+        // Gemini native /models endpoint support
+        if ($provider->format === 'gemini') {
+            try {
+                $modelsUrl = "{$baseUrl}/models?key={$apiKey}";
+                $res = Http::withHeaders([
+                    'x-goog-api-key' => $apiKey,
+                    'Accept' => 'application/json',
+                ])->timeout(8)->get($modelsUrl);
+
+                if ($res->successful()) {
+                    $json = $res->json();
+                    $modelList = [];
+                    if (isset($json['models']) && is_array($json['models'])) {
+                        foreach ($json['models'] as $item) {
+                            $rawName = is_array($item) ? ($item['name'] ?? null) : null;
+                            if ($rawName && is_string($rawName)) {
+                                $modelId = str_starts_with($rawName, 'models/') ? substr($rawName, 7) : $rawName;
+                                $modelList[] = $modelId;
+                            }
+                        }
+                    }
+                    if (!empty($modelList)) {
+                        $existing = is_array($provider->models_catalog) ? $provider->models_catalog : [];
+                        $merged = array_values(array_unique(array_merge($existing, $modelList)));
+                        $provider->models_catalog = $merged;
+                        $provider->save();
+
+                        return $merged;
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Silently fallback
+            }
+
+            return $provider->models_catalog ?? [];
+        }
 
         // Anthropic /models endpoint support
         if ($provider->format === 'anthropic') {
@@ -593,6 +813,8 @@ class AdminDashboardController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:100',
             'daily_token_limit' => 'nullable|integer|min:1',
+            'rpm_limit' => 'nullable|integer|min:1',
+            'tpm_limit' => 'nullable|integer|min:1',
         ]);
 
         $key = 'sk-omni-' . bin2hex(random_bytes(16));
@@ -601,10 +823,34 @@ class AdminDashboardController extends Controller
             'name' => $validated['name'],
             'key' => $key,
             'daily_token_limit' => $validated['daily_token_limit'] ?? null,
+            'rpm_limit' => $validated['rpm_limit'] ?? null,
+            'tpm_limit' => $validated['tpm_limit'] ?? null,
             'is_active' => true,
         ]);
 
         return back()->with('success', "Generated key '{$validated['name']}': {$key}");
+    }
+
+    /**
+     * Update an existing Gateway Key.
+     */
+    public function updateGatewayKey(Request $request, GatewayKey $gatewayKey): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
+            'daily_token_limit' => 'nullable|integer|min:1',
+            'rpm_limit' => 'nullable|integer|min:1',
+            'tpm_limit' => 'nullable|integer|min:1',
+        ]);
+
+        $gatewayKey->update([
+            'name' => $validated['name'],
+            'daily_token_limit' => $validated['daily_token_limit'] ?: null,
+            'rpm_limit' => $validated['rpm_limit'] ?: null,
+            'tpm_limit' => $validated['tpm_limit'] ?: null,
+        ]);
+
+        return back()->with('success', "Gateway key '{$gatewayKey->name}' updated successfully.");
     }
 
     /**
@@ -636,6 +882,24 @@ class AdminDashboardController extends Controller
         GatewayLog::truncate();
 
         return back()->with('success', 'Gateway logs cleared successfully.');
+    }
+
+    /**
+     * Purge all gateway response cache items.
+     */
+    public function purgeCache(Request $request): JsonResponse|RedirectResponse
+    {
+        $count = $this->cacheService->purgeAll();
+
+        if ($request->expectsJson() || $request->isXmlHttpRequest()) {
+            return response()->json([
+                'success' => true,
+                'purged_count' => $count,
+                'message' => "Gateway response cache purged successfully ({$count} entries removed).",
+            ]);
+        }
+
+        return back()->with('success', "Gateway response cache purged ({$count} entries removed).");
     }
 
     /**

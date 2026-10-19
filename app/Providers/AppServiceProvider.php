@@ -27,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
     {
         View::composer('layouts.dashboard', function ($view) {
             $view->with([
-                'sidebarProvidersCount' => ProviderAccount::where('is_active', true)->count(),
+                'sidebarProvidersCount' => AiProvider::count(),
                 'sidebarCombosCount' => RoutingCombo::count(),
                 'sidebarKeysCount' => GatewayKey::count(),
                 'sidebarLogsCount' => GatewayLog::count(),

@@ -19,6 +19,8 @@ class GatewayKey extends Model
         'name',
         'key',
         'daily_token_limit',
+        'rpm_limit',
+        'tpm_limit',
         'tokens_used_today',
         'usage_reset_date',
         'last_used_at',
@@ -34,6 +36,8 @@ class GatewayKey extends Model
     {
         return [
             'daily_token_limit' => 'integer',
+            'rpm_limit' => 'integer',
+            'tpm_limit' => 'integer',
             'tokens_used_today' => 'integer',
             'usage_reset_date' => 'date',
             'last_used_at' => 'datetime',

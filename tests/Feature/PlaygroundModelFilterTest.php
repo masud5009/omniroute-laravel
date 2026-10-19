@@ -6,11 +6,13 @@ use App\Models\AiProvider;
 use App\Models\ProviderAccount;
 use App\Models\RoutingCombo;
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class PlaygroundModelFilterTest extends TestCase
 {
+    use DatabaseTransactions;
     public function test_playground_only_shows_configured_providers_and_ready_combos(): void
     {
         $admin = User::first() ?? User::factory()->create(['email' => 'admin@omniroute.local']);
@@ -19,7 +21,7 @@ class PlaygroundModelFilterTest extends TestCase
         $response = $this->actingAs($admin)->get('/dashboard/playground');
 
         $response->assertStatus(200);
-        $response->assertSee('Configured & Ready APIs', false);
+        $response->assertSee('Live AI Studio Playground', false);
         $response->assertSee('Target Model / Smart Combo', false);
         $response->assertSee('+ Custom Model', false);
     }

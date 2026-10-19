@@ -77,6 +77,12 @@ class VerifyGatewayKey
 
         // 5. Check daily token limit
         if ($gatewayKey->daily_token_limit !== null && $gatewayKey->tokens_used_today >= $gatewayKey->daily_token_limit) {
+            app(\App\Services\Notification\AlertNotificationService::class)->notifyGatewayKeyLimitExceeded(
+                $gatewayKey->name,
+                'Daily Token Quota',
+                "Consumed {$gatewayKey->tokens_used_today} / {$gatewayKey->daily_token_limit} tokens today."
+            );
+
             return response()->json([
                 'error' => [
                     'message' => 'Daily token limit exceeded for this Gateway key.',

@@ -100,7 +100,7 @@
         playInput: '',
         playLoading: false,
         playMessages: [
-            { role: 'assistant', content: 'OmniRoute Lite live gateway playground is ready. Select a model or smart combo and send a prompt!' }
+            { role: 'assistant', content: 'OmniRoute Lite live gateway playground is ready. Select a model or smart combo and send a prompt!', isWelcome: true }
         ],
         playMeta: null,
         catalogModalOpen: false,
@@ -183,7 +183,8 @@
             if (this.playSystem.trim()) {
                 msgs.push({ role: 'system', content: this.playSystem.trim() });
             }
-            msgs.push(...this.playMessages.slice(-6));
+            const chatHistory = this.playMessages.filter(m => !m.isWelcome && !m.isError);
+            msgs.push(...chatHistory.slice(-6));
 
             try {
                 const res = await fetch('{{ route('dashboard.playground.chat') }}', {
@@ -350,9 +351,16 @@
             <!-- Live Telemetry Card -->
             <template x-if="playMeta">
                 <div class="p-4 rounded-xl bg-[#09090b] border border-emerald-500/20 text-xs sm:text-sm space-y-2.5">
-                    <div class="font-bold text-emerald-400 uppercase text-xs tracking-wider flex items-center gap-2">
-                        <i data-lucide="zap" class="w-3.5 h-3.5 text-emerald-400"></i>
-                        <span>Routing Telemetry</span>
+                    <div class="flex items-center justify-between">
+                        <div class="font-bold text-emerald-400 uppercase text-xs tracking-wider flex items-center gap-2">
+                            <i data-lucide="zap" class="w-3.5 h-3.5 text-emerald-400"></i>
+                            <span>Routing Telemetry</span>
+                        </div>
+                        <template x-if="playMeta.cached">
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold animate-pulse">
+                                ⚡ CACHE HIT
+                            </span>
+                        </template>
                     </div>
                     <div class="flex items-center justify-between text-zinc-400">
                         <span>Provider:</span>
@@ -371,6 +379,15 @@
                         <span class="font-bold text-emerald-400" x-text="`+${playMeta.saved_tokens}`"></span>
                     </div>
                     <div class="flex items-center justify-between text-zinc-400">
+                        <span>Est. Cost:</span>
+                        <div class="text-right">
+                            <span class="font-bold text-white font-mono" x-text="`$${Number(playMeta.cost_usd || 0).toFixed(5)}`"></span>
+                            <template x-if="playMeta.cost_saved_usd > 0">
+                                <span class="block text-[11px] text-emerald-400 font-mono" x-text="`+$${Number(playMeta.cost_saved_usd).toFixed(5)} saved`"></span>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-zinc-400">
                         <span>Latency:</span>
                         <span class="font-mono text-amber-400" x-text="`${playMeta.latency_ms}ms`"></span>
                     </div>
@@ -380,6 +397,19 @@
 
         <!-- Right Panel: Chat Studio Window -->
         <div class="lg:col-span-3 flex flex-col h-[600px] bg-[#09090b] border border-white/[0.07] rounded-xl overflow-hidden shadow-inner">
+            <!-- Chat Studio Window Header -->
+            <div class="px-4 py-2.5 border-b border-white/[0.06] bg-[#121215] flex items-center justify-between text-xs text-zinc-400">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span class="font-semibold text-zinc-300 font-mono text-[11px]">Chat Console</span>
+                </div>
+                <button type="button" @click="playMessages = [{ role: 'assistant', content: 'Chat history cleared. Send a prompt to start fresh!', isWelcome: true }]; playMeta = null;"
+                    class="text-xs text-zinc-400 hover:text-white flex items-center gap-1 px-2.5 py-1 rounded-lg hover:bg-white/5 transition-colors cursor-pointer">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5 text-zinc-500"></i>
+                    <span>Clear Chat</span>
+                </button>
+            </div>
+
             <!-- Messages Area -->
             <div id="play-chat-box" class="flex-1 p-5 overflow-y-auto space-y-4">
                 <template x-for="(msg, i) in playMessages" :key="i">
@@ -393,9 +423,13 @@
                         
                         <template x-if="msg.meta">
                             <div class="text-xs text-zinc-400 mt-1.5 flex items-center gap-1.5 font-mono">
+                                <template x-if="msg.meta.cached">
+                                    <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px] border border-emerald-500/30">CACHE HIT</span>
+                                </template>
                                 <span class="text-emerald-400 font-semibold" x-text="msg.meta.provider"></span> / 
                                 <span x-text="msg.meta.model"></span> • 
                                 <span class="text-emerald-400" x-text="`+${msg.meta.saved_tokens} saved`"></span> • 
+                                <span class="text-zinc-200" x-text="`$${Number(msg.meta.cost_usd || 0).toFixed(5)}`"></span> • 
                                 <span class="text-amber-400" x-text="`${msg.meta.latency_ms}ms`"></span>
                             </div>
                         </template>

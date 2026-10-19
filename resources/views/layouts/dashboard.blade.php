@@ -59,6 +59,8 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- ApexCharts CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <!-- OmniRoute Lite Admin JS -->
     <script src="{{ asset('assets/admin/js/main.js') }}?v={{ file_exists(public_path('assets/admin/js/main.js')) ? filemtime(public_path('assets/admin/js/main.js')) : time() }}"></script>
     <!-- Google Fonts Inter & JetBrains Mono -->
@@ -454,9 +456,10 @@
 
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Protocol</label>
-                    <select name="format" x-model="customProviderFormat" class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                    <select name="format" class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
                         <option value="openai">OpenAI (/chat/completions)</option>
                         <option value="anthropic">Anthropic (/messages)</option>
+                        <option value="gemini">Google Gemini (:generateContent)</option>
                     </select>
                 </div>
 
@@ -523,6 +526,7 @@
                     <select name="format" x-model="editProvider.format" class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
                         <option value="openai">OpenAI (/chat/completions)</option>
                         <option value="anthropic">Anthropic (/messages)</option>
+                        <option value="gemini">Google Gemini (:generateContent)</option>
                     </select>
                 </div>
 
