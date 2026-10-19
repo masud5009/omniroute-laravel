@@ -95,68 +95,98 @@
             line-height: 1.2rem !important;
         }
 
-        /* SweetAlert2 Zinc Dark Theme */
-        .swal2-popup.omni-swal {
+        /* SweetAlert2 Zinc Minimal Dark Theme */
+        div.swal2-container .swal2-popup.omni-swal {
             background: #121215 !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            border-radius: 1rem !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important;
-            padding: 1.5rem !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-radius: 1.25rem !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+            padding: 1.5rem 1.25rem 1.25rem !important;
+            max-width: 24rem !important;
+            width: 90% !important;
             font-family: 'Inter', sans-serif !important;
         }
-        .swal2-popup.omni-swal .swal2-title {
-            color: #ffffff !important;
-            font-size: 1.05rem !important;
+        div.swal2-container .swal2-popup.omni-swal .swal2-icon,
+        div.swal2-container .swal2-popup.omni-swal .swal2-icon.swal2-warning {
+            width: 3.25rem !important;
+            height: 3.25rem !important;
+            min-width: 3.25rem !important;
+            min-height: 3.25rem !important;
+            margin: 0.15rem auto 0.85rem auto !important;
+            border: 2px solid rgba(244, 63, 94, 0.4) !important;
+            background-color: rgba(244, 63, 94, 0.08) !important;
+            border-radius: 50% !important;
+        }
+        div.swal2-container .swal2-popup.omni-swal .swal2-icon .swal2-icon-content {
+            font-size: 1.5rem !important;
+            line-height: 3.25rem !important;
+            color: #f43f5e !important;
             font-weight: 700 !important;
-            margin-bottom: 0.25rem !important;
-        }
-        .swal2-popup.omni-swal .swal2-html-container {
-            color: #a1a1aa !important;
-            font-size: 0.8125rem !important;
-            line-height: 1.4 !important;
-            margin: 0.5rem 0 1.25rem 0 !important;
-        }
-        .swal2-popup.omni-swal .swal2-actions {
+            font-family: 'Inter', sans-serif !important;
             display: flex !important;
             align-items: center !important;
-            justify-content: flex-end !important;
-            gap: 0.5rem !important;
+            justify-content: center !important;
+        }
+        div.swal2-container .swal2-popup.omni-swal .swal2-title {
+            color: #ffffff !important;
+            font-size: 1.0625rem !important;
+            font-weight: 700 !important;
+            letter-spacing: -0.015em !important;
+            line-height: 1.35 !important;
+            padding: 0 !important;
+            margin: 0 0 0.35rem 0 !important;
+        }
+        div.swal2-container .swal2-popup.omni-swal .swal2-html-container {
+            color: #94a3b8 !important;
+            font-size: 0.8125rem !important;
+            line-height: 1.45 !important;
+            padding: 0 0.5rem !important;
+            margin: 0 0 1.25rem 0 !important;
+        }
+        div.swal2-container .swal2-popup.omni-swal .swal2-actions {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0.625rem !important;
             width: 100% !important;
-            margin-top: 0.75rem !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
-        .swal2-popup.omni-swal .swal2-confirm {
-            background-color: #e11d48 !important;
+        div.swal2-container .swal2-popup.omni-swal .swal2-confirm {
+            background: linear-gradient(135deg, #e11d48, #f43f5e) !important;
             color: #ffffff !important;
-            font-size: 0.75rem !important;
+            font-size: 0.8125rem !important;
             font-weight: 600 !important;
-            padding: 0.5rem 1rem !important;
+            padding: 0.55rem 1.15rem !important;
             border-radius: 0.75rem !important;
-            border: none !important;
-            box-shadow: 0 4px 6px -1px rgba(225, 29, 72, 0.3) !important;
+            border: 1px solid rgba(225, 29, 72, 0.3) !important;
+            box-shadow: 0 4px 10px -2px rgba(225, 29, 72, 0.35) !important;
             cursor: pointer !important;
             transition: all 0.15s ease !important;
         }
-        .swal2-popup.omni-swal .swal2-confirm:hover {
-            background-color: #f43f5e !important;
+        div.swal2-container .swal2-popup.omni-swal .swal2-confirm:hover {
+            background: linear-gradient(135deg, #be123c, #e11d48) !important;
+            box-shadow: 0 6px 14px -2px rgba(225, 29, 72, 0.45) !important;
+            transform: translateY(-1px);
         }
-        .swal2-popup.omni-swal .swal2-cancel {
+        div.swal2-container .swal2-popup.omni-swal .swal2-cancel {
+            background-color: #18181b !important;
+            color: #e4e4e7 !important;
+            font-size: 0.8125rem !important;
+            font-weight: 600 !important;
+            padding: 0.55rem 1.15rem !important;
+            border-radius: 0.75rem !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            cursor: pointer !important;
+            transition: all 0.15s ease !important;
+        }
+        div.swal2-container .swal2-popup.omni-swal .swal2-cancel:hover {
             background-color: #27272a !important;
-            color: #d4d4d8 !important;
-            font-size: 0.75rem !important;
-            font-weight: 600 !important;
-            padding: 0.5rem 1rem !important;
-            border-radius: 0.75rem !important;
-            border: 1px solid rgba(255, 255, 255, 0.05) !important;
-            cursor: pointer !important;
-            transition: all 0.15s ease !important;
-        }
-        .swal2-popup.omni-swal .swal2-cancel:hover {
-            background-color: #3f3f46 !important;
             color: #ffffff !important;
         }
-        .swal2-container {
-            backdrop-filter: blur(4px) !important;
-            background: rgba(0, 0, 0, 0.75) !important;
+        div.swal2-container {
+            backdrop-filter: blur(6px) !important;
+            background: rgba(0, 0, 0, 0.7) !important;
             z-index: 9999 !important;
         }
 
@@ -514,31 +544,42 @@
         }
 
         /* SweetAlert2 Light Mode */
-        html:not(.dark) .swal2-container {
-            background: rgba(15, 23, 42, 0.45) !important;
+        html:not(.dark) div.swal2-container {
+            background: rgba(15, 23, 42, 0.4) !important;
+            backdrop-filter: blur(6px) !important;
         }
 
-        html:not(.dark) .swal2-popup.omni-swal {
+        html:not(.dark) div.swal2-container .swal2-popup.omni-swal {
             background: #ffffff !important;
             border: 1px solid #e2e8f0 !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
         }
 
-        html:not(.dark) .swal2-popup.omni-swal .swal2-title {
+        html:not(.dark) div.swal2-container .swal2-popup.omni-swal .swal2-icon,
+        html:not(.dark) div.swal2-container .swal2-popup.omni-swal .swal2-icon.swal2-warning {
+            border-color: rgba(244, 63, 94, 0.45) !important;
+            background-color: #fff1f2 !important;
+        }
+
+        html:not(.dark) div.swal2-container .swal2-popup.omni-swal .swal2-icon .swal2-icon-content {
+            color: #e11d48 !important;
+        }
+
+        html:not(.dark) div.swal2-container .swal2-popup.omni-swal .swal2-title {
             color: #0f172a !important;
         }
 
-        html:not(.dark) .swal2-popup.omni-swal .swal2-html-container {
-            color: #475569 !important;
+        html:not(.dark) div.swal2-container .swal2-popup.omni-swal .swal2-html-container {
+            color: #64748b !important;
         }
 
-        html:not(.dark) .swal2-popup.omni-swal .swal2-cancel {
-            background-color: #f1f5f9 !important;
+        html:not(.dark) div.swal2-container .swal2-popup.omni-swal .swal2-cancel {
+            background-color: #f8fafc !important;
             color: #334155 !important;
             border: 1px solid #cbd5e1 !important;
         }
 
-        html:not(.dark) .swal2-popup.omni-swal .swal2-cancel:hover {
+        html:not(.dark) div.swal2-container .swal2-popup.omni-swal .swal2-cancel:hover {
             background-color: #e2e8f0 !important;
             color: #0f172a !important;
         }
@@ -848,9 +889,10 @@
 
                     <!-- Quick Add Key Button -->
                     <button type="button" @click="openAddKeyModal()"
-                        class="px-3.5 py-1.5 bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-xs sm:text-sm rounded-xl shadow-md transition-all flex items-center gap-1.5">
-                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                        <span>Add Key</span>
+                        class="px-3.5 py-1.5 bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-xs sm:text-sm rounded-xl shadow-md transition-all flex items-center gap-1.5"
+                        style="color: #ffffff !important;">
+                        <i data-lucide="plus" class="w-3.5 h-3.5" style="color: #ffffff !important; stroke: #ffffff !important;"></i>
+                        <span style="color: #ffffff !important;">Add Key</span>
                     </button>
                 </div>
             </header>
@@ -1111,6 +1153,7 @@
                 confirmButtonText: btnText,
                 cancelButtonText: 'Cancel',
                 buttonsStyling: false,
+                width: '24rem',
                 customClass: {
                     popup: 'omni-swal'
                 }

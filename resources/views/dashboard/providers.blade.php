@@ -21,120 +21,147 @@
 @endphp
 
 <div class="space-y-6" x-data="providersManager()">
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- TOP TOOLBAR: SEARCH, VIEWS & QUICK ACTIONS                     -->
-    <!-- ============================================================== -->
-    <div class="bg-[#121622]/90 border border-white/[0.07] rounded-2xl p-4 sm:p-5 shadow-lg space-y-3.5">
-        <!-- Row 1: Search Inputs & Action Buttons -->
-        <div class="flex items-center justify-between gap-3 flex-wrap">
-            <div class="flex items-center gap-3 flex-1 min-w-[280px] flex-wrap">
-                <!-- Search Providers Input -->
-                <div class="relative flex-1 min-w-[180px] max-w-xs">
-                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none"></i>
-                    <input type="text" x-model="searchQuery" placeholder="Search Providers"
-                        class="w-full bg-[#161c2c] border border-white/10 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 transition-colors">
-                </div>
-
-                <!-- Search by Model Input -->
-                <div class="relative flex-1 min-w-[180px] max-w-xs">
-                    <i data-lucide="sparkles" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none"></i>
-                    <input type="text" x-model="modelQuery" placeholder="Search by model..."
-                        class="w-full bg-[#161c2c] border border-white/10 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 transition-colors">
-                </div>
-
-                <!-- Segmented View Filter -->
-                <div class="flex items-center bg-[#161c2c] p-1 rounded-xl border border-white/10 text-sm">
-                    <button type="button" @click="providerFilter = 'all'"
-                        :class="providerFilter === 'all' ? 'bg-zinc-800 text-white font-semibold shadow-sm' : 'text-zinc-400 hover:text-white'"
-                        class="px-3.5 py-1.5 rounded-lg transition-colors flex items-center gap-1.5">
-                        <i data-lucide="layout-grid" class="w-4 h-4"></i>
-                        <span>All</span>
-                    </button>
-                    <button type="button" @click="providerFilter = 'connected'"
-                        :class="providerFilter === 'connected' ? 'bg-zinc-800 text-emerald-400 font-semibold shadow-sm' : 'text-zinc-400 hover:text-white'"
-                        class="px-3.5 py-1.5 rounded-lg transition-colors flex items-center gap-1.5">
-                        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
-                        <span>Configured</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex items-center gap-2 flex-wrap">
-                <button type="button" @click="openAddCustomProviderModal('openai')"
-                    class="px-3.5 py-2 text-xs sm:text-sm font-semibold bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white rounded-xl transition-all shadow-md shadow-rose-950/30 flex items-center gap-2">
-                    <i data-lucide="plus" class="w-4 h-4"></i>
-                    <span>Add Custom Provider</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Row 2: Category Filter Chips -->
-        <div class="flex items-center gap-2 flex-wrap pt-2.5 border-t border-white/[0.05] text-xs">
-            <button type="button" @click="providerFilter = 'all'"
-                :class="providerFilter === 'all' ? 'bg-rose-600 text-white shadow-sm' : 'bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-white/5'"
-                class="px-3 py-1 rounded-full font-semibold transition-colors flex items-center gap-1.5">
-                <span>Total</span>
-                <span class="opacity-90 font-mono">{{ $providers->count() }}</span>
-            </button>
-
-            <button type="button" @click="providerFilter = 'connected'"
-                :class="providerFilter === 'connected' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold' : 'bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-white/5'"
-                class="px-3 py-1 rounded-full transition-colors flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                <span>Connected</span>
-                <span class="text-zinc-400 font-mono">{{ $connectedCount }}</span>
-            </button>
-
-            <button type="button" @click="providerFilter = 'free'"
-                :class="providerFilter === 'free' ? 'bg-teal-500/20 text-teal-300 border border-teal-500/30 font-semibold' : 'bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-white/5'"
-                class="px-3 py-1 rounded-full transition-colors flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-teal-400"></span>
-                <span>Free Tier</span>
-                <span class="text-zinc-400 font-mono">{{ $freeTierCount }}</span>
-            </button>
-
-            <button type="button" @click="providerFilter = 'openai'"
-                :class="providerFilter === 'openai' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30 font-semibold' : 'bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-white/5'"
-                class="px-3 py-1 rounded-full transition-colors flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-blue-400"></span>
-                <span>OpenAI</span>
-                <span class="text-zinc-400 font-mono">{{ $openaiCount }}</span>
-            </button>
-
-            <button type="button" @click="providerFilter = 'anthropic'"
-                :class="providerFilter === 'anthropic' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold' : 'bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-white/5'"
-                class="px-3 py-1 rounded-full transition-colors flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-                <span>Anthropic</span>
-                <span class="text-zinc-400 font-mono">{{ $anthropicCount }}</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- ============================================================== -->
-    <!-- UNIFIED AI PROVIDERS SECTION                                   -->
-    <!-- ============================================================== -->
-    <div class="space-y-4" x-show="hasMatches()">
+    @if($providers->isEmpty())
+        <!-- ============================================================== -->
+        <!-- ZERO PROVIDERS CONFIGURED STATE (NO SEARCH/FILTERS)            -->
+        <!-- ============================================================== -->
         <div class="flex items-center justify-between gap-4 flex-wrap pb-1">
             <div>
                 <h3 class="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
                     <span>AI Providers</span>
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
-                    <span class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400">({{ $connectedCount }}/{{ $providers->count() }})</span>
                 </h3>
                 <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Configured upstream AI providers with failover, load balancing, and rate limit cooldowns.</p>
             </div>
+            <button type="button" @click="openAddCustomProviderModal('openai')"
+                class="px-3.5 py-2 text-xs sm:text-sm font-semibold bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white rounded-xl transition-all shadow-md shadow-rose-950/30 flex items-center gap-2 cursor-pointer"
+                style="color: #ffffff !important;">
+                <i data-lucide="plus" class="w-4 h-4" style="color: #ffffff !important; stroke: #ffffff !important;"></i>
+                <span style="color: #ffffff !important;">Add Custom Provider</span>
+            </button>
         </div>
 
-        @if($providers->isEmpty())
-            <div class="border border-dashed border-zinc-200 dark:border-white/10 rounded-2xl p-12 text-center text-zinc-500 text-base flex flex-col items-center justify-center gap-3.5 bg-zinc-50/50 dark:bg-[#121622]/40">
-                <i data-lucide="box" class="w-10 h-10 text-zinc-400 dark:text-zinc-600"></i>
-                <span class="text-zinc-900 dark:text-zinc-200 font-semibold text-lg">No AI providers configured yet</span>
-                <span class="text-zinc-500 dark:text-zinc-400 text-sm">Click "+ Add Custom Provider" above to add your first OpenAI or Anthropic compatible provider.</span>
+        <div class="border border-dashed border-zinc-200 dark:border-white/10 rounded-2xl p-12 text-center text-zinc-500 text-base flex flex-col items-center justify-center gap-3.5 bg-zinc-50/50 dark:bg-[#121622]/40">
+            <div class="w-14 h-14 rounded-2xl bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 flex items-center justify-center">
+                <i data-lucide="box" class="w-7 h-7 text-zinc-400 dark:text-zinc-500"></i>
             </div>
-        @else
+            <span class="text-zinc-900 dark:text-zinc-200 font-semibold text-lg">No AI providers configured yet</span>
+            <span class="text-zinc-500 dark:text-zinc-400 text-sm max-w-md">Connect an upstream AI provider (OpenAI, Anthropic, Gemini, Groq, etc.) to start routing requests with load balancing and failover.</span>
+            <button type="button" @click="openAddCustomProviderModal('openai')"
+                class="mt-2 px-4 py-2 text-xs sm:text-sm font-semibold bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white rounded-xl transition-all shadow-md shadow-rose-950/30 flex items-center gap-2 cursor-pointer"
+                style="color: #ffffff !important;">
+                <i data-lucide="plus" class="w-4 h-4" style="color: #ffffff !important; stroke: #ffffff !important;"></i>
+                <span style="color: #ffffff !important;">Add Custom Provider</span>
+            </button>
+        </div>
+    @else
+        <!-- ============================================================== -->
+        <!-- TOP TOOLBAR: SEARCH, VIEWS & QUICK ACTIONS                     -->
+        <!-- ============================================================== -->
+        <div class="bg-[#121622]/90 border border-white/[0.07] rounded-2xl p-4 sm:p-5 shadow-lg space-y-3.5">
+            <!-- Row 1: Search Inputs & Action Buttons -->
+            <div class="flex items-center justify-between gap-3 flex-wrap">
+                <div class="flex items-center gap-3 flex-1 min-w-[280px] flex-wrap">
+                    <!-- Search Providers Input -->
+                    <div class="relative flex-1 min-w-[180px] max-w-xs">
+                        <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none"></i>
+                        <input type="text" x-model="searchQuery" placeholder="Search Providers"
+                            class="w-full bg-[#161c2c] border border-white/10 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 transition-colors">
+                    </div>
+
+                    <!-- Search by Model Input -->
+                    <div class="relative flex-1 min-w-[180px] max-w-xs">
+                        <i data-lucide="sparkles" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none"></i>
+                        <input type="text" x-model="modelQuery" placeholder="Search by model..."
+                            class="w-full bg-[#161c2c] border border-white/10 rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 transition-colors">
+                    </div>
+
+                    <!-- Segmented View Filter -->
+                    <div class="flex items-center bg-[#161c2c] p-1 rounded-xl border border-white/10 text-sm">
+                        <button type="button" @click="providerFilter = 'all'"
+                            :class="providerFilter === 'all' ? 'bg-zinc-800 text-white font-semibold shadow-sm' : 'text-zinc-400 hover:text-white'"
+                            class="px-3.5 py-1.5 rounded-lg transition-colors flex items-center gap-1.5">
+                            <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                            <span>All</span>
+                        </button>
+                        <button type="button" @click="providerFilter = 'connected'"
+                            :class="providerFilter === 'connected' ? 'bg-zinc-800 text-emerald-400 font-semibold shadow-sm' : 'text-zinc-400 hover:text-white'"
+                            class="px-3.5 py-1.5 rounded-lg transition-colors flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                            <span>Configured</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button type="button" @click="openAddCustomProviderModal('openai')"
+                        class="px-3.5 py-2 text-xs sm:text-sm font-semibold bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white rounded-xl transition-all shadow-md shadow-rose-950/30 flex items-center gap-2"
+                        style="color: #ffffff !important;">
+                        <i data-lucide="plus" class="w-4 h-4" style="color: #ffffff !important; stroke: #ffffff !important;"></i>
+                        <span style="color: #ffffff !important;">Add Custom Provider</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Row 2: Category Filter Chips -->
+            <div class="flex items-center gap-2 flex-wrap pt-2.5 border-t border-white/[0.05] text-xs">
+                <button type="button" @click="providerFilter = 'all'"
+                    :class="providerFilter === 'all' ? 'bg-rose-600 text-white shadow-sm' : 'bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-white/5'"
+                    class="px-3 py-1 rounded-full font-semibold transition-colors flex items-center gap-1.5"
+                    :style="providerFilter === 'all' ? 'color: #ffffff !important;' : ''">
+                    <span :style="providerFilter === 'all' ? 'color: #ffffff !important;' : ''">Total</span>
+                    <span class="opacity-90 font-mono" :style="providerFilter === 'all' ? 'color: #ffffff !important;' : ''">{{ $providers->count() }}</span>
+                </button>
+
+                <button type="button" @click="providerFilter = 'connected'"
+                    :class="providerFilter === 'connected' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold' : 'bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-white/5'"
+                    class="px-3 py-1 rounded-full transition-colors flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span>Connected</span>
+                    <span class="text-zinc-400 font-mono">{{ $connectedCount }}</span>
+                </button>
+
+                <button type="button" @click="providerFilter = 'free'"
+                    :class="providerFilter === 'free' ? 'bg-teal-500/20 text-teal-300 border border-teal-500/30 font-semibold' : 'bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-white/5'"
+                    class="px-3 py-1 rounded-full transition-colors flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-teal-400"></span>
+                    <span>Free Tier</span>
+                    <span class="text-zinc-400 font-mono">{{ $freeTierCount }}</span>
+                </button>
+
+                <button type="button" @click="providerFilter = 'openai'"
+                    :class="providerFilter === 'openai' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30 font-semibold' : 'bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-white/5'"
+                    class="px-3 py-1 rounded-full transition-colors flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                    <span>OpenAI</span>
+                    <span class="text-zinc-400 font-mono">{{ $openaiCount }}</span>
+                </button>
+
+                <button type="button" @click="providerFilter = 'anthropic'"
+                    :class="providerFilter === 'anthropic' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold' : 'bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-white/5'"
+                    class="px-3 py-1 rounded-full transition-colors flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                    <span>Anthropic</span>
+                    <span class="text-zinc-400 font-mono">{{ $anthropicCount }}</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- UNIFIED AI PROVIDERS SECTION                                   -->
+        <!-- ============================================================== -->
+        <div class="space-y-4" x-show="hasMatches()">
+            <div class="flex items-center justify-between gap-4 flex-wrap pb-1">
+                <div>
+                    <h3 class="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                        <span>AI Providers</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+                        <span class="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400">({{ $connectedCount }}/{{ $providers->count() }})</span>
+                    </h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Configured upstream AI providers with failover, load balancing, and rate limit cooldowns.</p>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 @foreach($providers as $provider)
                     @php
@@ -249,21 +276,18 @@
                     </div>
                 @endforeach
             </div>
-        @endif
-    </div>
+        </div>
 
-    <!-- ============================================================== -->
-    <!-- ZERO SEARCH MATCHES EMPTY STATE                                -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- ZERO SEARCH MATCHES EMPTY STATE                                -->
-    <!-- ============================================================== -->
-    <div x-show="!hasMatches()"
-        class="border border-dashed border-white/10 rounded-2xl p-12 text-center text-zinc-500 text-sm flex flex-col items-center justify-center gap-2 bg-[#121622]/40">
-        <i data-lucide="search-x" class="w-9 h-9 text-zinc-600"></i>
-        <span class="text-zinc-200 font-semibold text-base">No matching providers found</span>
-        <span class="text-zinc-400 text-xs">Try adjusting your provider name or model search filter.</span>
-    </div>
+        <!-- ============================================================== -->
+        <!-- ZERO SEARCH MATCHES EMPTY STATE                                -->
+        <!-- ============================================================== -->
+        <div x-show="!hasMatches()"
+            class="border border-dashed border-zinc-200 dark:border-white/10 rounded-2xl p-12 text-center text-zinc-500 text-sm flex flex-col items-center justify-center gap-2 bg-zinc-50/50 dark:bg-[#121622]/40">
+            <i data-lucide="search-x" class="w-9 h-9 text-zinc-400 dark:text-zinc-600"></i>
+            <span class="text-zinc-900 dark:text-zinc-200 font-semibold text-base">No matching providers found</span>
+            <span class="text-zinc-500 dark:text-zinc-400 text-xs">Try adjusting your provider name or model search filter.</span>
+        </div>
+    @endif
 </div>
 
 @push('scripts')
