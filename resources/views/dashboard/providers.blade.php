@@ -11,16 +11,23 @@
     $anthropicCount = $providers->filter(fn($p) => $p->format === 'anthropic')->count();
 
     $providersList = $providers->map(fn($p) => [
+        'id' => $p->id,
         'name' => $p->name,
         'slug' => $p->slug,
         'format' => $p->format,
+        'base_url' => $p->base_url,
+        'description' => $p->description ?? '',
         'hasKeys' => $p->accounts->count() > 0,
         'isFree' => in_array($p->slug, $freeSlugs),
         'models' => $p->models_catalog ?? [],
     ])->values();
 @endphp
 
-<div class="space-y-6" x-data="providersManager(@json($providersList))">
+<script>
+    window.__initialProvidersList = @json($providersList);
+</script>
+
+<div class="space-y-6" x-data="providersManager(window.__initialProvidersList)">
     @if($providers->isEmpty())
         <!-- ============================================================== -->
         <!-- ZERO PROVIDERS CONFIGURED STATE (NO SEARCH/FILTERS)            -->
@@ -191,14 +198,7 @@
                                 <!-- Action Toolbar Pill (Edit & Delete) -->
                                 <div class="flex items-center bg-zinc-100/90 dark:bg-white/[0.04] p-1 rounded-xl border border-zinc-200/80 dark:border-white/[0.06] flex-shrink-0 shadow-sm" @click.stop>
                                     <button type="button"
-                                        @click.stop="openEditProviderModal({{ json_encode([
-                                            'id' => $provider->id,
-                                            'name' => $provider->name,
-                                            'slug' => $provider->slug,
-                                            'base_url' => $provider->base_url,
-                                            'format' => $provider->format,
-                                            'description' => $provider->description ?? '',
-                                        ]) }})"
+                                        @click.stop="openEditProviderById({{ $provider->id }})"
                                         class="w-7 h-7 rounded-lg flex items-center justify-center text-zinc-500 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 hover:bg-white dark:hover:bg-white/10 transition-all cursor-pointer"
                                         title="Edit Provider">
                                         <i data-lucide="pencil" class="w-3.5 h-3.5 pointer-events-none"></i>

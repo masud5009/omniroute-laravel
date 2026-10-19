@@ -60,13 +60,13 @@
     <!-- SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- OmniRoute Lite Admin JS -->
-    <script src="{{ asset('assets/admin/js/main.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/main.js') }}?v={{ file_exists(public_path('assets/admin/js/main.js')) ? filemtime(public_path('assets/admin/js/main.js')) : time() }}"></script>
     <!-- Google Fonts Inter & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <!-- OmniRoute Lite Admin CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/admin/css/main.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/main.css') }}?v={{ file_exists(public_path('assets/admin/css/main.css')) ? filemtime(public_path('assets/admin/css/main.css')) : time() }}">
     @stack('styles')
 </head>
 <body class="bg-[#09090b] text-zinc-100 antialiased selection:bg-emerald-500 selection:text-white"
@@ -303,10 +303,9 @@
 
                     <!-- Quick Add Key Button -->
                     <button type="button" @click="openAddKeyModal()"
-                        class="px-3.5 py-1.5 bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-xs sm:text-sm rounded-xl shadow-md transition-all flex items-center gap-1.5"
-                        style="color: #ffffff !important;">
-                        <i data-lucide="plus" class="w-3.5 h-3.5" style="color: #ffffff !important; stroke: #ffffff !important;"></i>
-                        <span style="color: #ffffff !important;">Add Key</span>
+                        class="px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 font-semibold text-xs sm:text-sm rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                        <span>Add Key</span>
                     </button>
                 </div>
             </header>

@@ -125,27 +125,38 @@ window.dashboardApp = function(defaultProviderId = 1) {
         openAddCustomProviderModal(format = 'openai') {
             this.customProviderFormat = format;
             this.showProviderModal = true;
+        },
+        openEditProviderById(id) {
+            const list = window.__initialProvidersList || [];
+            const provider = list.find(p => p.id === id);
+            if (provider) {
+                this.openEditProviderModal(provider);
+            }
         }
     };
 };
 
 // AI Providers Manager Alpine Component
-window.providersManager = function(initialProvidersList = []) {
+window.providersManager = function(initialProvidersList = null) {
+    const list = (initialProvidersList && Array.isArray(initialProvidersList))
+        ? initialProvidersList
+        : (window.__initialProvidersList || []);
+
     return {
         searchQuery: '',
         modelQuery: '',
         providerFilter: 'all',
         testingAccountId: null,
         testResult: null,
-        providersList: initialProvidersList,
+        providersList: list,
         matchesProvider(name, slug, format, hasKeys, isFree, models) {
-            if (this.searchQuery.trim() !== '') {
+            if (this.searchQuery && this.searchQuery.trim() !== '') {
                 const q = this.searchQuery.toLowerCase().trim();
-                if (!name.toLowerCase().includes(q) && !slug.toLowerCase().includes(q)) {
+                if (!(name || '').toLowerCase().includes(q) && !(slug || '').toLowerCase().includes(q)) {
                     return false;
                 }
             }
-            if (this.modelQuery.trim() !== '') {
+            if (this.modelQuery && this.modelQuery.trim() !== '') {
                 const mq = this.modelQuery.toLowerCase().trim();
                 const matchesModel = (models || []).some(m => (m || '').toLowerCase().includes(mq));
                 if (!matchesModel) return false;
@@ -157,11 +168,13 @@ window.providersManager = function(initialProvidersList = []) {
             return true;
         },
         matchesProviderBySlug(slug) {
+            if (!this.providersList || !this.providersList.length) return true;
             const p = this.providersList.find(item => item.slug === slug);
             if (!p) return true;
             return this.matchesProvider(p.name, p.slug, p.format, p.hasKeys, p.isFree, p.models);
         },
         hasMatches() {
+            if (!this.providersList || !this.providersList.length) return true;
             return this.providersList.some(p => this.matchesProvider(p.name, p.slug, p.format, p.hasKeys, p.isFree, p.models));
         },
         async pingAccount(accountId) {
