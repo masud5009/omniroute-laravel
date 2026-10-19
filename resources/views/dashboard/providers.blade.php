@@ -25,13 +25,7 @@
         <!-- ============================================================== -->
         <!-- ZERO PROVIDERS CONFIGURED STATE (NO SEARCH/FILTERS)            -->
         <!-- ============================================================== -->
-        <div class="flex items-center justify-between gap-4 flex-wrap pb-1">
-            <div>
-                <h3 class="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                    <span>AI Providers</span>
-                </h3>
-                <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Configured upstream AI providers with failover, load balancing, and rate limit cooldowns.</p>
-            </div>
+        <div class="flex items-center justify-end">
             <button type="button" @click="openAddCustomProviderModal('openai')"
                 class="px-3.5 py-2 text-xs sm:text-sm font-semibold bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white rounded-xl transition-all shadow-md shadow-rose-950/30 flex items-center gap-2 cursor-pointer"
                 style="color: #ffffff !important;">
