@@ -20,7 +20,7 @@
     ])->values();
 @endphp
 
-<div class="space-y-6" x-data="providersManager()">
+<div class="space-y-6" x-data="providersManager(@json($providersList))">
     @if($providers->isEmpty())
         <!-- ============================================================== -->
         <!-- ZERO PROVIDERS CONFIGURED STATE (NO SEARCH/FILTERS)            -->
@@ -290,68 +290,4 @@
     @endif
 </div>
 
-@push('scripts')
-<script>
-window.providersManager = function() {
-    return {
-        searchQuery: '',
-        modelQuery: '',
-        providerFilter: 'all',
-        testingAccountId: null,
-        testResult: null,
-        providersList: @json($providersList),
-        matchesProvider(name, slug, format, hasKeys, isFree, models) {
-            if (this.searchQuery.trim() !== '') {
-                const q = this.searchQuery.toLowerCase().trim();
-                if (!name.toLowerCase().includes(q) && !slug.toLowerCase().includes(q)) {
-                    return false;
-                }
-            }
-            if (this.modelQuery.trim() !== '') {
-                const mq = this.modelQuery.toLowerCase().trim();
-                const matchesModel = (models || []).some(m => (m || '').toLowerCase().includes(mq));
-                if (!matchesModel) return false;
-            }
-            if (this.providerFilter === 'connected' && !hasKeys) return false;
-            if (this.providerFilter === 'free' && !isFree) return false;
-            if (this.providerFilter === 'openai' && format !== 'openai') return false;
-            if (this.providerFilter === 'anthropic' && format !== 'anthropic') return false;
-            return true;
-        },
-        matchesProviderBySlug(slug) {
-            const p = this.providersList.find(item => item.slug === slug);
-            if (!p) return true;
-            return this.matchesProvider(p.name, p.slug, p.format, p.hasKeys, p.isFree, p.models);
-        },
-        hasMatches() {
-            return this.providersList.some(p => this.matchesProvider(p.name, p.slug, p.format, p.hasKeys, p.isFree, p.models));
-        },
-        async pingAccount(accountId) {
-            this.testingAccountId = accountId;
-            this.testResult = null;
-            try {
-                const res = await fetch(`/dashboard/accounts/${accountId}/test`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-                        'Accept': 'application/json'
-                    }
-                });
-                const data = await res.json();
-                this.testResult = { id: accountId, ...data };
-                if (typeof copyText === 'function') {
-                    copyText(data.message, data.success ? 'Key Verified OK!' : 'Test Failed');
-                }
-                setTimeout(() => { this.testResult = null; }, 5000);
-            } catch (err) {
-                this.testResult = { id: accountId, success: false, message: err.message };
-            } finally {
-                this.testingAccountId = null;
-                this.$nextTick(() => lucide.createIcons());
-            }
-        }
-    };
-};
-</script>
-@endpush
 @endsection
