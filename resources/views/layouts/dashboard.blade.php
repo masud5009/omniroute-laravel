@@ -25,6 +25,13 @@
             }
         })();
     </script>
+    <style>
+        /* Brand logo visibility follows the active theme (default: dark) */
+        html:not(.dark) .brand-logo-dark { display: none !important; }
+        html:not(.dark) .brand-logo-light { display: block !important; }
+        html.dark .brand-logo-dark { display: block !important; }
+        html.dark .brand-logo-light { display: none !important; }
+    </style>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -104,7 +111,7 @@
                             <img src="{{ $brandLogoDark }}" alt="{{ $brandTitle ?? 'OmniRoute' }} logo" class="brand-logo-dark w-full max-w-[190px] h-11 object-contain object-center">
                         @endif
                         @if($brandLogoLight)
-                            <img src="{{ $brandLogoLight }}" alt="{{ $brandTitle ?? 'OmniRoute' }} logo" class="brand-logo-light w-full max-w-[190px] h-11 object-contain object-center" style="display:none;">
+                            <img src="{{ $brandLogoLight }}" alt="{{ $brandTitle ?? 'OmniRoute' }} logo" class="brand-logo-light w-full max-w-[190px] h-11 object-contain object-center">
                         @endif
                     @elseif($brandLogo)
                         <img src="{{ $brandLogo }}" alt="{{ $brandTitle ?? 'OmniRoute' }} logo" class="w-full max-w-[190px] h-11 object-contain object-center">

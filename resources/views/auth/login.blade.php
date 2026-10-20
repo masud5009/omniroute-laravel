@@ -67,6 +67,12 @@
         code, pre { font-family: 'JetBrains Mono', monospace; }
         [x-cloak] { display: none !important; }
 
+        /* Brand logo visibility follows the active theme (default: dark) */
+        html:not(.dark) .brand-logo-dark { display: none !important; }
+        html:not(.dark) .brand-logo-light { display: block !important; }
+        html.dark .brand-logo-dark { display: block !important; }
+        html.dark .brand-logo-light { display: none !important; }
+
         /* Light Mode Styles */
         html:not(.dark) body {
             background-color: #f8fafc !important;
@@ -162,17 +168,8 @@
                         <img src="{{ $loginLogoDark }}" alt="Logo" class="brand-logo-dark max-w-[220px] max-h-20 w-auto h-auto object-contain relative z-10">
                     @endif
                     @if($loginLogoLight)
-                        <img src="{{ $loginLogoLight }}" alt="Logo" class="brand-logo-light max-w-[220px] max-h-20 w-auto h-auto object-contain relative z-10" style="display:none;">
+                        <img src="{{ $loginLogoLight }}" alt="Logo" class="brand-logo-light max-w-[220px] max-h-20 w-auto h-auto object-contain relative z-10">
                     @endif
-                    <script>
-                        (function() {
-                            try {
-                                const isDark = document.documentElement.classList.contains('dark');
-                                document.querySelectorAll('.brand-logo-dark').forEach((el) => { el.style.display = isDark ? '' : 'none'; });
-                                document.querySelectorAll('.brand-logo-light').forEach((el) => { el.style.display = isDark ? 'none' : ''; });
-                            } catch (e) {}
-                        })();
-                    </script>
                 @elseif($loginLogo)
                     <img src="{{ $loginLogo }}" alt="Logo" class="max-w-[220px] max-h-20 w-auto h-auto object-contain relative z-10">
                 @else
