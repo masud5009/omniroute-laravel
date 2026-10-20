@@ -608,3 +608,76 @@ html:not(.dark) div.swal2-container .swal2-popup.omni-swal .swal2-cancel:hover {
     background-color: #e2e8f0 !important;
     color: #0f172a !important;
 }
+
+/* ============================================================== */
+/* Solid Primary / Danger Buttons — FINAL OVERRIDE (Light Mode)   */
+/* Must stay at the END of file: substring selectors above like   */
+/* [class*="bg-emerald-50"] also match bg-emerald-500, so re-     */
+/* assert solid backgrounds + white text here.                    */
+/* ============================================================== */
+html:not(.dark) button.bg-emerald-500,
+html:not(.dark) a.bg-emerald-500,
+html:not(.dark) button.bg-emerald-600,
+html:not(.dark) a.bg-emerald-600 {
+    background-color: #059669 !important;
+    border-color: #059669 !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+html:not(.dark) button.bg-emerald-500:not(:disabled),
+html:not(.dark) a.bg-emerald-500:not(:disabled) {
+    opacity: 1 !important;
+}
+
+html:not(.dark) button.bg-emerald-500:hover:not(:disabled),
+html:not(.dark) a.bg-emerald-500:hover:not(:disabled),
+html:not(.dark) button.bg-emerald-600:hover:not(:disabled),
+html:not(.dark) a.bg-emerald-600:hover:not(:disabled) {
+    background-color: #10b981 !important;
+    border-color: #10b981 !important;
+    color: #ffffff !important;
+}
+
+html:not(.dark) button.bg-emerald-500 span,
+html:not(.dark) a.bg-emerald-500 span,
+html:not(.dark) button.bg-emerald-600 span,
+html:not(.dark) a.bg-emerald-600 span,
+html:not(.dark) button.bg-emerald-500 i,
+html:not(.dark) a.bg-emerald-500 i,
+html:not(.dark) button.bg-emerald-600 i,
+html:not(.dark) a.bg-emerald-600 i,
+html:not(.dark) button.bg-emerald-500 svg,
+html:not(.dark) a.bg-emerald-500 svg,
+html:not(.dark) button.bg-emerald-600 svg,
+html:not(.dark) a.bg-emerald-600 svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+    opacity: 1 !important;
+}
+
+html:not(.dark) button.bg-rose-600,
+html:not(.dark) a.bg-rose-600 {
+    background-color: #e11d48 !important;
+    border-color: #e11d48 !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+html:not(.dark) button.bg-rose-600:hover:not(:disabled),
+html:not(.dark) a.bg-rose-600:hover:not(:disabled) {
+    background-color: #f43f5e !important;
+    border-color: #f43f5e !important;
+    color: #ffffff !important;
+}
+
+html:not(.dark) button.bg-rose-600 span,
+html:not(.dark) a.bg-rose-600 span,
+html:not(.dark) button.bg-rose-600 i,
+html:not(.dark) a.bg-rose-600 i,
+html:not(.dark) button.bg-rose-600 svg,
+html:not(.dark) a.bg-rose-600 svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+    opacity: 1 !important;
+}

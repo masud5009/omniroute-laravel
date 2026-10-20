@@ -265,7 +265,7 @@
                     </div>
                     <div class="text-base text-zinc-200 font-semibold">No provider keys connected yet</div>
                     <p class="text-sm text-zinc-400 max-w-sm mx-auto">Add your free Groq, Gemini, OpenRouter, or OpenAI API key to start routing requests through OmniRoute.</p>
-                    <button type="button" @click="openAddKeyModal()" class="px-5 py-2.5 bg-white text-zinc-950 font-semibold text-sm rounded-xl shadow-lg hover:bg-zinc-200 transition-colors inline-flex items-center gap-2">
+                    <button type="button" @click="openAddKeyModal()" class="px-5 py-2.5 bg-emerald-500 text-white font-semibold text-sm rounded-xl shadow-lg hover:bg-emerald-400 transition-colors inline-flex items-center gap-2">
                         <i data-lucide="plus" class="w-4 h-4"></i>
                         <span>Connect Your First Key</span>
                     </button>

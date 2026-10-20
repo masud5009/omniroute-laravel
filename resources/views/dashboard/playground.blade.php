@@ -448,7 +448,7 @@
                     :disabled="playLoading"
                     class="flex-1 bg-[#09090b] border border-white/10 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 disabled:opacity-50 font-sans">
                 <button type="button" @click="sendPlayground()" :disabled="playLoading || !playInput.trim()"
-                    class="px-4 py-2.5 bg-white hover:bg-zinc-200 text-zinc-950 font-semibold text-xs sm:text-sm rounded-xl shadow-md transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer">
+                    class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-md transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer">
                     <span>Send</span>
                     <i data-lucide="send" class="w-4 h-4"></i>
                 </button>

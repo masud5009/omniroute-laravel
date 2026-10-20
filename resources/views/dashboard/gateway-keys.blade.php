@@ -252,8 +252,8 @@
                 </div>
 
                 <div class="pt-4 border-t border-white/[0.06] flex items-center justify-end gap-2.5">
-                    <button type="button" @click="editModalOpen = false" class="px-4 py-2.5 text-sm font-medium text-zinc-400 hover:text-white rounded-xl">Cancel</button>
-                    <button type="submit" class="px-5 py-2.5 bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-sm rounded-xl transition-all shadow-md cursor-pointer">
+                    <button type="button" @click="editModalOpen = false" class="px-4 py-2.5 text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white rounded-xl transition-all shadow-md cursor-pointer">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold text-sm rounded-xl transition-all shadow-md cursor-pointer">
                         Save Changes
                     </button>
                 </div>
