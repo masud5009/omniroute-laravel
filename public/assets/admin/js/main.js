@@ -55,6 +55,23 @@ window.confirmDelete = function(form, title = 'Are you sure?', text = 'This acti
     });
 };
 
+// Theme-aware brand logo swapper (dark / light logo)
+function swapBrandLogos() {
+    try {
+        const isDark = document.documentElement.classList.contains('dark');
+        document.querySelectorAll('.brand-logo-dark').forEach((el) => {
+            el.style.display = isDark ? '' : 'none';
+        });
+        document.querySelectorAll('.brand-logo-light').forEach((el) => {
+            el.style.display = isDark ? 'none' : '';
+        });
+    } catch (e) {
+        console.error('Brand logo swap error:', e);
+    }
+}
+
+window.swapBrandLogos = swapBrandLogos;
+
 // Main Admin Dashboard Alpine Root Component
 window.dashboardApp = function(defaultProviderId = 1) {
     return {
@@ -75,6 +92,7 @@ window.dashboardApp = function(defaultProviderId = 1) {
                 document.documentElement.classList.remove('dark');
                 localStorage.setItem('omni_theme', 'light');
             }
+            swapBrandLogos();
             this.$nextTick(() => {
                 if (window.lucide) lucide.createIcons();
             });
@@ -306,4 +324,5 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.lucide) {
         lucide.createIcons();
     }
+    swapBrandLogos();
 });

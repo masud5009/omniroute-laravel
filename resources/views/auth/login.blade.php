@@ -154,8 +154,27 @@
         <!-- Brand Header -->
         <div class="text-center mb-8">
             <div class="inline-flex items-center justify-center relative group">
-                @if(isset($globalSiteSettings) && $globalSiteSettings->logoUrl())
-                    <img src="{{ $globalSiteSettings->logoUrl() }}" alt="Logo" class="max-w-[220px] max-h-20 w-auto h-auto object-contain relative z-10">
+                @php($loginLogoDark = isset($globalSiteSettings) ? $globalSiteSettings->logoDarkUrl() : null)
+                @php($loginLogoLight = isset($globalSiteSettings) ? $globalSiteSettings->logoLightUrl() : null)
+                @php($loginLogo = $loginLogoDark ?? $loginLogoLight ?? (isset($globalSiteSettings) ? $globalSiteSettings->logoUrl() : null))
+                @if($loginLogoDark || $loginLogoLight)
+                    @if($loginLogoDark)
+                        <img src="{{ $loginLogoDark }}" alt="Logo" class="brand-logo-dark max-w-[220px] max-h-20 w-auto h-auto object-contain relative z-10">
+                    @endif
+                    @if($loginLogoLight)
+                        <img src="{{ $loginLogoLight }}" alt="Logo" class="brand-logo-light max-w-[220px] max-h-20 w-auto h-auto object-contain relative z-10" style="display:none;">
+                    @endif
+                    <script>
+                        (function() {
+                            try {
+                                const isDark = document.documentElement.classList.contains('dark');
+                                document.querySelectorAll('.brand-logo-dark').forEach((el) => { el.style.display = isDark ? '' : 'none'; });
+                                document.querySelectorAll('.brand-logo-light').forEach((el) => { el.style.display = isDark ? 'none' : ''; });
+                            } catch (e) {}
+                        })();
+                    </script>
+                @elseif($loginLogo)
+                    <img src="{{ $loginLogo }}" alt="Logo" class="max-w-[220px] max-h-20 w-auto h-auto object-contain relative z-10">
                 @else
                     <div class="w-14 h-14 rounded-2xl bg-gradient-to-b from-zinc-800 to-zinc-900 border border-white/10 shadow-2xl flex items-center justify-center relative overflow-hidden">
                         <div class="absolute inset-0 rounded-2xl bg-emerald-500/20 blur group-hover:bg-emerald-500/30 transition-colors"></div>
@@ -163,7 +182,7 @@
                     </div>
                 @endif
             </div>
-            @if(!isset($globalSiteSettings) || !$globalSiteSettings->logoUrl())
+            @if(!$loginLogo)
                 <h1 class="text-2xl font-bold tracking-tight text-white mt-4">{{ ($globalSiteSettings->site_title ?? 'OmniRoute') }}</h1>
             @endif
         </div>

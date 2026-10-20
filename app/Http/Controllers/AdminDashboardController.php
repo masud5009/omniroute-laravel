@@ -159,8 +159,12 @@ class AdminDashboardController extends Controller
             'site_title' => 'required|string|max:100',
             'version' => 'required|string|max:20',
             'logo' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp',
+            'logo_dark' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp',
+            'logo_light' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp',
             'favicon' => 'nullable|mimes:png,jpg,jpeg,svg,webp,ico',
             'remove_logo' => 'nullable|boolean',
+            'remove_logo_dark' => 'nullable|boolean',
+            'remove_logo_light' => 'nullable|boolean',
             'remove_favicon' => 'nullable|boolean',
         ]);
 
@@ -176,6 +180,16 @@ class AdminDashboardController extends Controller
             $data['logo_path'] = null;
         }
 
+        if ($request->boolean('remove_logo_dark') && $settings->logo_dark_path) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($settings->logo_dark_path);
+            $data['logo_dark_path'] = null;
+        }
+
+        if ($request->boolean('remove_logo_light') && $settings->logo_light_path) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($settings->logo_light_path);
+            $data['logo_light_path'] = null;
+        }
+
         if ($request->boolean('remove_favicon') && $settings->favicon_path) {
             \Illuminate\Support\Facades\Storage::disk('public')->delete($settings->favicon_path);
             $data['favicon_path'] = null;
@@ -186,6 +200,20 @@ class AdminDashboardController extends Controller
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($settings->logo_path);
             }
             $data['logo_path'] = $request->file('logo')->store('branding', 'public');
+        }
+
+        if ($request->hasFile('logo_dark')) {
+            if ($settings->logo_dark_path) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($settings->logo_dark_path);
+            }
+            $data['logo_dark_path'] = $request->file('logo_dark')->store('branding', 'public');
+        }
+
+        if ($request->hasFile('logo_light')) {
+            if ($settings->logo_light_path) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($settings->logo_light_path);
+            }
+            $data['logo_light_path'] = $request->file('logo_light')->store('branding', 'public');
         }
 
         if ($request->hasFile('favicon')) {

@@ -95,10 +95,19 @@
         <aside class="w-64 h-screen bg-[#10141e] border-r border-white/[0.07] flex flex-col justify-between flex-shrink-0 z-30 select-none">
             <!-- Sidebar Top: Brand -->
             <div>
-                @php($brandLogo = isset($globalSiteSettings) ? $globalSiteSettings->logoUrl() : null)
-                <a href="{{ route('dashboard.overview') }}" class="h-14 px-5 border-b border-white/[0.07] flex items-center hover:bg-white/[0.02] transition-colors">
-                    @if($brandLogo)
-                        <img src="{{ $brandLogo }}" alt="{{ $brandTitle ?? 'OmniRoute' }} logo" class="max-w-[170px] max-h-9 w-auto h-auto object-contain">
+                @php($brandLogoDark = isset($globalSiteSettings) ? $globalSiteSettings->logoDarkUrl() : null)
+                @php($brandLogoLight = isset($globalSiteSettings) ? $globalSiteSettings->logoLightUrl() : null)
+                @php($brandLogo = $brandLogoDark ?? $brandLogoLight ?? (isset($globalSiteSettings) ? $globalSiteSettings->logoUrl() : null))
+                <a href="{{ route('dashboard.overview') }}" class="px-4 py-3 border-b border-white/[0.07] flex items-center justify-center hover:bg-white/[0.02] transition-colors">
+                    @if($brandLogoDark || $brandLogoLight)
+                        @if($brandLogoDark)
+                            <img src="{{ $brandLogoDark }}" alt="{{ $brandTitle ?? 'OmniRoute' }} logo" class="brand-logo-dark w-full max-w-[190px] h-11 object-contain object-center">
+                        @endif
+                        @if($brandLogoLight)
+                            <img src="{{ $brandLogoLight }}" alt="{{ $brandTitle ?? 'OmniRoute' }} logo" class="brand-logo-light w-full max-w-[190px] h-11 object-contain object-center" style="display:none;">
+                        @endif
+                    @elseif($brandLogo)
+                        <img src="{{ $brandLogo }}" alt="{{ $brandTitle ?? 'OmniRoute' }} logo" class="w-full max-w-[190px] h-11 object-contain object-center">
                     @else
                         <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-zinc-800 to-zinc-900 border border-white/10 flex items-center justify-center shadow-lg">
                             <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>

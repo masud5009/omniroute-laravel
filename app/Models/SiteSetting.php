@@ -14,6 +14,8 @@ class SiteSetting extends Model
         'site_title',
         'version',
         'logo_path',
+        'logo_dark_path',
+        'logo_light_path',
         'favicon_path',
     ];
 
@@ -28,6 +30,8 @@ class SiteSetting extends Model
             'site_title' => 'OmniRoute',
             'version' => 'v1.0',
             'logo_path' => null,
+            'logo_dark_path' => null,
+            'logo_light_path' => null,
             'favicon_path' => null,
         ];
     }
@@ -42,8 +46,41 @@ class SiteSetting extends Model
 
     /**
      * Public URL for the uploaded logo (or null when using the default icon).
+     * Falls back to legacy logo_path for backward compatibility.
      */
     public function logoUrl(): ?string
+    {
+        return $this->logoDarkUrl() ?? $this->legacyLogoUrl();
+    }
+
+    /**
+     * Public URL for the dark-theme logo.
+     */
+    public function logoDarkUrl(): ?string
+    {
+        if ($this->logo_dark_path && Storage::disk('public')->exists($this->logo_dark_path)) {
+            return asset('storage/'.$this->logo_dark_path);
+        }
+
+        return null;
+    }
+
+    /**
+     * Public URL for the light-theme logo.
+     */
+    public function logoLightUrl(): ?string
+    {
+        if ($this->logo_light_path && Storage::disk('public')->exists($this->logo_light_path)) {
+            return asset('storage/'.$this->logo_light_path);
+        }
+
+        return null;
+    }
+
+    /**
+     * Legacy single-logo URL (kept for backward compatibility).
+     */
+    protected function legacyLogoUrl(): ?string
     {
         if ($this->logo_path && Storage::disk('public')->exists($this->logo_path)) {
             return asset('storage/'.$this->logo_path);
