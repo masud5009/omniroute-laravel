@@ -96,22 +96,14 @@
             <!-- Sidebar Top: Brand -->
             <div>
                 @php($brandLogo = isset($globalSiteSettings) ? $globalSiteSettings->logoUrl() : null)
-                <a href="{{ route('dashboard.overview') }}" class="h-14 px-5 border-b border-white/[0.07] flex items-center justify-between hover:bg-white/[0.02] transition-colors">
-                    <div class="flex items-center gap-2.5 min-w-0">
-                        <div class="h-8 flex items-center justify-center shrink-0 relative">
-                            @if($brandLogo)
-                                <img src="{{ $brandLogo }}" alt="{{ $brandTitle ?? 'OmniRoute' }} logo" class="max-w-[140px] max-h-8 w-auto h-auto object-contain">
-                            @else
-                                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-zinc-800 to-zinc-900 border border-white/10 flex items-center justify-center shadow-lg">
-                                    <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
-                                </div>
-                            @endif
+                <a href="{{ route('dashboard.overview') }}" class="h-14 px-5 border-b border-white/[0.07] flex items-center hover:bg-white/[0.02] transition-colors">
+                    @if($brandLogo)
+                        <img src="{{ $brandLogo }}" alt="{{ $brandTitle ?? 'OmniRoute' }} logo" class="max-w-[170px] max-h-9 w-auto h-auto object-contain">
+                    @else
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-zinc-800 to-zinc-900 border border-white/10 flex items-center justify-center shadow-lg">
+                            <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
                         </div>
-                        <div>
-                            <span class="font-bold text-sm tracking-tight text-white block leading-tight">{{ $brandTitle ?? 'OmniRoute' }}</span>
-                        </div>
-                    </div>
-                    <span class="text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded">{{ $brandVersion ?? 'v1.0' }}</span>
+                    @endif
                 </a>
 
                 <!-- Navigation Links with Dedicated Routes -->

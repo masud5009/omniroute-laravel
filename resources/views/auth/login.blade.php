@@ -178,7 +178,7 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('login') }}" class="space-y-4">
+            <form id="loginForm" method="POST" action="{{ route('login') }}" class="space-y-4" novalidate>
                 @csrf
 
                 <div>
@@ -187,10 +187,11 @@
                         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
                             <i data-lucide="mail" class="w-4 h-4"></i>
                         </div>
-                        <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
+                        <input type="email" id="email" name="email" value="{{ old('email') }}" autofocus
                             placeholder="name@example.com"
                             class="w-full bg-[#09090b] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-colors">
                     </div>
+                    <p id="emailError" class="hidden mt-1.5 text-xs text-rose-400 flex items-center gap-1.5"></p>
                 </div>
 
                 <div>
@@ -199,10 +200,11 @@
                         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
                             <i data-lucide="lock" class="w-4 h-4"></i>
                         </div>
-                        <input type="password" id="password" name="password" required
+                        <input type="password" id="password" name="password"
                             placeholder="••••••••"
                             class="w-full bg-[#09090b] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-colors">
                     </div>
+                    <p id="passwordError" class="hidden mt-1.5 text-xs text-rose-400 flex items-center gap-1.5"></p>
                 </div>
 
                 <div class="flex items-center text-xs pt-1">
@@ -213,12 +215,89 @@
                 </div>
 
                 <button type="submit"
+                    style="background-color: #10b981 !important; color: #ffffff !important;"
+                    onmouseover="this.style.backgroundColor='#34d399'"
+                    onmouseout="this.style.backgroundColor='#10b981'"
                     class="btn-primary w-full py-2.5 px-4 text-white font-semibold rounded-xl text-sm tracking-wide shadow-md transition-all duration-150 transform active:scale-[0.99] flex items-center justify-center gap-2 mt-2 cursor-pointer">
-                    <span>Enter Gateway Console</span>
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    <span style="color: #ffffff !important;">Enter Gateway Console</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4" style="color: #ffffff !important;"></i>
                 </button>
             </form>
         </div>
     </div>
+
+<script>
+(function() {
+    const form = document.getElementById('loginForm');
+    if (!form) return;
+
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+
+    const errorBorder = ['border-rose-500', 'focus:border-rose-500', 'focus:ring-rose-500/30'];
+    const okBorder = ['border-white/10', 'focus:border-emerald-500'];
+
+    function showError(input, box, message) {
+        box.textContent = message;
+        box.classList.remove('hidden');
+        input.classList.remove(...okBorder);
+        input.classList.add(...errorBorder);
+    }
+
+    function clearError(input, box) {
+        box.textContent = '';
+        box.classList.add('hidden');
+        input.classList.remove(...errorBorder);
+        input.classList.add(...okBorder);
+    }
+
+    function validateEmail(showMsg = true) {
+        const value = email.value.trim();
+        if (!value) {
+            if (showMsg) showError(email, emailError, 'Email is required.');
+            return false;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            if (showMsg) showError(email, emailError, 'Enter a valid email address.');
+            return false;
+        }
+        clearError(email, emailError);
+        return true;
+    }
+
+    function validatePassword(showMsg = true) {
+        if (!password.value) {
+            if (showMsg) showError(password, passwordError, 'Password is required.');
+            return false;
+        }
+        if (password.value.length < 1) {
+            if (showMsg) showError(password, passwordError, 'Password is required.');
+            return false;
+        }
+        clearError(password, passwordError);
+        return true;
+    }
+
+    // Validate immediately on typing / leaving the field
+    email.addEventListener('input', () => validateEmail(email.value.trim() !== '' || !emailError.classList.contains('hidden')));
+    email.addEventListener('blur', () => { if (email.value.trim() !== '' || !emailError.classList.contains('hidden')) validateEmail(true); });
+    password.addEventListener('input', () => validatePassword(password.value !== '' || !passwordError.classList.contains('hidden')));
+    password.addEventListener('blur', () => { if (password.value !== '' || !passwordError.classList.contains('hidden')) validatePassword(true); });
+
+    // Submit via JavaScript: block submit + show required messages immediately
+    form.addEventListener('submit', function(e) {
+        const emailOk = validateEmail(true);
+        const passOk = validatePassword(true);
+        if (!emailOk || !passOk) {
+            e.preventDefault();
+            (emailOk ? password : email).focus();
+            return false;
+        }
+        form.submit();
+    });
+})();
+</script>
 </body>
 </html>
