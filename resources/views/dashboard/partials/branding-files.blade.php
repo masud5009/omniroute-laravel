@@ -1,4 +1,4 @@
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div class="p-4 rounded-xl bg-[#09090b] border border-white/5 space-y-3">
                 <div class="space-y-2.5">
                     <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400">Logo (Dark Theme)</label>
@@ -8,7 +8,6 @@
                     <span id="previewEmptyLogoDark" class="text-xs text-zinc-500 font-mono {{ $siteSettings->logoDarkUrl() ? 'hidden' : '' }}">No dark logo uploaded</span>
                 </div>
                 <input type="file" id="inputLogoDark" name="logo_dark" accept="image/*" class="btn-file w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-bold file:text-xs file:cursor-pointer bg-[#121215] border border-white/10 rounded-xl p-2">
-                <p class="text-xs text-zinc-500">PNG/JPG/SVG/WEBP. Shown in dark mode.</p>
                 @if($siteSettings->logo_dark_path)
                     <label class="flex items-center gap-2 text-xs text-zinc-400 cursor-pointer">
                         <input type="checkbox" name="remove_logo_dark" value="1" class="rounded border-zinc-700 text-rose-500 focus:ring-rose-500">
@@ -25,7 +24,6 @@
                     <span id="previewEmptyLogoLight" class="text-xs text-zinc-500 font-mono {{ $siteSettings->logoLightUrl() ? 'hidden' : '' }}">No light logo uploaded</span>
                 </div>
                 <input type="file" id="inputLogoLight" name="logo_light" accept="image/*" class="btn-file w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-bold file:text-xs file:cursor-pointer bg-[#121215] border border-white/10 rounded-xl p-2">
-                <p class="text-xs text-zinc-500">PNG/JPG/SVG/WEBP. Shown in light mode.</p>
                 @if($siteSettings->logo_light_path)
                     <label class="flex items-center gap-2 text-xs text-zinc-400 cursor-pointer">
                         <input type="checkbox" name="remove_logo_light" value="1" class="rounded border-zinc-700 text-rose-500 focus:ring-rose-500">
@@ -42,7 +40,6 @@
                     <span id="previewEmptyFavicon" class="text-xs text-zinc-500 font-mono {{ $siteSettings->faviconUrl() ? 'hidden' : '' }}">Default favicon.ico</span>
                 </div>
                 <input type="file" id="inputFavicon" name="favicon" accept=".ico,.png,.jpg,.jpeg,.svg,.webp" class="btn-file w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-bold file:text-xs file:cursor-pointer bg-[#121215] border border-white/10 rounded-xl p-2">
-                <p class="text-xs text-zinc-500">ICO/PNG/SVG.</p>
                 @if($siteSettings->favicon_path)
                     <label class="flex items-center gap-2 text-xs text-zinc-400 cursor-pointer">
                         <input type="checkbox" name="remove_favicon" value="1" class="rounded border-zinc-700 text-rose-500 focus:ring-rose-500">
