@@ -158,8 +158,8 @@ class AdminDashboardController extends Controller
         $validated = $request->validate([
             'site_title' => 'required|string|max:100',
             'version' => 'required|string|max:20',
-            'logo' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
-            'favicon' => 'nullable|mimes:png,jpg,jpeg,svg,webp,ico|max:1024',
+            'logo' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp',
+            'favicon' => 'nullable|mimes:png,jpg,jpeg,svg,webp,ico',
             'remove_logo' => 'nullable|boolean',
             'remove_favicon' => 'nullable|boolean',
         ]);

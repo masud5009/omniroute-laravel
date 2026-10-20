@@ -9,7 +9,7 @@
                     @endif
                 </div>
                 <input type="file" name="logo" accept="image/*" class="btn-file w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-bold file:text-xs file:cursor-pointer bg-[#121215] border border-white/10 rounded-xl p-2">
-                <p class="text-xs text-zinc-500">PNG/JPG/SVG/WEBP, max 2MB.</p>
+                <p class="text-xs text-zinc-500">PNG/JPG/SVG/WEBP.</p>
                 @if($siteSettings->logo_path)
                     <label class="flex items-center gap-2 text-xs text-zinc-400 cursor-pointer">
                         <input type="checkbox" name="remove_logo" value="1" class="rounded border-zinc-700 text-rose-500 focus:ring-rose-500">
@@ -27,7 +27,7 @@
                     @endif
                 </div>
                 <input type="file" name="favicon" accept=".ico,.png,.jpg,.jpeg,.svg,.webp" class="btn-file w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-bold file:text-xs file:cursor-pointer bg-[#121215] border border-white/10 rounded-xl p-2">
-                <p class="text-xs text-zinc-500">ICO/PNG/SVG, max 1MB.</p>
+                <p class="text-xs text-zinc-500">ICO/PNG/SVG.</p>
                 @if($siteSettings->favicon_path)
                     <label class="flex items-center gap-2 text-xs text-zinc-400 cursor-pointer">
                         <input type="checkbox" name="remove_favicon" value="1" class="rounded border-zinc-700 text-rose-500 focus:ring-rose-500">
