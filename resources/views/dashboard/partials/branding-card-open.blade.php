@@ -9,16 +9,11 @@
     <form action="{{ route('dashboard.settings.site.update') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
         @csrf
         @method('PUT')
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="space-y-1.5">
                 <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400">Website Title</label>
                 <input type="text" name="site_title" value="{{ old('site_title', $siteSettings->site_title) }}" required maxlength="100" placeholder="OmniRoute" class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500">
                 <p class="text-xs text-zinc-500">Sidebar brand + browser tab.</p>
-            </div>
-            <div class="space-y-1.5">
-                <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400">Subtitle</label>
-                <input type="text" name="subtitle" value="{{ old('subtitle', $siteSettings->subtitle) }}" maxlength="100" placeholder="Lite Gateway" class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-600 font-mono focus:outline-none focus:border-emerald-500">
-                <p class="text-xs text-zinc-500">Small text under title.</p>
             </div>
             <div class="space-y-1.5">
                 <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400">Version</label>

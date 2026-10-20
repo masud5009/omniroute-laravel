@@ -12,7 +12,6 @@ class SiteSetting extends Model
 
     protected $fillable = [
         'site_title',
-        'subtitle',
         'version',
         'logo_path',
         'favicon_path',
@@ -27,7 +26,6 @@ class SiteSetting extends Model
     {
         return [
             'site_title' => 'OmniRoute',
-            'subtitle' => 'Lite Gateway',
             'version' => 'v1.0',
             'logo_path' => null,
             'favicon_path' => null,

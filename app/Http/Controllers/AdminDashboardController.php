@@ -157,7 +157,6 @@ class AdminDashboardController extends Controller
     {
         $validated = $request->validate([
             'site_title' => 'required|string|max:100',
-            'subtitle' => 'nullable|string|max:100',
             'version' => 'required|string|max:20',
             'logo' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
             'favicon' => 'nullable|mimes:png,jpg,jpeg,svg,webp,ico|max:1024',
@@ -169,7 +168,6 @@ class AdminDashboardController extends Controller
 
         $data = [
             'site_title' => $validated['site_title'],
-            'subtitle' => $validated['subtitle'] ?? '',
             'version' => $validated['version'],
         ];
 

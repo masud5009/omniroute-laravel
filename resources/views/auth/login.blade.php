@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ ($globalSiteSettings->site_title ?? 'OmniRoute') }} {{ ($globalSiteSettings->subtitle ?? 'Lite') }} - Sign In</title>
+    <title>{{ ($globalSiteSettings->site_title ?? 'OmniRoute') }} - Sign In</title>
     @if(isset($globalSiteSettings) && $globalSiteSettings->faviconUrl())
     <link rel="icon" href="{{ $globalSiteSettings->faviconUrl() }}">
     @endif
@@ -161,7 +161,7 @@
                     <i data-lucide="zap" class="w-7 h-7 text-emerald-400 relative z-10"></i>
                 @endif
             </div>
-            <h1 class="text-2xl font-bold tracking-tight text-white">{{ ($globalSiteSettings->site_title ?? 'OmniRoute') }} {{ ($globalSiteSettings->subtitle ?? 'Lite') }}</h1>
+            <h1 class="text-2xl font-bold tracking-tight text-white">{{ ($globalSiteSettings->site_title ?? 'OmniRoute') }}</h1>
         </div>
 
         <!-- Login Card -->

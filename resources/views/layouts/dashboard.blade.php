@@ -5,10 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @php($brandTitle = $globalSiteSettings->site_title ?? 'OmniRoute')
-    @php($brandSubtitle = $globalSiteSettings->subtitle ?? 'Lite Gateway')
     @php($brandVersion = $globalSiteSettings->version ?? 'v1.0')
     @php($brandFavicon = isset($globalSiteSettings) ? $globalSiteSettings->faviconUrl() : null)
-    <title>{{ $brandTitle }} {{ $brandSubtitle }} - @yield('title', 'AI Gateway Console')</title>
+    <title>{{ $brandTitle }} - @yield('title', 'AI Gateway Console')</title>
     <link rel="icon" type="image/x-icon" href="{{ $brandFavicon ?? asset('favicon.ico') }}">
 
     <!-- Theme Initializer (Prevents Theme Flash / FOUC) -->
@@ -107,8 +106,7 @@
                             @endif
                         </div>
                         <div>
-                            <span class="font-bold text-sm tracking-tight text-white block">{{ $brandTitle ?? 'OmniRoute' }}</span>
-                            <span class="text-[11px] text-zinc-500 font-mono">{{ $brandSubtitle ?? 'Lite Gateway' }}</span>
+                            <span class="font-bold text-sm tracking-tight text-white block leading-tight">{{ $brandTitle ?? 'OmniRoute' }}</span>
                         </div>
                     </div>
                     <span class="text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded">{{ $brandVersion ?? 'v1.0' }}</span>
