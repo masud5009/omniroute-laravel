@@ -153,15 +153,19 @@
 
         <!-- Brand Header -->
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-b from-zinc-800 to-zinc-900 border border-white/10 shadow-2xl mb-4 relative group overflow-hidden">
-                <div class="absolute inset-0 rounded-2xl bg-emerald-500/20 blur group-hover:bg-emerald-500/30 transition-colors"></div>
+            <div class="inline-flex items-center justify-center relative group">
                 @if(isset($globalSiteSettings) && $globalSiteSettings->logoUrl())
-                    <img src="{{ $globalSiteSettings->logoUrl() }}" alt="Logo" class="w-full h-full object-cover relative z-10">
+                    <img src="{{ $globalSiteSettings->logoUrl() }}" alt="Logo" class="max-w-[220px] max-h-20 w-auto h-auto object-contain relative z-10">
                 @else
-                    <i data-lucide="zap" class="w-7 h-7 text-emerald-400 relative z-10"></i>
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-b from-zinc-800 to-zinc-900 border border-white/10 shadow-2xl flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 rounded-2xl bg-emerald-500/20 blur group-hover:bg-emerald-500/30 transition-colors"></div>
+                        <i data-lucide="zap" class="w-7 h-7 text-emerald-400 relative z-10"></i>
+                    </div>
                 @endif
             </div>
-            <h1 class="text-2xl font-bold tracking-tight text-white">{{ ($globalSiteSettings->site_title ?? 'OmniRoute') }}</h1>
+            @if(!isset($globalSiteSettings) || !$globalSiteSettings->logoUrl())
+                <h1 class="text-2xl font-bold tracking-tight text-white mt-4">{{ ($globalSiteSettings->site_title ?? 'OmniRoute') }}</h1>
+            @endif
         </div>
 
         <!-- Login Card -->

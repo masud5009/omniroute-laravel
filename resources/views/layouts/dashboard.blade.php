@@ -97,12 +97,14 @@
             <div>
                 @php($brandLogo = isset($globalSiteSettings) ? $globalSiteSettings->logoUrl() : null)
                 <a href="{{ route('dashboard.overview') }}" class="h-14 px-5 border-b border-white/[0.07] flex items-center justify-between hover:bg-white/[0.02] transition-colors">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-zinc-800 to-zinc-900 border border-white/10 flex items-center justify-center shadow-lg relative overflow-hidden">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <div class="h-8 flex items-center justify-center shrink-0 relative">
                             @if($brandLogo)
-                                <img src="{{ $brandLogo }}" alt="{{ $brandTitle ?? 'OmniRoute' }} logo" class="w-full h-full object-cover">
+                                <img src="{{ $brandLogo }}" alt="{{ $brandTitle ?? 'OmniRoute' }} logo" class="max-w-[140px] max-h-8 w-auto h-auto object-contain">
                             @else
-                                <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
+                                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-zinc-800 to-zinc-900 border border-white/10 flex items-center justify-center shadow-lg">
+                                    <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
+                                </div>
                             @endif
                         </div>
                         <div>
