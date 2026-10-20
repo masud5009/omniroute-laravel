@@ -125,12 +125,6 @@
                 localStorage.setItem('omni_theme', 'dark');
             }
             this.$nextTick(() => lucide.createIcons());
-        },
-        email: 'admin@omniroute.local',
-        password: 'password',
-        fillDefaults() {
-            this.email = 'admin@omniroute.local';
-            this.password = 'password';
         }
     }" x-init="$nextTick(() => lucide.createIcons())">
     <!-- Theme Switcher Top-Right Button -->
@@ -160,11 +154,7 @@
                 <div class="absolute inset-0 rounded-2xl bg-emerald-500/20 blur group-hover:bg-emerald-500/30 transition-colors"></div>
                 <i data-lucide="zap" class="w-7 h-7 text-emerald-400 relative z-10"></i>
             </div>
-            <div class="flex items-center justify-center gap-2">
-                <h1 class="text-2xl font-bold tracking-tight text-white">OmniRoute Lite</h1>
-                <span class="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Gateway</span>
-            </div>
-            <p class="text-xs sm:text-sm text-zinc-400 mt-1.5 font-normal">Next-Gen Shared-Hosting Compatible AI Proxy</p>
+            <h1 class="text-2xl font-bold tracking-tight text-white">OmniRoute Lite</h1>
         </div>
 
         <!-- Login Card -->
@@ -186,31 +176,29 @@
                         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
                             <i data-lucide="mail" class="w-4 h-4"></i>
                         </div>
-                        <input type="email" id="email" name="email" x-model="email" required autofocus
+                        <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
+                            placeholder="name@example.com"
                             class="w-full bg-[#09090b] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-colors">
                     </div>
                 </div>
 
                 <div>
-                    <div class="flex items-center justify-between mb-1.5">
-                        <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-zinc-400">Password</label>
-                        <button type="button" @click="fillDefaults()" class="text-xs text-emerald-400 hover:text-emerald-300 font-medium">Use Default</button>
-                    </div>
+                    <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">Password</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
                             <i data-lucide="lock" class="w-4 h-4"></i>
                         </div>
-                        <input type="password" id="password" name="password" x-model="password" required
+                        <input type="password" id="password" name="password" required
+                            placeholder="••••••••"
                             class="w-full bg-[#09090b] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-colors">
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between text-xs pt-1">
+                <div class="flex items-center text-xs pt-1">
                     <label class="flex items-center gap-2 text-zinc-400 cursor-pointer select-none">
                         <input type="checkbox" name="remember" value="1" checked class="rounded border-white/10 bg-[#09090b] text-emerald-500 focus:ring-emerald-500/30">
                         <span>Remember session</span>
                     </label>
-                    <span class="text-zinc-500 font-mono text-[11px]">PHP 8.3 • MySQL</span>
                 </div>
 
                 <button type="submit"
@@ -219,19 +207,7 @@
                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
             </form>
-
-            <!-- Quick Start Helper Pill -->
-            <div class="mt-6 pt-5 border-t border-white/[0.06] flex items-center justify-between text-xs text-zinc-400">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-                    <span>Default: <code class="text-zinc-200 bg-zinc-900 px-1.5 py-0.5 rounded border border-white/5">admin@omniroute.local</code> / <code class="text-zinc-200 bg-zinc-900 px-1.5 py-0.5 rounded border border-white/5">password</code></span>
-                </div>
-            </div>
         </div>
-
-        <p class="text-center text-xs text-zinc-500 mt-6 font-mono">
-            OmniRoute Lite • Zero Build • Shared Hosting Optimized
-        </p>
     </div>
 </body>
 </html>
