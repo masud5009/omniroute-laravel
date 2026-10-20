@@ -195,7 +195,7 @@
                         <span class="text-[11px] px-1.5 py-0.5 rounded font-mono bg-zinc-800 text-zinc-400">{{ $sidebarLogsCount }}</span>
                     </a>
 
-                    <!-- 7. Settings & Security -->
+                    <!-- 7. Alerts & Webhooks -->
                     <a href="{{ route('dashboard.settings') }}"
                         @class([
                             'w-full py-2 px-3 rounded-xl text-xs sm:text-sm flex items-center justify-between transition-all group',
@@ -203,8 +203,8 @@
                             'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]' => !request()->routeIs('dashboard.settings'),
                         ])>
                         <div class="flex items-center gap-2.5">
-                            <i data-lucide="shield-check" class="w-4 h-4 transition-colors {{ request()->routeIs('dashboard.settings') ? 'text-emerald-400' : 'text-zinc-500 group-hover:text-zinc-300' }}"></i>
-                            <span>Settings & Security</span>
+                            <i data-lucide="bell-ring" class="w-4 h-4 transition-colors {{ request()->routeIs('dashboard.settings') ? 'text-emerald-400' : 'text-zinc-500 group-hover:text-zinc-300' }}"></i>
+                            <span>Alerts & Webhooks</span>
                         </div>
                     </a>
                 </nav>

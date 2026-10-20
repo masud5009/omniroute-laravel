@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Architecture & Security Settings')
+@section('title', 'Alerts & Webhooks')
 
 @section('content')
 <div class="space-y-6">

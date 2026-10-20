@@ -74,115 +74,119 @@
 
     <!-- Keys Table -->
     <div class="bg-[#121215] border border-white/[0.07] rounded-2xl overflow-hidden shadow-lg">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm">
-                <thead class="bg-[#09090b] text-zinc-400 uppercase text-xs font-bold border-b border-white/[0.06] tracking-wider">
-                    <tr>
-                        <th class="py-3.5 px-5">Key Name</th>
-                        <th class="py-3.5 px-5">API Key Token</th>
-                        <th class="py-3.5 px-5">Rate Limits (RPM & TPM)</th>
-                        <th class="py-3.5 px-5">Daily Quota Usage</th>
-                        <th class="py-3.5 px-5">Last Activity</th>
-                        <th class="py-3.5 px-5">Status</th>
-                        <th class="py-3.5 px-5 text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-white/[0.05]">
-                    @forelse($gatewayKeys as $gKey)
-                        <tr class="hover:bg-white/[0.02] transition-colors">
-                            <td class="py-4 px-5 font-semibold text-white">
-                                <div class="text-sm font-bold text-white">{{ $gKey->name }}</div>
-                            </td>
-                            <td class="py-4 px-5 font-mono">
-                                <div class="flex items-center gap-2">
-                                    <span class="bg-[#09090b] border border-white/10 px-2.5 py-1 rounded-lg text-emerald-300 font-mono text-xs select-all">
-                                        {{ $gKey->key }}
-                                    </span>
-                                    <button type="button" @click="copyText('{{ $gKey->key }}', 'API key copied!')" class="p-1.5 text-zinc-400 hover:text-white cursor-pointer" title="Copy Key">
-                                        <i data-lucide="copy" class="w-4 h-4"></i>
-                                    </button>
-                                </div>
-                            </td>
-                            <td class="py-4 px-5 whitespace-nowrap">
-                                <div class="flex items-center gap-2 flex-wrap">
-                                    <!-- RPM Badge -->
-                                    @if($gKey->rpm_limit)
-                                        <span class="px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono text-xs font-semibold flex items-center gap-1">
-                                            <i data-lucide="gauge" class="w-3 h-3"></i>
-                                            <span>{{ number_format($gKey->rpm_limit) }} RPM</span>
-                                        </span>
-                                    @else
-                                        <span class="px-2.5 py-1 rounded-lg bg-zinc-800 text-zinc-400 border border-white/5 font-mono text-xs">
-                                            ∞ RPM
-                                        </span>
-                                    @endif
-
-                                    <!-- TPM Badge -->
-                                    @if($gKey->tpm_limit)
-                                        <span class="px-2.5 py-1 rounded-lg bg-purple-500/10 text-purple-300 border border-purple-500/20 font-mono text-xs font-semibold flex items-center gap-1">
-                                            <i data-lucide="zap" class="w-3 h-3"></i>
-                                            <span>{{ number_format($gKey->tpm_limit) }} TPM</span>
-                                        </span>
-                                    @else
-                                        <span class="px-2.5 py-1 rounded-lg bg-zinc-800 text-zinc-400 border border-white/5 font-mono text-xs">
-                                            ∞ TPM
-                                        </span>
-                                    @endif
-                                </div>
-                            </td>
-                            <td class="py-4 px-5">
-                                <div class="font-bold text-white font-mono">{{ number_format($gKey->tokens_used_today) }}</div>
-                                <div class="text-xs text-zinc-500 font-mono">Quota: {{ $gKey->daily_token_limit ? number_format($gKey->daily_token_limit) : 'Unlimited' }}</div>
-                            </td>
-                            <td class="py-4 px-5 text-zinc-400 font-mono text-xs whitespace-nowrap">
-                                {{ $gKey->last_used_at ? $gKey->last_used_at->diffForHumans() : 'Never' }}
-                            </td>
-                            <td class="py-4 px-5 whitespace-nowrap">
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold {{ $gKey->is_active ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-zinc-800 text-zinc-400' }}">
-                                    <span class="w-1.5 h-1.5 rounded-full {{ $gKey->is_active ? 'bg-emerald-400' : 'bg-zinc-500' }} mr-1.5"></span>
-                                    {{ $gKey->is_active ? 'Active' : 'Disabled' }}
-                                </span>
-                            </td>
-                            <td class="py-4 px-5 text-right whitespace-nowrap">
-                                <div class="flex items-center justify-end gap-1.5">
-                                    <!-- Edit Key Button -->
-                                    <button type="button"
-                                        @click="openEditModal({{ json_encode($gKey) }})"
-                                        class="p-2 text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors cursor-pointer" title="Edit Rate Limits & Quota">
-                                        <i data-lucide="pencil" class="w-4 h-4 pointer-events-none"></i>
-                                    </button>
-
-                                    <!-- Pause / Enable Toggle -->
-                                    <form action="{{ route('dashboard.gateway-keys.toggle', $gKey) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="p-2 rounded-xl transition-colors cursor-pointer {{ $gKey->is_active ? 'text-amber-400 hover:bg-amber-500/10' : 'text-emerald-400 hover:bg-emerald-500/10' }}" title="{{ $gKey->is_active ? 'Pause Key' : 'Enable Key' }}">
-                                            <i data-lucide="{{ $gKey->is_active ? 'pause-circle' : 'play-circle' }}" class="w-4 h-4 pointer-events-none"></i>
-                                        </button>
-                                    </form>
-
-                                    <!-- Delete Button -->
-                                    <form action="{{ route('dashboard.gateway-keys.delete', $gKey) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button"
-                                            @click="confirmDelete($el.closest('form'), 'Delete Gateway Key', 'Permanently delete gateway key &quot;{{ $gKey->name }}&quot;? External clients using this key will immediately lose access.', 'Yes, Delete Key')"
-                                            class="p-2 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors cursor-pointer" title="Delete Key">
-                                            <i data-lucide="trash-2" class="w-4 h-4 pointer-events-none"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
+        @if($gatewayKeys->isNotEmpty())
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-[#09090b] text-zinc-400 uppercase text-xs font-bold border-b border-white/[0.06] tracking-wider">
                         <tr>
-                            <td colspan="7" class="py-12 text-center text-zinc-500 text-sm">
-                                No gateway keys generated yet. Generate your first virtual key above!
-                            </td>
+                            <th class="py-3.5 px-5">Key Name</th>
+                            <th class="py-3.5 px-5">API Key Token</th>
+                            <th class="py-3.5 px-5">Rate Limits (RPM & TPM)</th>
+                            <th class="py-3.5 px-5">Daily Quota Usage</th>
+                            <th class="py-3.5 px-5">Last Activity</th>
+                            <th class="py-3.5 px-5">Status</th>
+                            <th class="py-3.5 px-5 text-right">Actions</th>
                         </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody class="divide-y divide-white/[0.05]">
+                        @foreach($gatewayKeys as $gKey)
+                            <tr class="hover:bg-white/[0.02] transition-colors">
+                                <td class="py-4 px-5 font-semibold text-white">
+                                    <div class="text-sm font-bold text-white">{{ $gKey->name }}</div>
+                                </td>
+                                <td class="py-4 px-5 font-mono">
+                                    <div class="flex items-center gap-2">
+                                        <span class="bg-[#09090b] border border-white/10 px-2.5 py-1 rounded-lg text-emerald-300 font-mono text-xs select-all">
+                                            {{ $gKey->key }}
+                                        </span>
+                                        <button type="button" @click="copyText('{{ $gKey->key }}', 'API key copied!')" class="p-1.5 text-zinc-400 hover:text-white cursor-pointer" title="Copy Key">
+                                            <i data-lucide="copy" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <!-- RPM Badge -->
+                                        @if($gKey->rpm_limit)
+                                            <span class="px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono text-xs font-semibold flex items-center gap-1">
+                                                <i data-lucide="gauge" class="w-3 h-3"></i>
+                                                <span>{{ number_format($gKey->rpm_limit) }} RPM</span>
+                                            </span>
+                                        @else
+                                            <span class="px-2.5 py-1 rounded-lg bg-zinc-800 text-zinc-400 border border-white/5 font-mono text-xs">
+                                                ∞ RPM
+                                            </span>
+                                        @endif
+
+                                        <!-- TPM Badge -->
+                                        @if($gKey->tpm_limit)
+                                            <span class="px-2.5 py-1 rounded-lg bg-purple-500/10 text-purple-300 border border-purple-500/20 font-mono text-xs font-semibold flex items-center gap-1">
+                                                <i data-lucide="zap" class="w-3 h-3"></i>
+                                                <span>{{ number_format($gKey->tpm_limit) }} TPM</span>
+                                            </span>
+                                        @else
+                                            <span class="px-2.5 py-1 rounded-lg bg-zinc-800 text-zinc-400 border border-white/5 font-mono text-xs">
+                                                ∞ TPM
+                                            </span>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="py-4 px-5">
+                                    <div class="font-bold text-white font-mono">{{ number_format($gKey->tokens_used_today) }}</div>
+                                    <div class="text-xs text-zinc-500 font-mono">Quota: {{ $gKey->daily_token_limit ? number_format($gKey->daily_token_limit) : 'Unlimited' }}</div>
+                                </td>
+                                <td class="py-4 px-5 text-zinc-400 font-mono text-xs whitespace-nowrap">
+                                    {{ $gKey->last_used_at ? $gKey->last_used_at->diffForHumans() : 'Never' }}
+                                </td>
+                                <td class="py-4 px-5 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold {{ $gKey->is_active ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-zinc-800 text-zinc-400' }}">
+                                        <span class="w-1.5 h-1.5 rounded-full {{ $gKey->is_active ? 'bg-emerald-400' : 'bg-zinc-500' }} mr-1.5"></span>
+                                        {{ $gKey->is_active ? 'Active' : 'Disabled' }}
+                                    </span>
+                                </td>
+                                <td class="py-4 px-5 text-right whitespace-nowrap">
+                                    <div class="flex items-center justify-end gap-1.5">
+                                        <!-- Edit Key Button -->
+                                        <button type="button"
+                                            @click="openEditModal({{ json_encode($gKey) }})"
+                                            class="p-2 text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors cursor-pointer" title="Edit Rate Limits & Quota">
+                                            <i data-lucide="pencil" class="w-4 h-4 pointer-events-none"></i>
+                                        </button>
+
+                                        <!-- Pause / Enable Toggle -->
+                                        <form action="{{ route('dashboard.gateway-keys.toggle', $gKey) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="p-2 rounded-xl transition-colors cursor-pointer {{ $gKey->is_active ? 'text-amber-400 hover:bg-amber-500/10' : 'text-emerald-400 hover:bg-emerald-500/10' }}" title="{{ $gKey->is_active ? 'Pause Key' : 'Enable Key' }}">
+                                                <i data-lucide="{{ $gKey->is_active ? 'pause-circle' : 'play-circle' }}" class="w-4 h-4 pointer-events-none"></i>
+                                            </button>
+                                        </form>
+
+                                        <!-- Delete Button -->
+                                        <form action="{{ route('dashboard.gateway-keys.delete', $gKey) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button"
+                                                @click="confirmDelete($el.closest('form'), 'Delete Gateway Key', 'Permanently delete gateway key &quot;{{ $gKey->name }}&quot;? External clients using this key will immediately lose access.', 'Yes, Delete Key')"
+                                                class="p-2 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors cursor-pointer" title="Delete Key">
+                                                <i data-lucide="trash-2" class="w-4 h-4 pointer-events-none"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <div class="py-14 text-center text-zinc-500 text-sm">
+                <div class="w-14 h-14 rounded-2xl bg-zinc-800/80 border border-white/5 mx-auto flex items-center justify-center text-zinc-400 mb-3.5">
+                    <i data-lucide="key-round" class="w-7 h-7"></i>
+                </div>
+                <div class="text-base text-zinc-300 font-semibold">No gateway keys generated yet</div>
+                <p class="text-xs text-zinc-500 mt-1 max-w-sm mx-auto">Generate your first virtual key above to start routing requests.</p>
+            </div>
+        @endif
     </div>
 
     <!-- Edit Gateway Key Modal -->
