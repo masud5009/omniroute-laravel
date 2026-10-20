@@ -37,7 +37,7 @@
             </div>
         </div>
         <div class="pt-3 border-t border-white/[0.06] flex items-center justify-end">
-            <button type="submit" class="px-5 py-2.5 bg-white text-zinc-950 hover:bg-zinc-200 font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer">
+            <button type="submit" class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer">
                 <i data-lucide="save" class="w-3.5 h-3.5"></i>
                 <span>Save Website Settings</span>
             </button>

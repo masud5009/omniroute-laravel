@@ -364,6 +364,38 @@ html:not(.dark) [class*="bg-gradient-to-"] span {
     color: #ffffff !important;
 }
 
+/* Solid emerald buttons (e.g. Choose File) keep white text in light mode */
+html:not(.dark) button[class*="bg-emerald-500"] span,
+html:not(.dark) button[class*="bg-emerald-500"] i,
+html:not(.dark) button[class*="bg-emerald-500"] svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
+/* File input ::file-selector-button (Choose File) keeps white text in light mode */
+html:not(.dark) input[type="file"]::file-selector-button {
+    background-color: #059669 !important;
+    color: #ffffff !important;
+}
+
+html:not(.dark) input[type="file"]::-webkit-file-upload-button {
+    background-color: #059669 !important;
+    color: #ffffff !important;
+}
+
+/* Header Add Key button (bg-zinc-900 light / zinc-100 dark) keeps white-ish text in light mode */
+html:not(.dark) button[class*="bg-zinc-900"] {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+}
+
+html:not(.dark) button[class*="bg-zinc-900"] span,
+html:not(.dark) button[class*="bg-zinc-900"] i,
+html:not(.dark) button[class*="bg-zinc-900"] svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
 /* Zinc Neutral Text Hierarchy */
 html:not(.dark) .text-zinc-100,
 html:not(.dark) .text-zinc-200 {
@@ -479,6 +511,20 @@ html:not(.dark) a.bg-white.text-zinc-950 {
     background-color: #0f172a !important;
     color: #ffffff !important;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Force white text + icon inside dark action buttons (light mode) */
+html:not(.dark) .bg-white.text-zinc-950 span,
+html:not(.dark) button.bg-white.text-zinc-950 span,
+html:not(.dark) a.bg-white.text-zinc-950 span,
+html:not(.dark) .bg-white.text-zinc-950 i,
+html:not(.dark) button.bg-white.text-zinc-950 i,
+html:not(.dark) a.bg-white.text-zinc-950 i,
+html:not(.dark) .bg-white.text-zinc-950 svg,
+html:not(.dark) button.bg-white.text-zinc-950 svg,
+html:not(.dark) a.bg-white.text-zinc-950 svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
 }
 
 html:not(.dark) .bg-white.text-zinc-950:hover,
