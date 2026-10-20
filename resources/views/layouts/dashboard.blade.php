@@ -280,13 +280,6 @@
                             <i data-lucide="moon" class="w-4 h-4 text-indigo-600"></i>
                         </span>
                     </button>
-
-                    <!-- Quick Add Key Button -->
-                    <button type="button" @click="openAddKeyModal()"
-                        class="px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 font-semibold text-xs sm:text-sm rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer">
-                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                        <span>Add Key</span>
-                    </button>
                 </div>
             </header>
 
@@ -454,8 +447,8 @@
                 </div>
 
                 <div class="pt-4 border-t border-white/[0.06] flex items-center justify-end gap-2.5">
-                    <button type="button" @click="showProviderModal = false" class="px-4 py-2.5 text-sm font-medium text-zinc-400 hover:text-white rounded-xl">Cancel</button>
-                    <button type="submit" class="px-5 py-2.5 bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-sm rounded-xl transition-all shadow-md">
+                    <button type="button" @click="showProviderModal = false" class="px-4 py-2.5 text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white rounded-xl transition-all shadow-md cursor-pointer">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold text-sm rounded-xl transition-all shadow-md cursor-pointer">
                         Add Provider
                     </button>
                 </div>
