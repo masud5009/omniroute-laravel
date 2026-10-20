@@ -2,15 +2,12 @@
             <div class="p-4 rounded-xl bg-[#09090b] border border-white/5 space-y-3">
                 <div class="space-y-2.5">
                     <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400">Logo (Dark Theme)</label>
-                    @if($siteSettings->logoDarkUrl())
-                        <div class="rounded-xl border border-white/10 bg-white/[0.02] p-3 flex items-center justify-center">
-                            <img src="{{ $siteSettings->logoDarkUrl() }}" alt="Dark theme logo" class="max-w-full max-h-24 w-auto h-auto object-contain">
-                        </div>
-                    @else
-                        <span class="text-xs text-zinc-500 font-mono">No dark logo uploaded</span>
-                    @endif
+                    <div id="previewWrapLogoDark" class="rounded-xl border border-white/10 bg-white/[0.02] p-3 flex items-center justify-center {{ $siteSettings->logoDarkUrl() ? '' : 'hidden' }}">
+                        <img id="previewImgLogoDark" src="{{ $siteSettings->logoDarkUrl() ?? '' }}" alt="Dark theme logo" class="max-w-full max-h-24 w-auto h-auto object-contain">
+                    </div>
+                    <span id="previewEmptyLogoDark" class="text-xs text-zinc-500 font-mono {{ $siteSettings->logoDarkUrl() ? 'hidden' : '' }}">No dark logo uploaded</span>
                 </div>
-                <input type="file" name="logo_dark" accept="image/*" class="btn-file w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-bold file:text-xs file:cursor-pointer bg-[#121215] border border-white/10 rounded-xl p-2">
+                <input type="file" id="inputLogoDark" name="logo_dark" accept="image/*" class="btn-file w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-bold file:text-xs file:cursor-pointer bg-[#121215] border border-white/10 rounded-xl p-2">
                 <p class="text-xs text-zinc-500">PNG/JPG/SVG/WEBP. Shown in dark mode.</p>
                 @if($siteSettings->logo_dark_path)
                     <label class="flex items-center gap-2 text-xs text-zinc-400 cursor-pointer">
@@ -22,15 +19,12 @@
             <div class="p-4 rounded-xl bg-[#09090b] border border-white/5 space-y-3">
                 <div class="space-y-2.5">
                     <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400">Logo (Light Theme)</label>
-                    @if($siteSettings->logoLightUrl())
-                        <div class="rounded-xl border border-white/10 bg-white/[0.02] p-3 flex items-center justify-center">
-                            <img src="{{ $siteSettings->logoLightUrl() }}" alt="Light theme logo" class="max-w-full max-h-24 w-auto h-auto object-contain">
-                        </div>
-                    @else
-                        <span class="text-xs text-zinc-500 font-mono">No light logo uploaded</span>
-                    @endif
+                    <div id="previewWrapLogoLight" class="rounded-xl border border-white/10 bg-white/[0.02] p-3 flex items-center justify-center {{ $siteSettings->logoLightUrl() ? '' : 'hidden' }}">
+                        <img id="previewImgLogoLight" src="{{ $siteSettings->logoLightUrl() ?? '' }}" alt="Light theme logo" class="max-w-full max-h-24 w-auto h-auto object-contain">
+                    </div>
+                    <span id="previewEmptyLogoLight" class="text-xs text-zinc-500 font-mono {{ $siteSettings->logoLightUrl() ? 'hidden' : '' }}">No light logo uploaded</span>
                 </div>
-                <input type="file" name="logo_light" accept="image/*" class="btn-file w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-bold file:text-xs file:cursor-pointer bg-[#121215] border border-white/10 rounded-xl p-2">
+                <input type="file" id="inputLogoLight" name="logo_light" accept="image/*" class="btn-file w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-bold file:text-xs file:cursor-pointer bg-[#121215] border border-white/10 rounded-xl p-2">
                 <p class="text-xs text-zinc-500">PNG/JPG/SVG/WEBP. Shown in light mode.</p>
                 @if($siteSettings->logo_light_path)
                     <label class="flex items-center gap-2 text-xs text-zinc-400 cursor-pointer">
@@ -42,15 +36,12 @@
             <div class="p-4 rounded-xl bg-[#09090b] border border-white/5 space-y-3">
                 <div class="space-y-2.5">
                     <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400">Favicon</label>
-                    @if($siteSettings->faviconUrl())
-                        <div class="rounded-xl border border-white/10 bg-white/[0.02] p-3 flex items-center justify-center">
-                            <img src="{{ $siteSettings->faviconUrl() }}" alt="Current favicon" class="max-w-full max-h-24 w-auto h-auto object-contain">
-                        </div>
-                    @else
-                        <span class="text-xs text-zinc-500 font-mono">Default favicon.ico</span>
-                    @endif
+                    <div id="previewWrapFavicon" class="rounded-xl border border-white/10 bg-white/[0.02] p-3 flex items-center justify-center {{ $siteSettings->faviconUrl() ? '' : 'hidden' }}">
+                        <img id="previewImgFavicon" src="{{ $siteSettings->faviconUrl() ?? '' }}" alt="Current favicon" class="max-w-full max-h-24 w-auto h-auto object-contain">
+                    </div>
+                    <span id="previewEmptyFavicon" class="text-xs text-zinc-500 font-mono {{ $siteSettings->faviconUrl() ? 'hidden' : '' }}">Default favicon.ico</span>
                 </div>
-                <input type="file" name="favicon" accept=".ico,.png,.jpg,.jpeg,.svg,.webp" class="btn-file w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-bold file:text-xs file:cursor-pointer bg-[#121215] border border-white/10 rounded-xl p-2">
+                <input type="file" id="inputFavicon" name="favicon" accept=".ico,.png,.jpg,.jpeg,.svg,.webp" class="btn-file w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-bold file:text-xs file:cursor-pointer bg-[#121215] border border-white/10 rounded-xl p-2">
                 <p class="text-xs text-zinc-500">ICO/PNG/SVG.</p>
                 @if($siteSettings->favicon_path)
                     <label class="flex items-center gap-2 text-xs text-zinc-400 cursor-pointer">
@@ -68,3 +59,28 @@
         </div>
     </form>
 </div>
+
+<script>
+(function() {
+    function bindInstantPreview(inputId, imgId, wrapId, emptyId) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        const img = document.getElementById(imgId);
+        const wrap = document.getElementById(wrapId);
+        const empty = document.getElementById(emptyId);
+        let objectUrl = null;
+        input.addEventListener('change', function() {
+            const file = input.files && input.files[0];
+            if (!file) return;
+            if (objectUrl) URL.revokeObjectURL(objectUrl);
+            objectUrl = URL.createObjectURL(file);
+            img.src = objectUrl;
+            wrap.classList.remove('hidden');
+            if (empty) empty.classList.add('hidden');
+        });
+    }
+    bindInstantPreview('inputLogoDark', 'previewImgLogoDark', 'previewWrapLogoDark', 'previewEmptyLogoDark');
+    bindInstantPreview('inputLogoLight', 'previewImgLogoLight', 'previewWrapLogoLight', 'previewEmptyLogoLight');
+    bindInstantPreview('inputFavicon', 'previewImgFavicon', 'previewWrapFavicon', 'previewEmptyFavicon');
+})();
+</script>
