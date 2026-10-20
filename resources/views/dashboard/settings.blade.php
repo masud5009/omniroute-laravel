@@ -5,62 +5,6 @@
 @section('content')
 <div class="space-y-6">
 
-    <!-- Appearance & Theme Selector Card -->
-    <div class="bg-[#121215] border border-white/[0.07] rounded-2xl p-6 shadow-lg space-y-4">
-        <div class="flex items-center gap-2.5 border-b border-white/[0.06] pb-3.5">
-            <i data-lucide="palette" class="w-5 h-5 text-emerald-400"></i>
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Appearance & Theme Mode</h3>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-            <!-- Dark Mode Option Card -->
-            <button type="button" @click="setTheme('dark')"
-                :class="currentTheme === 'dark' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-white/10 hover:border-white/20'"
-                class="p-5 rounded-2xl bg-[#09090b] border text-left transition-all relative flex flex-col justify-between cursor-pointer group">
-                <div class="flex items-center justify-between mb-3.5">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-zinc-800 border border-white/10 flex items-center justify-center text-amber-400">
-                            <i data-lucide="moon" class="w-4.5 h-4.5"></i>
-                        </div>
-                        <div>
-                            <div class="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors">Dark Mode</div>
-                            <div class="text-xs text-zinc-400 font-mono mt-0.5">Obsidian Zinc Aesthetic</div>
-                        </div>
-                    </div>
-                    <span x-show="currentTheme === 'dark'" class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-                </div>
-                <div class="h-11 rounded-xl bg-[#121215] border border-white/5 p-2.5 flex items-center gap-2.5">
-                    <div class="w-3.5 h-3.5 rounded-full bg-emerald-500/30"></div>
-                    <div class="h-2.5 w-20 bg-zinc-700 rounded"></div>
-                    <div class="h-2.5 w-10 bg-zinc-800 rounded ml-auto"></div>
-                </div>
-            </button>
-
-            <!-- Light / White Mode Option Card -->
-            <button type="button" @click="setTheme('light')"
-                :class="currentTheme === 'light' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-white/10 hover:border-white/20'"
-                class="p-5 rounded-2xl bg-[#09090b] border text-left transition-all relative flex flex-col justify-between cursor-pointer group">
-                <div class="flex items-center justify-between mb-3.5">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-zinc-800 border border-white/10 flex items-center justify-center text-amber-400">
-                            <i data-lucide="sun" class="w-4.5 h-4.5"></i>
-                        </div>
-                        <div>
-                            <div class="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors">White / Light Mode</div>
-                            <div class="text-xs text-zinc-400 font-mono mt-0.5">High-Clarity Daylight Surface</div>
-                        </div>
-                    </div>
-                    <span x-show="currentTheme === 'light'" class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-                </div>
-                <div class="h-11 rounded-xl bg-[#f8fafc] border border-zinc-200 p-2.5 flex items-center gap-2.5">
-                    <div class="w-3.5 h-3.5 rounded-full bg-emerald-600/30"></div>
-                    <div class="h-2.5 w-20 bg-zinc-300 rounded"></div>
-                    <div class="h-2.5 w-10 bg-zinc-200 rounded ml-auto"></div>
-                </div>
-            </button>
-        </div>
-    </div>
-
     <!-- ============================================================== -->
     <!-- REAL-TIME FAILOVER ALERTS & WEBHOOKS CARD -->
     <!-- ============================================================== -->

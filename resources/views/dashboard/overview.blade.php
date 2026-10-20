@@ -242,14 +242,10 @@
         <!-- Left 2/3: Active Provider Health Matrix -->
         <div class="lg:col-span-2 bg-[#121215] border border-white/[0.07] rounded-2xl p-6 shadow-lg space-y-4">
             <div class="flex items-center justify-between border-b border-white/[0.06] pb-3.5">
-                <div>
-                    <h3 class="text-base font-bold text-white flex items-center gap-2.5">
-                        <span>Active Provider Health Matrix</span>
-                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-                        <span class="text-xs font-mono font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md">Latest 10</span>
-                    </h3>
-                    <p class="text-sm text-zinc-400 mt-1">Live status, quota progress, and priority order of configured upstream keys (showing latest 10).</p>
-                </div>
+                <h3 class="text-base font-bold text-white flex items-center gap-2.5">
+                    <span>Active Provider Health Matrix</span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                </h3>
                 <a href="{{ route('dashboard.providers') }}" class="text-sm text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-1.5">
                     <span>Manage All Providers</span>
                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
