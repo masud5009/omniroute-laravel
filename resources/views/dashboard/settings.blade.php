@@ -7,15 +7,10 @@
 
     <!-- Appearance & Theme Selector Card -->
     <div class="bg-[#121215] border border-white/[0.07] rounded-2xl p-6 shadow-lg space-y-4">
-        <div class="flex items-center justify-between border-b border-white/[0.06] pb-3.5">
-            <div class="flex items-center gap-2.5">
-                <i data-lucide="palette" class="w-5 h-5 text-emerald-400"></i>
-                <h3 class="text-sm font-bold text-white uppercase tracking-wider">Appearance & Theme Mode</h3>
-            </div>
-            <span class="text-xs font-mono px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">Dual Mode Ready</span>
+        <div class="flex items-center gap-2.5 border-b border-white/[0.06] pb-3.5">
+            <i data-lucide="palette" class="w-5 h-5 text-emerald-400"></i>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Appearance & Theme Mode</h3>
         </div>
-
-        <p class="text-sm text-zinc-400">Customize the visual presentation of your OmniRoute Lite admin console. Your preference is persisted locally across sessions.</p>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
             <!-- Dark Mode Option Card -->
@@ -111,10 +106,6 @@
                 </span>
             </div>
         </div>
-
-        <p class="text-sm text-zinc-400">
-            Instantly dispatch rich notifications to your team's Discord, Slack, or Telegram channel when an upstream provider experiences circuit breaker failure, rate limit cooldown, or quota limits.
-        </p>
 
         <!-- Test Result Banner -->
         <template x-if="testResult">

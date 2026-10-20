@@ -210,53 +210,10 @@
                 </nav>
             </div>
 
-            <!-- Sidebar Bottom: System Health, Clear Cache & User Profile -->
-            <div class="p-3.5 border-t border-white/[0.07] space-y-2.5 bg-[#0c101a]">
-                <!-- Health Pulse -->
-                <div class="p-3 rounded-xl bg-[#141926] border border-white/[0.06] flex items-center justify-between text-xs">
-                    <div class="flex items-center gap-2.5">
-                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span class="text-zinc-200 font-medium">All Systems Operational</span>
-                    </div>
-                    <span class="text-zinc-400 font-mono text-xs">No-Redis</span>
-                </div>
-
-                <!-- Clear Cache Button -->
-                <button type="button" @click="clearCache()"
-                    class="w-full py-2 px-3 rounded-xl bg-[#141926] hover:bg-[#1a2133] border border-white/[0.06] hover:border-white/10 text-zinc-200 text-xs font-medium flex items-center justify-between transition-colors group">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="refresh-cw" class="w-4 h-4 text-zinc-400 group-hover:text-emerald-400 transition-colors"></i>
-                        <span>Clear Gateway Cache</span>
-                    </div>
-                    <span class="text-[11px] font-mono text-zinc-400 uppercase tracking-wider">Purge</span>
-                </button>
-
-                <!-- Theme Mode Selector Pill -->
-                <div class="p-2 rounded-xl bg-[#141926] border border-white/[0.06] flex items-center justify-between text-xs">
-                    <span class="text-zinc-300 font-medium px-2 flex items-center gap-2">
-                        <i data-lucide="palette" class="w-4 h-4 text-zinc-400"></i>
-                        <span>Theme</span>
-                    </span>
-                    <div class="flex items-center bg-[#09090b] rounded-lg p-0.5 border border-white/5">
-                        <button type="button" @click="setTheme('dark')"
-                            :class="currentTheme === 'dark' ? 'bg-zinc-800 text-amber-400 font-semibold shadow-sm' : 'text-zinc-400 hover:text-white'"
-                            class="px-2.5 py-1 rounded-md text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
-                            title="Dark Theme">
-                            <i data-lucide="moon" class="w-3.5 h-3.5"></i>
-                            <span>Dark</span>
-                        </button>
-                        <button type="button" @click="setTheme('light')"
-                            :class="currentTheme === 'light' ? 'bg-white text-zinc-950 font-semibold shadow-sm' : 'text-zinc-400 hover:text-white'"
-                            class="px-2.5 py-1 rounded-md text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
-                            title="Light / White Theme">
-                            <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-500"></i>
-                            <span>Light</span>
-                        </button>
-                    </div>
-                </div>
-
+            <!-- Sidebar Bottom: User Profile -->
+            <div class="p-3.5 border-t border-white/[0.07] bg-[#0c101a]">
                 <!-- Admin Profile Card -->
-                <div class="flex items-center justify-between px-1.5 pt-1">
+                <div class="flex items-center justify-between px-1.5 py-1">
                     <div class="flex items-center gap-2.5 truncate">
                         <div class="w-8 h-8 rounded-lg bg-zinc-800 border border-white/10 flex items-center justify-center font-bold text-sm text-zinc-300">
                             {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
