@@ -131,14 +131,23 @@ class AdminDashboardController extends Controller
     }
 
     /**
-     * Display Gateway Settings page (Branding + Alerts).
+     * Display Website / Branding Settings page (only Site Settings).
      */
     public function settings(): View
     {
-        $alertSettings = \App\Models\AlertSetting::getSettings();
         $siteSettings = \App\Models\SiteSetting::getSettings();
 
-        return view('dashboard.settings', compact('alertSettings', 'siteSettings'));
+        return view('dashboard.settings', compact('siteSettings'));
+    }
+
+    /**
+     * Display Alerts & Webhooks page (only Alert Settings).
+     */
+    public function alerts(): View
+    {
+        $alertSettings = \App\Models\AlertSetting::getSettings();
+
+        return view('dashboard.alerts', compact('alertSettings'));
     }
 
     /**
