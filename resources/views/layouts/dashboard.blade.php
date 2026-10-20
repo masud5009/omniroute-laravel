@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>OmniRoute Lite - @yield('title', 'AI Gateway Console')</title>
+    @php($brandTitle = $globalSiteSettings->site_title ?? 'OmniRoute')
+    @php($brandSubtitle = $globalSiteSettings->subtitle ?? 'Lite Gateway')
+    @php($brandVersion = $globalSiteSettings->version ?? 'v1.0')
+    @php($brandFavicon = isset($globalSiteSettings) ? $globalSiteSettings->faviconUrl() : null)
+    <title>{{ $brandTitle }} {{ $brandSubtitle }} - @yield('title', 'AI Gateway Console')</title>
+    <link rel="icon" type="image/x-icon" href="{{ $brandFavicon ?? asset('favicon.ico') }}">
 
     <!-- Theme Initializer (Prevents Theme Flash / FOUC) -->
     <script>
@@ -91,17 +96,22 @@
         <aside class="w-64 h-screen bg-[#10141e] border-r border-white/[0.07] flex flex-col justify-between flex-shrink-0 z-30 select-none">
             <!-- Sidebar Top: Brand -->
             <div>
+                @php($brandLogo = isset($globalSiteSettings) ? $globalSiteSettings->logoUrl() : null)
                 <a href="{{ route('dashboard.overview') }}" class="h-14 px-5 border-b border-white/[0.07] flex items-center justify-between hover:bg-white/[0.02] transition-colors">
                     <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-zinc-800 to-zinc-900 border border-white/10 flex items-center justify-center shadow-lg relative">
-                            <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-zinc-800 to-zinc-900 border border-white/10 flex items-center justify-center shadow-lg relative overflow-hidden">
+                            @if($brandLogo)
+                                <img src="{{ $brandLogo }}" alt="{{ $brandTitle ?? 'OmniRoute' }} logo" class="w-full h-full object-cover">
+                            @else
+                                <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
+                            @endif
                         </div>
                         <div>
-                            <span class="font-bold text-sm tracking-tight text-white block">OmniRoute</span>
-                            <span class="text-[11px] text-zinc-500 font-mono">Lite Gateway</span>
+                            <span class="font-bold text-sm tracking-tight text-white block">{{ $brandTitle ?? 'OmniRoute' }}</span>
+                            <span class="text-[11px] text-zinc-500 font-mono">{{ $brandSubtitle ?? 'Lite Gateway' }}</span>
                         </div>
                     </div>
-                    <span class="text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded">v1.0</span>
+                    <span class="text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded">{{ $brandVersion ?? 'v1.0' }}</span>
                 </a>
 
                 <!-- Navigation Links with Dedicated Routes -->
@@ -195,7 +205,7 @@
                         <span class="text-[11px] px-1.5 py-0.5 rounded font-mono bg-zinc-800 text-zinc-400">{{ $sidebarLogsCount }}</span>
                     </a>
 
-                    <!-- 7. Alerts & Webhooks -->
+                    <!-- 7. Settings -->
                     <a href="{{ route('dashboard.settings') }}"
                         @class([
                             'w-full py-2 px-3 rounded-xl text-xs sm:text-sm flex items-center justify-between transition-all group',
@@ -203,8 +213,8 @@
                             'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]' => !request()->routeIs('dashboard.settings'),
                         ])>
                         <div class="flex items-center gap-2.5">
-                            <i data-lucide="bell-ring" class="w-4 h-4 transition-colors {{ request()->routeIs('dashboard.settings') ? 'text-emerald-400' : 'text-zinc-500 group-hover:text-zinc-300' }}"></i>
-                            <span>Alerts & Webhooks</span>
+                            <i data-lucide="settings" class="w-4 h-4 transition-colors {{ request()->routeIs('dashboard.settings') ? 'text-emerald-400' : 'text-zinc-500 group-hover:text-zinc-300' }}"></i>
+                            <span>Settings</span>
                         </div>
                     </a>
                 </nav>

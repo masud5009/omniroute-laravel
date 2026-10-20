@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OmniRoute Lite - Sign In</title>
+    <title>{{ ($globalSiteSettings->site_title ?? 'OmniRoute') }} {{ ($globalSiteSettings->subtitle ?? 'Lite') }} - Sign In</title>
+    @if(isset($globalSiteSettings) && $globalSiteSettings->faviconUrl())
+    <link rel="icon" href="{{ $globalSiteSettings->faviconUrl() }}">
+    @endif
 
     <!-- Theme Initializer -->
     <script>
@@ -150,11 +153,15 @@
 
         <!-- Brand Header -->
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-b from-zinc-800 to-zinc-900 border border-white/10 shadow-2xl mb-4 relative group">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-b from-zinc-800 to-zinc-900 border border-white/10 shadow-2xl mb-4 relative group overflow-hidden">
                 <div class="absolute inset-0 rounded-2xl bg-emerald-500/20 blur group-hover:bg-emerald-500/30 transition-colors"></div>
-                <i data-lucide="zap" class="w-7 h-7 text-emerald-400 relative z-10"></i>
+                @if(isset($globalSiteSettings) && $globalSiteSettings->logoUrl())
+                    <img src="{{ $globalSiteSettings->logoUrl() }}" alt="Logo" class="w-full h-full object-cover relative z-10">
+                @else
+                    <i data-lucide="zap" class="w-7 h-7 text-emerald-400 relative z-10"></i>
+                @endif
             </div>
-            <h1 class="text-2xl font-bold tracking-tight text-white">OmniRoute Lite</h1>
+            <h1 class="text-2xl font-bold tracking-tight text-white">{{ ($globalSiteSettings->site_title ?? 'OmniRoute') }} {{ ($globalSiteSettings->subtitle ?? 'Lite') }}</h1>
         </div>
 
         <!-- Login Card -->

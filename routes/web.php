@@ -28,6 +28,7 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
     Route::get('/playground', [AdminDashboardController::class, 'playground'])->name('playground');
     Route::get('/logs', [AdminDashboardController::class, 'logs'])->name('logs');
     Route::get('/settings', [AdminDashboardController::class, 'settings'])->name('settings');
+    Route::put('/settings/site', [AdminDashboardController::class, 'updateSiteSettings'])->name('settings.site.update');
     Route::put('/settings/alerts', [AdminDashboardController::class, 'updateAlertSettings'])->name('settings.alerts.update');
     Route::post('/settings/alerts/test', [AdminDashboardController::class, 'testAlertWebhook'])->name('settings.alerts.test');
     Route::get('/analytics/charts', [AdminDashboardController::class, 'chartAnalytics'])->name('analytics.charts');

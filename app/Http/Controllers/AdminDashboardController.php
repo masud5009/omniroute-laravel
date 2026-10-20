@@ -131,13 +131,66 @@ class AdminDashboardController extends Controller
     }
 
     /**
-     * Display Architecture & Security Settings page.
+     * Display Gateway Settings page (Branding + Alerts).
      */
     public function settings(): View
     {
         $alertSettings = \App\Models\AlertSetting::getSettings();
+        $siteSettings = \App\Models\SiteSetting::getSettings();
 
-        return view('dashboard.settings', compact('alertSettings'));
+        return view('dashboard.settings', compact('alertSettings', 'siteSettings'));
+    }
+
+    /**
+     * Update General Website / Branding Settings.
+     */
+    public function updateSiteSettings(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'site_title' => 'required|string|max:100',
+            'subtitle' => 'nullable|string|max:100',
+            'version' => 'required|string|max:20',
+            'logo' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
+            'favicon' => 'nullable|mimes:png,jpg,jpeg,svg,webp,ico|max:1024',
+            'remove_logo' => 'nullable|boolean',
+            'remove_favicon' => 'nullable|boolean',
+        ]);
+
+        $settings = \App\Models\SiteSetting::getSettings();
+
+        $data = [
+            'site_title' => $validated['site_title'],
+            'subtitle' => $validated['subtitle'] ?? '',
+            'version' => $validated['version'],
+        ];
+
+        if ($request->boolean('remove_logo') && $settings->logo_path) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($settings->logo_path);
+            $data['logo_path'] = null;
+        }
+
+        if ($request->boolean('remove_favicon') && $settings->favicon_path) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($settings->favicon_path);
+            $data['favicon_path'] = null;
+        }
+
+        if ($request->hasFile('logo')) {
+            if ($settings->logo_path) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($settings->logo_path);
+            }
+            $data['logo_path'] = $request->file('logo')->store('branding', 'public');
+        }
+
+        if ($request->hasFile('favicon')) {
+            if ($settings->favicon_path) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($settings->favicon_path);
+            }
+            $data['favicon_path'] = $request->file('favicon')->store('branding', 'public');
+        }
+
+        $settings->update($data);
+
+        return back()->with('success', 'Website settings updated successfully.');
     }
 
     /**
