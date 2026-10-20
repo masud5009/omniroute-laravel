@@ -209,7 +209,7 @@
                 </div>
 
                 <button type="submit"
-                    class="w-full py-2.5 px-4 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold rounded-xl text-sm tracking-wide shadow-md transition-all duration-150 transform active:scale-[0.99] flex items-center justify-center gap-2 mt-2 cursor-pointer">
+                    class="btn-primary w-full py-2.5 px-4 text-white font-semibold rounded-xl text-sm tracking-wide shadow-md transition-all duration-150 transform active:scale-[0.99] flex items-center justify-center gap-2 mt-2 cursor-pointer">
                     <span>Enter Gateway Console</span>
                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>

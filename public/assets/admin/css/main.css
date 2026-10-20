@@ -681,3 +681,158 @@ html:not(.dark) a.bg-rose-600 svg {
     stroke: #ffffff !important;
     opacity: 1 !important;
 }
+
+/* ============================================================== */
+/* GLOBAL PRIMARY BUTTON RULE                                     */
+/* Light (white) theme: dark background + white text              */
+/* Dark theme: primary (emerald) background + white text          */
+/* .btn-primary carries the base colors so buttons keep working   */
+/* even where old per-button classes were removed.                */
+/* ============================================================== */
+.btn-primary,
+button.btn-primary,
+a.btn-primary {
+    background-color: #10b981 !important;
+    border-color: #10b981 !important;
+    color: #ffffff !important;
+}
+
+.btn-primary:hover:not(:disabled),
+button.btn-primary:hover:not(:disabled),
+a.btn-primary:hover:not(:disabled) {
+    background-color: #34d399 !important;
+    border-color: #34d399 !important;
+    color: #ffffff !important;
+}
+
+.btn-primary span,
+button.btn-primary span,
+a.btn-primary span,
+.btn-primary i,
+button.btn-primary i,
+a.btn-primary i,
+.btn-primary svg,
+button.btn-primary svg,
+a.btn-primary svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+}
+html:not(.dark) button.btn-primary,
+html:not(.dark) a.btn-primary,
+html:not(.dark) button[class*="bg-emerald-500"],
+html:not(.dark) a[class*="bg-emerald-500"],
+html:not(.dark) button[class*="from-rose-600"][class*="to-pink-600"],
+html:not(.dark) a[class*="from-rose-600"][class*="to-pink-600"] {
+    background: #0f172a !important;
+    background-color: #0f172a !important;
+    background-image: none !important;
+    border-color: #0f172a !important;
+    color: #ffffff !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+    opacity: 1 !important;
+}
+
+html:not(.dark) button.btn-primary:hover:not(:disabled),
+html:not(.dark) a.btn-primary:hover:not(:disabled),
+html:not(.dark) button[class*="bg-emerald-500"]:hover:not(:disabled),
+html:not(.dark) a[class*="bg-emerald-500"]:hover:not(:disabled),
+html:not(.dark) button[class*="from-rose-600"][class*="to-pink-600"]:hover:not(:disabled),
+html:not(.dark) a[class*="from-rose-600"][class*="to-pink-600"]:hover:not(:disabled) {
+    background: #1e293b !important;
+    background-color: #1e293b !important;
+    background-image: none !important;
+    border-color: #1e293b !important;
+    color: #ffffff !important;
+}
+
+html:not(.dark) button.btn-primary span,
+html:not(.dark) a.btn-primary span,
+html:not(.dark) button[class*="bg-emerald-500"] span,
+html:not(.dark) a[class*="bg-emerald-500"] span,
+html:not(.dark) button[class*="from-rose-600"][class*="to-pink-600"] span,
+html:not(.dark) a[class*="from-rose-600"][class*="to-pink-600"] span,
+html:not(.dark) button.btn-primary i,
+html:not(.dark) a.btn-primary i,
+html:not(.dark) button[class*="bg-emerald-500"] i,
+html:not(.dark) a[class*="bg-emerald-500"] i,
+html:not(.dark) button[class*="from-rose-600"][class*="to-pink-600"] i,
+html:not(.dark) a[class*="from-rose-600"][class*="to-pink-600"] i,
+html:not(.dark) button.btn-primary svg,
+html:not(.dark) a.btn-primary svg,
+html:not(.dark) button[class*="bg-emerald-500"] svg,
+html:not(.dark) a[class*="bg-emerald-500"] svg,
+html:not(.dark) button[class*="from-rose-600"][class*="to-pink-600"] svg,
+html:not(.dark) a[class*="from-rose-600"][class*="to-pink-600"] svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+    opacity: 1 !important;
+}
+
+html.dark button.btn-primary,
+html.dark a.btn-primary,
+html.dark button[class*="bg-emerald-500"],
+html.dark a[class*="bg-emerald-500"] {
+    background-color: #10b981 !important;
+    border-color: #10b981 !important;
+    color: #ffffff !important;
+}
+
+html.dark button.btn-primary:hover:not(:disabled),
+html.dark a.btn-primary:hover:not(:disabled),
+html.dark button[class*="bg-emerald-500"]:hover:not(:disabled),
+html.dark a[class*="bg-emerald-500"]:hover:not(:disabled) {
+    background-color: #34d399 !important;
+    border-color: #34d399 !important;
+    color: #ffffff !important;
+}
+
+html.dark button.btn-primary span,
+html.dark a.btn-primary span,
+html.dark button[class*="bg-emerald-500"] span,
+html.dark a[class*="bg-emerald-500"] span,
+html.dark button.btn-primary i,
+html.dark a.btn-primary i,
+html.dark button[class*="bg-emerald-500"] i,
+html.dark a[class*="bg-emerald-500"] i,
+html.dark button.btn-primary svg,
+html.dark a.btn-primary svg,
+html.dark button[class*="bg-emerald-500"] svg,
+html.dark a[class*="bg-emerald-500"] svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
+/* File input pseudo-button follows the same global rule */
+input.btn-file::file-selector-button {
+    background-color: #10b981 !important;
+    border: 0 !important;
+    color: #ffffff !important;
+}
+
+input.btn-file::file-selector-button:hover {
+    background-color: #34d399 !important;
+    color: #ffffff !important;
+}
+
+input.btn-file::-webkit-file-upload-button {
+    background-color: #10b981 !important;
+    border: 0 !important;
+    color: #ffffff !important;
+}
+
+input.btn-file::-webkit-file-upload-button:hover {
+    background-color: #34d399 !important;
+    color: #ffffff !important;
+}
+
+html:not(.dark) input.btn-file::file-selector-button,
+html:not(.dark) input.btn-file::-webkit-file-upload-button {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+}
+
+html:not(.dark) input.btn-file::file-selector-button:hover,
+html:not(.dark) input.btn-file::-webkit-file-upload-button:hover {
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+}

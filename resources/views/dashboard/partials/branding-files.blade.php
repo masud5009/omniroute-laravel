@@ -8,7 +8,7 @@
                         <span class="text-xs text-zinc-500 font-mono">Default icon</span>
                     @endif
                 </div>
-                <input type="file" name="logo" accept="image/*" class="w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-emerald-500 file:text-zinc-950 file:font-bold file:text-xs file:cursor-pointer hover:file:bg-emerald-400 bg-[#121215] border border-white/10 rounded-xl p-2">
+                <input type="file" name="logo" accept="image/*" class="btn-file w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-bold file:text-xs file:cursor-pointer bg-[#121215] border border-white/10 rounded-xl p-2">
                 <p class="text-xs text-zinc-500">PNG/JPG/SVG/WEBP, max 2MB.</p>
                 @if($siteSettings->logo_path)
                     <label class="flex items-center gap-2 text-xs text-zinc-400 cursor-pointer">
@@ -26,7 +26,7 @@
                         <span class="text-xs text-zinc-500 font-mono">Default favicon.ico</span>
                     @endif
                 </div>
-                <input type="file" name="favicon" accept=".ico,.png,.jpg,.jpeg,.svg,.webp" class="w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-emerald-500 file:text-zinc-950 file:font-bold file:text-xs file:cursor-pointer hover:file:bg-emerald-400 bg-[#121215] border border-white/10 rounded-xl p-2">
+                <input type="file" name="favicon" accept=".ico,.png,.jpg,.jpeg,.svg,.webp" class="btn-file w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:font-bold file:text-xs file:cursor-pointer bg-[#121215] border border-white/10 rounded-xl p-2">
                 <p class="text-xs text-zinc-500">ICO/PNG/SVG, max 1MB.</p>
                 @if($siteSettings->favicon_path)
                     <label class="flex items-center gap-2 text-xs text-zinc-400 cursor-pointer">
@@ -37,7 +37,7 @@
             </div>
         </div>
         <div class="pt-3 border-t border-white/[0.06] flex items-center justify-end">
-            <button type="submit" class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer">
+            <button type="submit" class="btn-primary px-5 py-2.5 text-white font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer">
                 <i data-lucide="save" class="w-3.5 h-3.5"></i>
                 <span>Save Website Settings</span>
             </button>

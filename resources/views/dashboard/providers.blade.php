@@ -41,10 +41,9 @@
             <span class="text-zinc-900 dark:text-zinc-200 font-semibold text-lg">No AI providers configured yet</span>
             <span class="text-zinc-500 dark:text-zinc-400 text-sm max-w-md">Connect an upstream AI provider (OpenAI, Anthropic, Gemini, Groq, etc.) to start routing requests with load balancing and failover.</span>
             <button type="button" @click="openAddCustomProviderModal('openai')"
-                class="mt-2 px-4 py-2 text-xs sm:text-sm font-semibold bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white rounded-xl transition-all shadow-md shadow-rose-950/30 flex items-center gap-2 cursor-pointer"
-                style="color: #ffffff !important;">
-                <i data-lucide="plus" class="w-4 h-4" style="color: #ffffff !important; stroke: #ffffff !important;"></i>
-                <span style="color: #ffffff !important;">Add Custom Provider</span>
+                class="btn-primary mt-2 px-4 py-2 text-xs sm:text-sm font-semibold text-white rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>Add Custom Provider</span>
             </button>
         </div>
     @else
@@ -89,10 +88,9 @@
                 <!-- Action Buttons -->
                 <div class="flex items-center gap-2 flex-wrap">
                     <button type="button" @click="openAddCustomProviderModal('openai')"
-                        class="px-3.5 py-2 text-xs sm:text-sm font-semibold bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white rounded-xl transition-all shadow-md shadow-rose-950/30 flex items-center gap-2"
-                        style="color: #ffffff !important;">
-                        <i data-lucide="plus" class="w-4 h-4" style="color: #ffffff !important; stroke: #ffffff !important;"></i>
-                        <span style="color: #ffffff !important;">Add Custom Provider</span>
+                        class="btn-primary px-3.5 py-2 text-xs sm:text-sm font-semibold text-white rounded-xl transition-all shadow-md flex items-center gap-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Add Custom Provider</span>
                     </button>
                 </div>
             </div>

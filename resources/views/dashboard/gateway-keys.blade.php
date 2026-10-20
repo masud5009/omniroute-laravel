@@ -64,7 +64,7 @@
                     class="w-full bg-[#09090b] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 font-mono">
             </div>
             <div class="sm:col-span-2 lg:col-span-5 flex justify-end pt-1">
-                <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold text-sm rounded-xl shadow-md transition-colors whitespace-nowrap flex items-center justify-center gap-2 cursor-pointer">
+                <button type="submit" class="btn-primary w-full sm:w-auto px-5 py-2.5 text-white font-semibold text-sm rounded-xl shadow-md transition-colors whitespace-nowrap flex items-center justify-center gap-2 cursor-pointer">
                     <i data-lucide="plus" class="w-4 h-4"></i>
                     <span>Generate Virtual Key</span>
                 </button>
@@ -253,7 +253,7 @@
 
                 <div class="pt-4 border-t border-white/[0.06] flex items-center justify-end gap-2.5">
                     <button type="button" @click="editModalOpen = false" class="px-4 py-2.5 text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white rounded-xl transition-all shadow-md cursor-pointer">Cancel</button>
-                    <button type="submit" class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold text-sm rounded-xl transition-all shadow-md cursor-pointer">
+                    <button type="submit" class="btn-primary px-5 py-2.5 text-white font-semibold text-sm rounded-xl transition-all shadow-md cursor-pointer">
                         Save Changes
                     </button>
                 </div>

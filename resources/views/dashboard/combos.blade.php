@@ -33,10 +33,9 @@
         </div>
 
         <button type="button" @click="showCreateModal = true; $nextTick(() => { if (window.lucide) lucide.createIcons(); })"
-            class="px-4 py-2 text-xs sm:text-sm font-semibold bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white rounded-xl transition-all shadow-md shadow-rose-950/30 flex items-center gap-2 cursor-pointer"
-            style="color: #ffffff !important;">
-            <i data-lucide="plus" class="w-4 h-4" style="color: #ffffff !important; stroke: #ffffff !important;"></i>
-            <span style="color: #ffffff !important;">Create Smart Combo</span>
+            class="btn-primary px-4 py-2 text-xs sm:text-sm font-semibold text-white rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Create Smart Combo</span>
         </button>
     </div>
 
@@ -51,10 +50,9 @@
             <span class="text-zinc-900 dark:text-zinc-200 font-semibold text-lg">No Smart Combos created yet</span>
             <span class="text-zinc-500 dark:text-zinc-400 text-sm max-w-md">Create virtual model names with ordered multi-provider fallback chains and prompt compression for 100% uptime.</span>
             <button type="button" @click="showCreateModal = true; $nextTick(() => { if (window.lucide) lucide.createIcons(); })"
-                class="mt-2 px-4 py-2 text-xs sm:text-sm font-semibold bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white rounded-xl transition-all shadow-md shadow-rose-950/30 flex items-center gap-2 cursor-pointer"
-                style="color: #ffffff !important;">
-                <i data-lucide="plus" class="w-4 h-4" style="color: #ffffff !important; stroke: #ffffff !important;"></i>
-                <span style="color: #ffffff !important;">Create First Combo</span>
+                class="btn-primary mt-2 px-4 py-2 text-xs sm:text-sm font-semibold text-white rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>Create First Combo</span>
             </button>
         </div>
     @else
@@ -359,7 +357,7 @@
                     Cancel
                 </button>
                 <button type="submit" form="createComboForm" :disabled="sequence.length === 0"
-                    class="px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-40 disabled:pointer-events-none text-white font-semibold text-xs sm:text-sm rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer">
+                    class="btn-primary px-4 sm:px-5 py-2 sm:py-2.5 disabled:opacity-40 disabled:pointer-events-none text-white font-semibold text-xs sm:text-sm rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer">
                     <i data-lucide="check" class="w-4 h-4"></i>
                     <span>Save Smart Combo</span>
                 </button>
